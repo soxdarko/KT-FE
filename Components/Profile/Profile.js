@@ -13,7 +13,7 @@ import ChangePass from '../Auth/ChangePass';
 import AddClientButton from '../UI/AddClientButton';
 
 import classes from '../UI/UI.module.scss';
-
+//develop
 const Profile = props => {
 	const { isMobile } = useDeviceDetect();
 	const [autorefreshIcon, setAutorefreshIcon] = useState(true);
