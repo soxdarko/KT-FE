@@ -1,0 +1,21 @@
+@import '../../scss/variables.scss';
+
+@include scrollbars();
+
+.Layout {
+	width: 100%;
+	height: auto;
+	background-color: $base-background-color;
+}
+
+.Main {
+	margin-top: 55px;
+}
+
+.OpenMob {
+	transform: translateX(0);
+}
+
+.CloseMob {
+	transform: translateX(-100%);
+}
