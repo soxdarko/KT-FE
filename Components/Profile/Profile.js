@@ -15,6 +15,7 @@ import ChangePass from '../Auth/ChangePass';
 import AddClientButton from '../UI/AddClientButton';
 import Confirmation from '../UI/Forms/Confirmation';
 import Backdrop from '../UI/Backdrop';
+import InviteClient from '../AddToList/InviteClient';
 
 import classes from '../UI/UI.module.scss';
 
@@ -24,6 +25,8 @@ const Profile = props => {
 	const [autorefreshIcon, setAutorefreshIcon] = useState(true);
 	const [displayConfirmation, setDisplayConfirmation] = useState('none');
 	const [displayChangePass, setDisplayChangePass] = useState('none');
+	const [displayInviteClient, setDisplayInviteClient] = useState('none');
+	const [backdrop, setBackdrop] = useState('none');
 	const [userData, setUserData] = useState([]);
 	const [formInput, setFormInput] = useState({
 		name: {
@@ -203,6 +206,7 @@ const Profile = props => {
 		return (
 			<>
 				<Backdrop display={displayConfirmation} onClick={() => setDisplayConfirmation('none')} />
+				<InviteClient display={displayInviteClient} />
 				<Confirmation
 					display={displayConfirmation}
 					info="Da li sigurno želite deaktivirati profil? Deaktivacija profila onemogućuje Vas i klijente da Vam rezervišu termine !!!"
@@ -350,7 +354,7 @@ const Profile = props => {
 					className={classes.SaveMob}
 					onClick={onSubmit}
 				/>
-				<AddClientButton />
+				<AddClientButton onClick={() => setDisplayInviteClient('block')} />
 			</>
 		);
 	}
