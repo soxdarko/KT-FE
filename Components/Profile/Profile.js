@@ -205,14 +205,14 @@ const Profile = props => {
 	if (isMobile) {
 		return (
 			<>
-				<Backdrop display={displayConfirmation} onClick={() => setDisplayConfirmation('none')} />
+				<Backdrop display={backdrop} onClick={() => {setDisplayConfirmation('none'), setDisplayInviteClient('none') , setBackdrop('none')}} />
 				<InviteClient display={displayInviteClient} />
 				<Confirmation
 					display={displayConfirmation}
 					info="Da li sigurno želite deaktivirati profil? Deaktivacija profila onemogućuje Vas i klijente da Vam rezervišu termine !!!"
 					submitValue="DEAKTIVIRAJ"
-					onDecline={() => setDisplayConfirmation('none')}
-					onSubmit={() => setDisplayConfirmation('none')}
+					onDecline={() => {setDisplayConfirmation('none'), setBackdrop('none')}}
+					onSubmit={() => {setDisplayConfirmation('none'), setBackdrop('none')}}
 				/>
 				<ChangePass
 					displayChangePass={displayChangePass}
@@ -342,7 +342,7 @@ const Profile = props => {
 								type="button"
 								value="Deaktiviraj nalog"
 								className={[classes.ButtonMob, classes.Danger, classes.Deactivate].join(' ')}
-								onClick={() => setDisplayConfirmation('block')}
+								onClick={() => {setDisplayConfirmation('block'), setBackdrop('block')}}
 							/>
 						</div>
 					</div>
@@ -354,7 +354,7 @@ const Profile = props => {
 					className={classes.SaveMob}
 					onClick={onSubmit}
 				/>
-				<AddClientButton onClick={() => setDisplayInviteClient('block')} />
+				<AddClientButton onClick={() => {setDisplayInviteClient('block'), setBackdrop('block')}} />
 			</>
 		);
 	}
