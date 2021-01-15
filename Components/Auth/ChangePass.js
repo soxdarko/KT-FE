@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from '../../utils/Axios/axios-appointments';
 import useDeviceDetect from '../../utils/UseDeviceDetect';
-import { updateObject, checkValidity, updateValidity } from '../shared/utility';
+import { inputChangedHandler, updateValidity } from '../shared/utility';
 
 import Input from '../UI/Forms/Input';
 import PassRecovery from './PassRecovery/PassRecovery';
@@ -68,20 +68,6 @@ const ChangePass = props => {
 		}
 		regHandler();
 	}, [changePass]);
-
-	const inputChangedHandler = (e, inputIdentifier) => {
-		const updatedFormElement = updateObject(formInput[inputIdentifier], {
-			value: e.target.value,
-			valid: checkValidity(e.target.value, formInput[inputIdentifier]),
-			touched: true,
-		});
-
-		setFormInput(
-			updateObject(formInput, {
-				[inputIdentifier]: updatedFormElement,
-			})
-		);
-	};
 
 	const onSubmit = e => {
 		e.preventDefault();
@@ -180,7 +166,7 @@ const ChangePass = props => {
 					placeholder="Uneti trenutnu lozinku"
 					value={formInput.oldPass.value}
 					maxLength="50"
-					onChange={e => inputChangedHandler(e, 'oldPass')}
+					onChange={e => inputChangedHandler(e, 'oldPass', formInput, setFormInput)}
 					invalid={!formInput.oldPass.valid}
 				/>
 				<Input
@@ -190,7 +176,7 @@ const ChangePass = props => {
 					placeholder="Izabrati novu lozinku"
 					value={formInput.newPass.value}
 					maxLength="50"
-					onChange={e => inputChangedHandler(e, 'newPass')}
+					onChange={e => inputChangedHandler(e, 'newPass', formInput, setFormInput)}
 					invalid={!formInput.newPass.valid}
 				/>
 				<Input
@@ -200,7 +186,7 @@ const ChangePass = props => {
 					placeholder="Potvrditi novu lozinku"
 					value={formInput.passConfirm.value}
 					maxLength="50"
-					onChange={e => inputChangedHandler(e, 'passConfirm')}
+					onChange={e => inputChangedHandler(e, 'passConfirm', formInput, setFormInput)}
 					invalid={!formInput.passConfirm.valid}
 				/>
 				{buttonGroup}

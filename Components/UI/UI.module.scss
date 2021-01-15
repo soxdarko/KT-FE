@@ -8,7 +8,7 @@
 	height: 100%;
 	top: 0;
 	z-index: 300;
-	background-color: rgba(0, 0, 0, 0.5);
+	background-color: rgba(0, 0, 0, 0.9);
 }
 
 .Rounded {
@@ -834,4 +834,22 @@
 	border-radius: 50%;
 	color: $base-orange-color;
 	background-color: rgba(99, 68, 2, 0.171);
+}
+
+.Confirmation {
+	width: calc(100vw - 6px);
+	border: 3px dashed $base-orange-color;
+	p {
+		padding: 5px;
+		color: red;
+	}
+	input {
+		margin: 15px;
+	}
+	.Confirm {
+		float: left;
+	}
+	.Decline {
+		float: right;
+	}
 }
