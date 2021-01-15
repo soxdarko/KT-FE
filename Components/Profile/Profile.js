@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { faSave, faCheckCircle, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import useDeviceDetect from '../../utils/UseDeviceDetect';
+import { inputChangedHandler } from '../shared/utility';
 
 import ListHeadButton from '../UI/List/ListHead/ListHeadButton';
 import Input from '../UI/Forms/Input';
@@ -13,12 +14,75 @@ import ChangePass from '../Auth/ChangePass';
 import AddClientButton from '../UI/AddClientButton';
 
 import classes from '../UI/UI.module.scss';
-//develop
+
 const Profile = props => {
 	const { isMobile } = useDeviceDetect();
 	const [autorefreshIcon, setAutorefreshIcon] = useState(true);
 	const [displayChangePass, setDisplayChangePass] = useState('none');
-	console.log(autorefreshIcon);
+	const [userData, setUserData] = useState([]);
+	const [formInput, setFormInput] = useState({
+		name: {
+			value: 'Jovan Stefanovic',
+			touched: false,
+			valid: true,
+		},
+		userName: {
+			value: 'JovanS',
+			touched: false,
+			valid: true,
+		},
+		company: {
+			value: 'JovanFrizeraj',
+			touched: false,
+			valid: true,
+		},
+		email: {
+			value: 'zbni.rs@gmail.com',
+			touched: false,
+			valid: true,
+		},
+		phone: {
+			value: '0691120296',
+			touched: false,
+			valid: true,
+		},
+		city: {
+			value: 'Subotica',
+			touched: false,
+			valid: true,
+		},
+		address: {
+			value: 'Kozaracka 31',
+			touched: false,
+			valid: true,
+		},
+		city: {
+			value: 'Subotica',
+			touched: false,
+			valid: true,
+		},
+		activity: {
+			value: 'Frizer',
+			touched: false,
+			valid: true,
+		},
+		timePerField: {
+			value: '15',
+			touched: false,
+			valid: true,
+		},
+		resLimit: {
+			value: '3',
+			touched: false,
+			valid: true,
+		},
+		password: {
+			value: '',
+			touched: false,
+			valid: true,
+		},
+	});
+
 	if (isMobile) {
 		return (
 			<>
@@ -39,39 +103,93 @@ const Profile = props => {
 					<div className={classes.SettingProp}>
 						<div>
 							<div>Ime i prezime</div>
-							<input type="text" value="Jovan Stefanovic" className={classes.InputMob} />
+							<input
+								type="text"
+								value={formInput.name.value}
+								className={classes.InputMob}
+								onChange={e => inputChangedHandler(e, 'name', formInput, setFormInput)}
+							/>
+						</div>
+						<div>
+							<div>Korisničko ime</div>
+							<input
+								type="text"
+								value={formInput.userName.value}
+								className={classes.InputMob}
+								onChange={e => inputChangedHandler(e, 'userName', formInput, setFormInput)}
+							/>
 						</div>
 						<div>
 							<div>Naziv Firme</div>
-							<input type="text" value="Frizerko" className={classes.InputMob} />
+							<input
+								type="text"
+								value={formInput.company.value}
+								className={classes.InputMob}
+								onChange={e => inputChangedHandler(e, 'company', formInput, setFormInput)}
+							/>
 						</div>
 						<div>
 							<div>E-mail adresa</div>
-							<input type="text" value="zbni.rs@gmail.com" className={classes.InputMob} />
+							<input
+								type="text"
+								value={formInput.email.value}
+								className={classes.InputMob}
+								onChange={e => inputChangedHandler(e, 'email', formInput, setFormInput)}
+							/>
 						</div>
 						<div>
 							<div>Broj telefona</div>
-							<input type="number" value="0691120296" className={classes.InputMob} />
+							<input
+								type="number"
+								value={formInput.phone.value}
+								className={classes.InputMob}
+								onChange={e => inputChangedHandler(e, 'phone', formInput, setFormInput)}
+							/>
 						</div>
 						<div>
 							<div>Mesto</div>
-							<input type="text" value="Subotica" className={classes.InputMob} />
+							<input
+								type="text"
+								value={formInput.city.value}
+								className={classes.InputMob}
+								onChange={e => inputChangedHandler(e, 'city', formInput, setFormInput)}
+							/>
 						</div>
 						<div>
 							<div>Adresa</div>
-							<input type="text" value="Kozaracka 31" className={classes.InputMob} />
+							<input
+								type="text"
+								value={formInput.address.value}
+								className={classes.InputMob}
+								onChange={e => inputChangedHandler(e, 'address', formInput, setFormInput)}
+							/>
 						</div>
 						<div>
 							<div>Delatnost</div>
-							<input type="text" value="Frizer" className={classes.InputMob} />
+							<input
+								type="text"
+								value={formInput.activity.value}
+								className={classes.InputMob}
+								onChange={e => inputChangedHandler(e, 'activity', formInput, setFormInput)}
+							/>
 						</div>
 						<div>
 							<div>Dužina polja u kalendaru</div>
-							<input type="number" value="15" className={classes.InputMob} />
+							<input
+								type="number"
+								value={formInput.timePerField.value}
+								className={classes.InputMob}
+								onChange={e => inputChangedHandler(e, 'timePerField', formInput, setFormInput)}
+							/>
 						</div>
 						<div>
 							<div>Mesečni limit rezervacija po klijentu</div>
-							<input type="number" value="3" className={classes.InputMob} />
+							<input
+								type="number"
+								value={formInput.resLimit.value}
+								className={classes.InputMob}
+								onChange={e => inputChangedHandler(e, 'resLimit', formInput, setFormInput)}
+							/>
 						</div>
 						<div className={classes.NoBorder}>
 							<ListHeadButton
@@ -128,6 +246,7 @@ const Profile = props => {
 			<ListBody>
 				<div className={classes.SettingName}>
 					<div>Ime i Prezime</div>
+					<div>Korisničko ime</div>
 					<div>Naziv firme</div>
 					<div>E-mail</div>
 					<div>Telefon</div>
@@ -135,7 +254,6 @@ const Profile = props => {
 					<div>Adresa</div>
 					<div>Delatnost</div>
 					<div>Lozinka</div>
-					<div>Broj dana do koliko je moguće rezervisati</div>
 					<div>Dužina trajanja jednog polja u kalendaru</div>
 					<div>Broj dozvoljenih rezervacija za period od 30 dana</div>
 					<div>Automatsko osvežavanje novih zakazanih termina?</div>
@@ -144,25 +262,60 @@ const Profile = props => {
 				</div>
 				<div className={classes.SettingProp}>
 					<div>
-						<input type="text" value="Jovan Stefanovic" />
+						<input
+							type="text"
+							value={formInput.name.value}
+							onChange={e => inputChangedHandler(e, 'name', formInput, setFormInput)}
+						/>
 					</div>
 					<div>
-						<input type="text" value="Frizerko" />
+						<input
+							type="text"
+							value={formInput.userName.value}
+							onChange={e => inputChangedHandler(e, 'userName', formInput, setFormInput)}
+						/>
 					</div>
 					<div>
-						<input type="text" value="zbni.rs@gmail.com" />
+						<input
+							type="text"
+							value={formInput.company.value}
+							onChange={e => inputChangedHandler(e, 'company', formInput, setFormInput)}
+						/>
 					</div>
 					<div>
-						<input type="number" value="0691120296" />
+						<input
+							type="text"
+							value={formInput.email.value}
+							onChange={e => inputChangedHandler(e, 'email', formInput, setFormInput)}
+						/>
 					</div>
 					<div>
-						<input type="text" value="Subotica" />
+						<input
+							type="number"
+							value={formInput.phone.value}
+							onChange={e => inputChangedHandler(e, 'phone', formInput, setFormInput)}
+						/>
 					</div>
 					<div>
-						<input type="text" value="Kozaracka 31" />
+						<input
+							type="text"
+							value={formInput.city.value}
+							onChange={e => inputChangedHandler(e, 'city', formInput, setFormInput)}
+						/>
 					</div>
 					<div>
-						<input type="text" value="Frizer" />
+						<input
+							type="text"
+							value={formInput.address.value}
+							onChange={e => inputChangedHandler(e, 'address', formInput, setFormInput)}
+						/>
+					</div>
+					<div>
+						<input
+							type="text"
+							value={formInput.activity.value}
+							onChange={e => inputChangedHandler(e, 'activity', formInput, setFormInput)}
+						/>
 					</div>
 					<div>
 						<input
@@ -172,13 +325,18 @@ const Profile = props => {
 						/>
 					</div>
 					<div>
-						<input type="number" value="14" />
+						<input
+							type="number"
+							value={formInput.timePerField.value}
+							onChange={e => inputChangedHandler(e, 'timePerField', formInput, setFormInput)}
+						/>
 					</div>
 					<div>
-						<input type="number" value="15" />
-					</div>
-					<div>
-						<input type="number" value="3" />
+						<input
+							type="number"
+							value={formInput.resLimit.value}
+							onChange={e => inputChangedHandler(e, 'resLimit', formInput, setFormInput)}
+						/>
 					</div>
 					<div>
 						<Input type="checkbox" id="autorefresh" />
