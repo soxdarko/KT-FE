@@ -6,7 +6,7 @@ import classes from '../Components/Navigation/Navigation.module.scss';
 
 import ServiceProvidersEmployees from '../Components/DataFromBE/ServiceProvidersEmployees';
 
-const Profil = () => (
+const profil = () => (
 	<>
 		<Head>
 			<title>Podešavanja</title>
@@ -33,4 +33,4 @@ const Profil = () => (
 	</>
 );
 
-export default Profil;
+export default profil;

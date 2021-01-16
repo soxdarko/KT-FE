@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import useDeviceDetect from '../../utils/UseDeviceDetect';
 
-import Button from '../UI/Button';
+import Input from '../UI/Forms/Input';
 import Backdrop from '../UI/Backdrop';
 
 import classes from './HomePage.scss';
@@ -40,13 +40,15 @@ const AuthButton = (props) => {
           transform: show ? 'translate(0, 0)' : 'translate(0, 100px)',
         }}
       >
-        <Button
+        <Input
+          type='button'
           value="PRIJAVA"
           float="left"
           margin="0 0 0 4px"
           onClick={props.onClickLogin}
         />
-        <Button
+        <Input
+          type='button'
           value="REGISTRACIJA"
           float="right"
           margin="0 4px 0 0"

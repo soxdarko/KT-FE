@@ -53,8 +53,8 @@ const Index = () => {
 			<NavItem link="/" className={classes.IndexToolbarNavBtn} marginLeft="283px">
 				<a>Kontakt</a>
 			</NavItem>
-			<Link href="/Kalendar">
-				<NavItem link="/Kalendar" className={classes.IndexBookingButton} marginLeft="375px">
+			<Link href="/kalendar">
+				<NavItem link="/kalendar" className={classes.IndexBookingButton} marginLeft="375px">
 					<a>Rezerviši termin</a>
 				</NavItem>
 			</Link>

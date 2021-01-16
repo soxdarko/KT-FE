@@ -7,9 +7,9 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import NavItems from './NavItems';
 import NavItem from './NavItem';
-import Button from '../UI/Button';
 import ServiceProviderLogo from '../UI/ServiceProviderLogo';
 import Backdrop from '../UI/Backdrop';
+import Input from '../UI/Forms/Input';
 
 import useDeviceDetect from '../../utils/UseDeviceDetect';
 
@@ -39,58 +39,58 @@ const SideDrawer = (props) => {
                 <NavItem
                   display="block"
                   className={classes.NavItemServiceProviderMob}
-                  link="/Kalendar"
+                  link="/kalendar"
                 >
-                  <>
+                  <div>
                     <FontAwesomeIcon
                       icon={faCalendarAlt}
                       className={classes.sideDrawerIconMob}
                       style={{ color: props.colorCalIcon }}
                     />
                     <p>Kalendar</p>
-                  </>
+                  </div>
                 </NavItem>
                 <NavItem
                   display="block"
                   className={classes.NavItemServiceProviderMob}
                   link="/"
                 >
-                  <>
+                  <div>
                     <FontAwesomeIcon
                       icon={faAddressBook}
                       className={classes.sideDrawerIconMob}
                       style={{ color: props.colorClinetsIcon }}
                     />
                     <p>Lista klijenata</p>
-                  </>
+                  </div>
                 </NavItem>
                 <NavItem
                   display="block"
                   className={classes.NavItemServiceProviderMob}
                   link="/"
                 >
-                  <>
+                  <div>
                     <FontAwesomeIcon
                       icon={faCut}
                       className={classes.sideDrawerIconMob}
                       style={{ color: props.colorServicesIcon }}
                     />
                     <p>Usluge</p>
-                  </>
+                  </div>
                 </NavItem>
                 <NavItem
                   display="block"
                   className={classes.NavItemServiceProviderMob}
-                  link="/Profil"
+                  link="/profil"
                 >
-                  <>
+                  <div>
                     <FontAwesomeIcon
                       icon={faCog}
                       className={classes.sideDrawerIconMob}
                       style={{ color: props.colorSettingsIcon }}
                     />
                     <p>Moj profil</p>
-                  </>
+                  </div>
                 </NavItem>
               </div>
             </NavItems>
@@ -103,7 +103,7 @@ const SideDrawer = (props) => {
         </div>
       </>
     );
-  }
+  } else {
   return (
     <div className={classes.SideDrawerPC} style={{ display: props.displayPC }}>
       <nav>
@@ -112,11 +112,12 @@ const SideDrawer = (props) => {
             <NavItem
               display="block"
               className={classes.NavItemServiceProviderPC}
-              link="/Kalendar"
+              link="/kalendar"
             >
-              <Button
+              <Input
+                type='button'
                 value="Kalendar"
-                classNameButton={props.classNameCal}
+                className={props.classNameCal}
                 fontSize="1rem"
               />
             </NavItem>
@@ -130,9 +131,10 @@ const SideDrawer = (props) => {
               className={classes.NavItemServiceProviderPC}
               link="/"
             >
-              <Button
+              <Input
+                type='button'
                 value="Lista klijenata"
-                classNameButton={props.classNameClients}
+                className={props.classNameClients}
                 fontSize="1rem"
               />
             </NavItem>
@@ -146,9 +148,10 @@ const SideDrawer = (props) => {
               className={classes.NavItemServiceProviderPC}
               link="/"
             >
-              <Button
+              <Input
+                type='button'
                 value="Lista usluga"
-                classNameButton={props.classNameServices}
+                className={props.classNameServices}
                 fontSize="1rem"
               />
             </NavItem>
@@ -160,11 +163,12 @@ const SideDrawer = (props) => {
             <NavItem
               display="block"
               className={classes.NavItemServiceProviderPC}
-              link="/Profil"
+              link="/profil"
             >
-              <Button
+              <Input
+                type='button'
                 value="Moj profil"
-                classNameButton={props.classNameProfile}
+                className={props.classNameProfile}
                 fontSize="1rem"
               />
             </NavItem>
@@ -182,7 +186,7 @@ const SideDrawer = (props) => {
         />
       </nav>
     </div>
-  );
+  )}
 };
 
 export default SideDrawer;

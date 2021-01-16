@@ -8,7 +8,7 @@ import classes from '../Components/Navigation/Navigation.module.scss';
 
 import ServiceProvidersEmployees from '../Components/DataFromBE/ServiceProvidersEmployees';
 
-const Kalendar = () => {
+const kalendar = () => {
 	const [clientFormBackdrop, setClientFormBackdrop] = useState('none');
 
 	const clientFormBackdropShow = () => {
@@ -49,4 +49,4 @@ const Kalendar = () => {
 	);
 };
 
-export default Kalendar;
+export default kalendar;
