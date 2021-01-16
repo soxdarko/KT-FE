@@ -8,7 +8,7 @@ import { inputChangedHandler } from '../shared/utility';
 
 import ListHeadButton from '../UI/List/ListHead/ListHeadButton';
 import Input from '../UI/Forms/Input';
-import Label from '../UI/Forms/label';
+import Label from '../UI/Forms/Label';
 import ListBody from '../UI/List/ListBody/ListBody';
 import ListHead from '../UI/List/ListHead/ListHead';
 import ChangePass from '../Auth/ChangePass';
