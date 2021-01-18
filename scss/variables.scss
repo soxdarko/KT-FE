@@ -122,6 +122,16 @@ i {
 	appearance: none;
 }
 
+@mixin absoluteCenter {
+	left: 50%;
+	margin-right: -50%;
+	transform: translate(-50%, -50%);
+	-webkit-transform: translate(-50%, -50%);
+	-moz-transform: translate(-50%, -50%);
+	-o-transform: translate(-50%, -50%);
+	-ms-transform: translate(-50%, -50%);
+}
+
 @mixin RoundBottomBorders {
 	border: {
 		bottom-left-radius: 20px;

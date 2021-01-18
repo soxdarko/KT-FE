@@ -6,6 +6,7 @@ import initState from './initState';
 
 import Select from '../../UI/Select';
 import Input from '../../UI/Forms/Input';
+import ResponseForm from '../../UI/Forms/ResponseForm';
 
 import classes from '../../UI/UI.module.scss';
 
@@ -71,9 +72,22 @@ const RegServProv = props => {
 		const api = axios
 			.post('/users/companyRegistration', regCompany)
 			.then(response => {
-				console.log(response), alert('Uspešno ste se registrovali');
+				console.log(response),
+					alert('Uspešno ste se registrovali'),
+					props.setDisplayRegServProv('none');
 			})
-			.catch(error => console.log(regCompany));
+			.catch(error => {
+				if (error.response) {
+					error.response.data.map(err => {
+						props.setResponse({ display: 'block', message: err.errorMessage, border: 'red' });
+						updateValidity(setFormInput, err.type, formInput, '', false);
+					});
+				} else if (error.request) {
+					console.log(error.request);
+				} else {
+					console.log('nesto drugo');
+				}
+			});
 		api;
 		setFormInput(initState);
 	};
@@ -148,7 +162,6 @@ const RegServProv = props => {
 			alert('Lozinka i potvrda moraju biti jednake');
 		} else {
 			setRegCompany(formData);
-			props.setDisplayRegServProv('none');
 		}
 	};
 

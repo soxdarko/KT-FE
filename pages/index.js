@@ -13,10 +13,11 @@ import PassRecovery from '../Components/Auth/PassRecovery/PassRecovery';
 import ClientVerification from '../Components/Auth/ClientVerification';
 import ContactForm from '../Components/HomePage/forms/ContactForm';
 import Footer from '../Components/HomePage/Footer';
+import OurServices from '../Components/HomePage/OurServices/OurServices';
 import AuthButton from '../Components/HomePage/AuthButton';
+import ResponseForm from '../Components/UI/Forms/ResponseForm';
 
 import classes from '../Components/Navigation/Navigation.module.scss';
-import OurServices from '../Components/HomePage/OurServices/OurServices';
 
 const Index = () => {
 	const { isMobile } = useDeviceDetect();
@@ -25,6 +26,16 @@ const Index = () => {
 	/* const [displayRegClient, setDisplayRegClient] = useState('none'); */
 	const [displayClientVerify, setDisplayClientVerify] = useState('none');
 	const [displayPassRecovery, setDisplayPassRecovery] = useState('none');
+	const [response, setResponse] = useState({
+		display: 'none',
+		message: '',
+		border: '',
+	});
+	const responseInit = {
+		display: 'none',
+		message: '',
+		border: '',
+	};
 
 	const Navigation = (
 		<NavItems display={isMobile ? 'none' : 'inherit'}>
@@ -63,6 +74,12 @@ const Index = () => {
 
 	const RegistrationAndLogin = (
 		<>
+			<ResponseForm
+				message={response.message}
+				display={response.display}
+				borderColor={response.border}
+				onClick={() => setResponse(responseInit)}
+			/>
 			<Login
 				displayLogin={displayLogin}
 				setDisplayLogin={setDisplayLogin}
@@ -72,6 +89,7 @@ const Index = () => {
 			<RegServProv
 				displayRegServProv={displayRegServProv}
 				setDisplayRegServProv={setDisplayRegServProv}
+				setResponse={setResponse}
 			/>
 			<ClientVerification
 				displayClientVerify={displayClientVerify}
