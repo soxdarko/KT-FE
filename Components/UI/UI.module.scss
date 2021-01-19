@@ -855,22 +855,39 @@
 }
 
 .Response {
+	@extend .Confirmation;
 	@include absoluteCenter;
-	position: absolute;
+	position: fixed;
 	top: 45vh;
 	width: auto;
 	min-width: 25vw;
 	z-index: 500;
 	border: 8px inset;
-	background-color: white;
+	background: $calendar-weeks-button-bg;
 	p {
 		text-align: center;
 		font-size: 1.2rem;
-		color: black;
+		color: $base-cal-font-color;
 	}
 	.Confirm {
 		clear: both;
 		margin-left: calc(50% - 2.5rem);
 		width: 5rem;
+	}
+}
+
+.ResponseMob {
+	@extend .Response;
+	width: 97%;
+	min-width: 95%;
+	top: unset;
+	bottom: -7%;
+	word-wrap: break-word;
+	border: 5px inset;
+	z-index: 999999;
+	.Confirm {
+		width: 8rem;
+		margin-left: calc(50% - 4rem);
+		font-size: 1.5rem;
 	}
 }

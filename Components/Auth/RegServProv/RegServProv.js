@@ -6,7 +6,6 @@ import initState from './initState';
 
 import Select from '../../UI/Select';
 import Input from '../../UI/Forms/Input';
-import ResponseForm from '../../UI/Forms/ResponseForm';
 
 import classes from '../../UI/UI.module.scss';
 
@@ -73,14 +72,20 @@ const RegServProv = props => {
 			.post('/users/companyRegistration', regCompany)
 			.then(response => {
 				console.log(response),
-					alert('Uspešno ste se registrovali'),
-					props.setDisplayRegServProv('none');
+					props.setResponse({
+						display: 'block',
+						message:
+							'Poslali smo Vam verifikacioni e-mail i sms. Klikom na link u e-mail-u i sms-u registracija će biti završena.',
+						border: 'green',
+					});
+				props.setDisplayRegServProv('none');
 			})
 			.catch(error => {
 				if (error.response) {
 					error.response.data.map(err => {
+						const Input = err.type[0].toLowerCase() + err.type.slice(1);
 						props.setResponse({ display: 'block', message: err.errorMessage, border: 'red' });
-						updateValidity(setFormInput, err.type, formInput, '', false);
+						updateValidity(setFormInput, Input, formInput, '', false);
 					});
 				} else if (error.request) {
 					console.log(error.request);
@@ -111,7 +116,6 @@ const RegServProv = props => {
 			userName: formInput.userName.value.trim(),
 			password: formInput.password.value.trim(),
 			city: formInput.city.value.trim(),
-			/* address: formInput.address.value.trim(), */
 		};
 
 		const emailPattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
