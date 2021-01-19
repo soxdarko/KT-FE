@@ -18,20 +18,22 @@ import AuthButton from '../Components/HomePage/AuthButton';
 import ResponseForm from '../Components/UI/Forms/ResponseForm';
 
 import classes from '../Components/Navigation/Navigation.module.scss';
+import Loader from '../Components/UI/Loader';
 
 const Index = () => {
 	const { isMobile } = useDeviceDetect();
+	const [isLoading, setIsLoading] = useState(false);
 	const [displayLogin, setDisplayLogin] = useState('none');
 	const [displayRegServProv, setDisplayRegServProv] = useState('none');
 	/* const [displayRegClient, setDisplayRegClient] = useState('none'); */
 	const [displayClientVerify, setDisplayClientVerify] = useState('none');
 	const [displayPassRecovery, setDisplayPassRecovery] = useState('none');
-	const [response, setResponse] = useState({
+	const [resForm, setResForm] = useState({
 		display: 'none',
 		message: '',
 		border: '',
 	});
-	const responseInit = {
+	const resFormInit = {
 		display: 'none',
 		message: '',
 		border: '',
@@ -75,13 +77,13 @@ const Index = () => {
 	const RegistrationAndLogin = (
 		<>
 			<ResponseForm
-				message={response.message}
-				display={response.display}
+				message={resForm.message}
+				display={resForm.display}
 				displayLinkButton="none"
 				displayFormButton="block"
-				borderColor={response.border}
+				borderColor={resForm.border}
 				link="/"
-				onClick={() => setResponse(responseInit)}
+				onClick={() => setResForm(resFormInit)}
 			/>
 			<Login
 				displayLogin={displayLogin}
@@ -92,7 +94,8 @@ const Index = () => {
 			<RegServProv
 				displayRegServProv={displayRegServProv}
 				setDisplayRegServProv={setDisplayRegServProv}
-				setResponse={setResponse}
+				setResForm={setResForm}
+				setIsLoading={setIsLoading}
 			/>
 			<ClientVerification
 				displayClientVerify={displayClientVerify}
@@ -123,6 +126,7 @@ const Index = () => {
 				classNameProfile={classes.sideDrawerButton}
 				selectData={null}
 				backgroundColorLayout="#303030">
+				<Loader loading={isLoading} />
 				{RegistrationAndLogin}
 				{Navigation}
 				<Slider />

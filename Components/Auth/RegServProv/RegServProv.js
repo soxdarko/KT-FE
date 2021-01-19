@@ -1,5 +1,5 @@
+import { userRegistration } from '../../../API/userRegistration';
 import { useState, useRef, useEffect } from 'react';
-import axios from '../../../utils/Axios/axios-appointments';
 import useDeviceDetect from '../../../utils/UseDeviceDetect';
 import { inputChangedHandler, updateValidity } from '../../shared/utility';
 import initState from './initState';
@@ -67,12 +67,12 @@ const RegServProv = props => {
 		},
 	});
 
-	const regHandler = () => {
+	/* const regHandler = () => {
 		const api = axios
 			.post('/users/companyRegistration', regCompany)
 			.then(response => {
 				console.log(response),
-					props.setResponse({
+					props.setResForm({
 						display: 'block',
 						message:
 							'Poslali smo Vam verifikacioni e-mail i sms. Klikom na link u e-mail-u i sms-u registracija će biti završena.',
@@ -84,7 +84,7 @@ const RegServProv = props => {
 				if (error.response) {
 					error.response.data.map(err => {
 						const Input = err.type[0].toLowerCase() + err.type.slice(1);
-						props.setResponse({ display: 'block', message: err.errorMessage, border: 'red' });
+						props.setResForm({ display: 'block', message: err.errorMessage, border: 'red' });
 						updateValidity(setFormInput, Input, formInput, '', false);
 					});
 				} else if (error.request) {
@@ -95,14 +95,23 @@ const RegServProv = props => {
 			});
 		api;
 		setFormInput(initState);
-	};
+	}; */
 
 	useEffect(() => {
 		if (isPageLoad.current) {
 			isPageLoad.current = false;
 			return;
 		}
-		regHandler();
+		userRegistration(
+			'companyRegistration',
+			regCompany,
+			props.setDisplayRegServProv,
+			props.setResForm,
+			formInput,
+			setFormInput,
+			initState,
+			props.setIsLoading
+		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [regCompany]);
 
@@ -166,6 +175,7 @@ const RegServProv = props => {
 			alert('Lozinka i potvrda moraju biti jednake');
 		} else {
 			setRegCompany(formData);
+			props.setIsLoading(true);
 		}
 	};
 
