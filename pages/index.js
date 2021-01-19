@@ -77,7 +77,10 @@ const Index = () => {
 			<ResponseForm
 				message={response.message}
 				display={response.display}
+				displayLinkButton="none"
+				displayFormButton="block"
 				borderColor={response.border}
+				link="/"
 				onClick={() => setResponse(responseInit)}
 			/>
 			<Login
