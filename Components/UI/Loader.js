@@ -11,7 +11,7 @@ const Loader = props => {
 	return (
 		<>
 			<Backdrop display={props.loading ? 'block' : 'none'} />
-			<RingLoader color={'gold'} loading={props.loading} size="80" css={overide} />
+			<RingLoader color={'gold'} loading={props.loading} size="80px" css={overide} />
 		</>
 	);
 };

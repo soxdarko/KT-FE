@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import axios from '../../../utils/Axios/axios-appointments';
+/* import axios from '../../../utils/Axios/axios-appointments'; */
 import useDeviceDetect from '../../../utils/UseDeviceDetect';
 import { inputChangedHandler } from '../../shared/utility';
 import initState from './initState';
@@ -33,7 +33,7 @@ const PassRecovery = props => {
 		},
 	});
 
-	const passRecoveryHandler = () => {
+	/* const passRecoveryHandler = () => {
 		const api = axios
 			.post('/logins.json', userData)
 			.then(response => {
@@ -43,14 +43,14 @@ const PassRecovery = props => {
 			.catch(error => console.log(error));
 		api;
 		setFormInput(initState);
-	};
+	}; */
 
 	useEffect(() => {
 		if (isPageLoad.current) {
 			isPageLoad.current = false;
 			return;
 		}
-		passRecoveryHandler();
+		/* passRecoveryHandler(); */
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userData]);
 

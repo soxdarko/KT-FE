@@ -1,4 +1,4 @@
-import { userRegistration } from '../../../API/userRegistration';
+import { newCompany } from '../../../API/userRegistration';
 import { useState, useRef, useEffect } from 'react';
 import useDeviceDetect from '../../../utils/UseDeviceDetect';
 import { inputChangedHandler, updateValidity } from '../../shared/utility';
@@ -12,7 +12,7 @@ import classes from '../../UI/UI.module.scss';
 const RegServProv = props => {
 	const { isMobile } = useDeviceDetect();
 	const isPageLoad = useRef(true);
-	const [regCompany, setRegCompany] = useState({});
+	const [companyData, setCompanyData] = useState({});
 
 	const [formInput, setFormInput] = useState({
 		name: {
@@ -67,9 +67,8 @@ const RegServProv = props => {
 		},
 	});
 
-	/* const regHandler = () => {
-		const api = axios
-			.post('/users/companyRegistration', regCompany)
+	const regHandler = () => {
+		const api = newCompany(companyData)
 			.then(response => {
 				console.log(response),
 					props.setResForm({
@@ -78,9 +77,11 @@ const RegServProv = props => {
 							'Poslali smo Vam verifikacioni e-mail i sms. Klikom na link u e-mail-u i sms-u registracija će biti završena.',
 						border: 'green',
 					});
+				props.setIsLoading(false);
 				props.setDisplayRegServProv('none');
 			})
 			.catch(error => {
+				props.setIsLoading(false);
 				if (error.response) {
 					error.response.data.map(err => {
 						const Input = err.type[0].toLowerCase() + err.type.slice(1);
@@ -95,25 +96,17 @@ const RegServProv = props => {
 			});
 		api;
 		setFormInput(initState);
-	}; */
+	};
 
 	useEffect(() => {
 		if (isPageLoad.current) {
 			isPageLoad.current = false;
 			return;
 		}
-		userRegistration(
-			'companyRegistration',
-			regCompany,
-			props.setDisplayRegServProv,
-			props.setResForm,
-			formInput,
-			setFormInput,
-			initState,
-			props.setIsLoading
-		);
+		regHandler();
+
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [regCompany]);
+	}, [companyData]);
 
 	const onSubmit = e => {
 		e.preventDefault();
@@ -174,7 +167,7 @@ const RegServProv = props => {
 			});
 			alert('Lozinka i potvrda moraju biti jednake');
 		} else {
-			setRegCompany(formData);
+			setCompanyData(formData);
 			props.setIsLoading(true);
 		}
 	};
