@@ -178,7 +178,9 @@ const RegServProv = props => {
 			style={{ display: props.displayRegServProv, position: 'absolute' }}
 			className={classes.Form}
 			onSubmit={onSubmit}>
-			<h2 className={classes.FormTitle}>REGISTRACIJA PRUŽAOCA USLUGA</h2>
+			<h2 className={isMobile ? classes.FormTitleMob : classes.FormTitle}>
+				REGISTRACIJA PRUŽAOCA USLUGA
+			</h2>
 			<Input
 				type="text"
 				name="name"
@@ -295,7 +297,7 @@ const RegServProv = props => {
 			/>
 			<Input
 				type="button"
-				value="NAZAD"
+				value="ODUSTANI"
 				display="block"
 				float={isMobile ? 'right' : 'inherit'}
 				width={isMobile ? '48%' : 'inherit'}

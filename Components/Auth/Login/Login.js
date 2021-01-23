@@ -45,6 +45,9 @@ const Login = props => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [loginUser]);
 
+	const buttonClassName = (mob, pc) => {
+		return isMobile ? mob : [pc, classes.Block].join(' ');
+	};
 	const buttonGroup = (
 		<>
 			<Input
@@ -52,22 +55,15 @@ const Login = props => {
 				name="submit"
 				value="PRIJAVI SE"
 				placeholder="Uneti lozinku"
-				className={classes.SubmitButton}
-				display="block"
-				width="70%"
-				height="40px"
-				margin="40px auto 5px auto"
+				margin={isMobile ? '30px auto 5px auto' : null}
+				className={buttonClassName(classes.SubmitButtonMob, classes.SubmitButton)}
 			/>
 			<Input
 				type="button"
 				name="register"
 				value="REGISTRUJ SE"
 				placeholder="Uneti lozinku"
-				className={isMobile ? classes.FormButtonMob : classes.FormButton}
-				display="block"
-				width="70%"
-				height="40px"
-				margin="40px auto 5px auto"
+				className={buttonClassName(classes.FormButtonMob, classes.FormButton)}
 				onClick={() => {
 					props.setDisplayLogin('none'),
 						props.setDisplayRegServProv('block'),
@@ -79,11 +75,7 @@ const Login = props => {
 				name="passRecovery"
 				value="ZABORAVLJENA LOZINKA"
 				placeholder="Uneti lozinku"
-				className={isMobile ? classes.FormButtonMob : classes.FormButton}
-				display="block"
-				width="70%"
-				height="40px"
-				margin="40px auto 5px auto"
+				className={buttonClassName(classes.FormButtonMob, classes.FormButton)}
 				onClick={() => {
 					props.setDisplayLogin('none'),
 						props.setDisplayPassRecovery('block'),
@@ -95,11 +87,8 @@ const Login = props => {
 				name="formClose"
 				value="ODUSTANI"
 				placeholder="Uneti lozinku"
-				className={isMobile ? classes.FormButtonMob : classes.FormButton}
-				display="block"
-				width="70%"
-				height="40px"
-				margin="40px auto 5px auto"
+				className={buttonClassName(classes.FormButtonMob, classes.FormButton)}
+				color="orangered"
 				onClick={() => {
 					props.setDisplayLogin('none'), setFormInput(initState);
 				}}
@@ -140,7 +129,7 @@ const Login = props => {
 	const inputClassName = isMobile ? classes.InputTextMob : classes.InputText;
 	return (
 		<form style={{ display: props.displayLogin }} className={classes.Form} onSubmit={onSubmit}>
-			<h2 className={classes.FormTitle}>PRIJAVA KORISNIKA</h2>
+			<h2 className={isMobile ? classes.FormTitleMob : classes.FormTitle}>PRIJAVA KORISNIKA</h2>
 			<Input
 				type="text"
 				name="username"

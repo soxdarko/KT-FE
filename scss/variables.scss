@@ -44,6 +44,10 @@ $list-prop-color: $base-orange-color;
 	border: 0;
 }
 
+.Block {
+	display: block !important;
+}
+
 @mixin scrollbars() {
 	// For Google Chrome
 	::-webkit-scrollbar-track {
@@ -167,7 +171,7 @@ hr {
 	outline: none;
 	overflow: hidden;
 	font: {
-		size: 1.2em;
+		size: 1.2rem;
 		weight: 600;
 	}
 	text: {
@@ -323,7 +327,7 @@ input[type='button'] {
 	outline: none;
 	overflow: hidden;
 	font: {
-		size: 1.2em;
+		size: 1.2rem;
 		weight: 600;
 	}
 	text: {
