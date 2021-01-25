@@ -1,7 +1,10 @@
-import { newCompany } from '../../../API/userRegistration';
 import { useState, useRef, useEffect } from 'react';
-import useDeviceDetect from '../../../utils/UseDeviceDetect';
-import { inputChangedHandler, updateValidity } from '../../shared/utility';
+import {
+	useDeviceDetect,
+	inputChangedHandler,
+	updateValidity,
+} from '../../../helpers/universalFunctions';
+import { newCompany } from '../../../API/userRegistration';
 import initState from './initState';
 
 import Select from '../../UI/Select';

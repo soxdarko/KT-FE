@@ -1,10 +1,10 @@
 import Head from 'next/head';
+import ServiceProvidersEmployees from '../Components/DataFromBE/ServiceProvidersEmployees';
+
 import Layout from '../Components/hoc/Layout/Layout';
 import Profile from '../Components/Profile/Profile';
 
 import classes from '../Components/Navigation/Navigation.module.scss';
-
-import ServiceProvidersEmployees from '../Components/DataFromBE/ServiceProvidersEmployees';
 
 const profil = () => (
 	<>

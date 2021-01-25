@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import useDeviceDetect from '../../utils/UseDeviceDetect';
+import { useDeviceDetect } from '../../helpers/universalFunctions';
 import TextareaAutosize from 'react-textarea-autosize';
 import InputText from '../UI/InputText';
 import Title from './Title';
@@ -42,17 +42,13 @@ const ContactForm = () => {
 			setFormValidation(false);
 		} else {
 			setMessage([...message, contact]);
-			alert(
-				'Hvala na Vašoj poruci. Uskoro ćemo Vam odgovoriti. Vaš KlikTermin tim'
-			),
+			alert('Hvala na Vašoj poruci. Uskoro ćemo Vam odgovoriti. Vaš KlikTermin tim'),
 				setFormValidation(true);
 		}
 	};
 
 	return (
-		<form
-			className={isMobile ? classes.ContactMob : classes.Contact}
-			onSubmit={onSubmit}>
+		<form className={isMobile ? classes.ContactMob : classes.Contact} onSubmit={onSubmit}>
 			<Title txt="KONTAKT" top="20px" />
 			<h2>Informacije</h2>
 			<div className={classes.InfoBg}>

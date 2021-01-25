@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
+import { useDeviceDetect } from '../../helpers/universalFunctions';
+
 import Button from '../UI/Button';
-import useDeviceDetect from '../../utils/UseDeviceDetect';
 
 import classes from './HomePage.scss';
 
@@ -35,18 +36,8 @@ const RegLogButton = props => {
 				display: isMobile ? 'block' : 'none',
 				transform: show ? 'translate(0, 0)' : 'translate(0, 100px)',
 			}}>
-			<Button
-				value="PRIJAVA"
-				float="left"
-				margin="0 0 0 4px"
-				onClick={props.onClickLogin}
-			/>
-			<Button
-				value="REGISTRACIJA"
-				float="right"
-				margin="0 4px 0 0"
-				onClick={props.onClickReg}
-			/>
+			<Button value="PRIJAVA" float="left" margin="0 0 0 4px" onClick={props.onClickLogin} />
+			<Button value="REGISTRACIJA" float="right" margin="0 4px 0 0" onClick={props.onClickReg} />
 		</div>
 	);
 };

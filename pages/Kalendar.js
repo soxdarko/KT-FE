@@ -1,12 +1,11 @@
 import { useState } from 'react';
+import ServiceProvidersEmployees from '../Components/DataFromBE/ServiceProvidersEmployees';
 
 import Head from 'next/head';
 import Layout from '../Components/hoc/Layout/Layout';
 import Calendar from '../Components/Calendar/Calendar';
 
 import classes from '../Components/Navigation/Navigation.module.scss';
-
-import ServiceProvidersEmployees from '../Components/DataFromBE/ServiceProvidersEmployees';
 
 const kalendar = () => {
 	const [clientFormBackdrop, setClientFormBackdrop] = useState('none');

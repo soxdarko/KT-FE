@@ -1,12 +1,12 @@
+import { useDeviceDetect } from '../../helpers/universalFunctions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarAlt, faAddressBook, faCut, faCog } from '@fortawesome/free-solid-svg-icons';
+
 import NavItems from './NavItems';
 import NavItem from './NavItem';
 import ServiceProviderLogo from '../UI/ServiceProviderLogo';
 import Backdrop from '../UI/Backdrop';
 import Input from '../UI/Forms/Input';
-
-import useDeviceDetect from '../../utils/UseDeviceDetect';
 
 import classes from './Navigation.module.scss';
 

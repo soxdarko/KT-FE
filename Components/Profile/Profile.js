@@ -1,10 +1,9 @@
 /* eslint-disable import/no-unresolved */
 /* eslint-disable no-unused-vars */
 import { useState, useEffect, useRef } from 'react';
-import axios from '../../utils/Axios/axios-appointments';
+import axios from '../../helpers/Axios';
+import { useDeviceDetect, inputChangedHandler } from '../../helpers/universalFunctions';
 import { faSave, faCheckCircle, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
-import useDeviceDetect from '../../utils/UseDeviceDetect';
-import { inputChangedHandler } from '../shared/utility';
 
 import ListHeadButton from '../UI/List/ListHead/ListHeadButton';
 import Input from '../UI/Forms/Input';
@@ -16,6 +15,7 @@ import AddClientButton from '../UI/AddClientButton';
 import Confirmation from '../UI/Forms/Confirmation';
 import Backdrop from '../UI/Backdrop';
 import InviteClient from '../AddToList/InviteClient';
+
 import classes from '../UI/UI.module.scss';
 
 const Profile = props => {
@@ -204,14 +204,23 @@ const Profile = props => {
 	if (isMobile) {
 		return (
 			<>
-				<Backdrop display={backdrop} onClick={() => {setDisplayConfirmation('none'), setDisplayInviteClient('none') , setBackdrop('none')}} />
+				<Backdrop
+					display={backdrop}
+					onClick={() => {
+						setDisplayConfirmation('none'), setDisplayInviteClient('none'), setBackdrop('none');
+					}}
+				/>
 				<InviteClient display={displayInviteClient} />
 				<Confirmation
 					display={displayConfirmation}
 					info="Da li sigurno želite deaktivirati profil? Deaktivacija profila onemogućuje Vas i klijente da Vam rezervišu termine !!!"
 					submitValue="DEAKTIVIRAJ"
-					onDecline={() => {setDisplayConfirmation('none'), setBackdrop('none')}}
-					onSubmit={() => {setDisplayConfirmation('none'), setBackdrop('none')}}
+					onDecline={() => {
+						setDisplayConfirmation('none'), setBackdrop('none');
+					}}
+					onSubmit={() => {
+						setDisplayConfirmation('none'), setBackdrop('none');
+					}}
 				/>
 				<ChangePass
 					displayChangePass={displayChangePass}
@@ -341,7 +350,9 @@ const Profile = props => {
 								type="button"
 								value="Deaktiviraj nalog"
 								className={[classes.ButtonMob, classes.Danger, classes.Deactivate].join(' ')}
-								onClick={() => {setDisplayConfirmation('block'), setBackdrop('block')}}
+								onClick={() => {
+									setDisplayConfirmation('block'), setBackdrop('block');
+								}}
 							/>
 						</div>
 					</div>
@@ -353,7 +364,11 @@ const Profile = props => {
 					className={classes.SaveMob}
 					onClick={onSubmit}
 				/>
-				<AddClientButton onClick={() => {setDisplayInviteClient('block'), setBackdrop('block')}} />
+				<AddClientButton
+					onClick={() => {
+						setDisplayInviteClient('block'), setBackdrop('block');
+					}}
+				/>
 			</>
 		);
 	}

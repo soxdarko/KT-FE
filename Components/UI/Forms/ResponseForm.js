@@ -1,4 +1,4 @@
-import useDeviceDetect from '../../../utils/UseDeviceDetect';
+import { useDeviceDetect } from '../../../helpers/universalFunctions';
 
 import Input from './Input';
 import Backdrop from '../Backdrop';

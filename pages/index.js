@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Head from 'next/head';
-import useDeviceDetect from '../utils/UseDeviceDetect';
+import { useDeviceDetect } from '../helpers/universalFunctions';
 
 import Layout from '../Components/hoc/Layout/Layout';
 import NavItem from '../Components/Navigation/NavItem';
@@ -16,9 +16,9 @@ import Footer from '../Components/HomePage/Footer';
 import OurServices from '../Components/HomePage/OurServices/OurServices';
 import AuthButton from '../Components/HomePage/AuthButton';
 import ResponseForm from '../Components/UI/Forms/ResponseForm';
+import Loader from '../Components/UI/Loader';
 
 import classes from '../Components/Navigation/Navigation.module.scss';
-import Loader from '../Components/UI/Loader';
 
 const Index = () => {
 	const { isMobile } = useDeviceDetect();

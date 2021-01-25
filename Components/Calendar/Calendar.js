@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 import moment from 'moment';
 /* import axios from '../../utils/Axios/axios-appointments'; */
-import useDeviceDetect from '../../utils/UseDeviceDetect';
+import { useDeviceDetect } from '../../helpers/universalFunctions';
 import Clients from '../DataFromBE/Clients';
 import Appointments from '../DataFromBE/Appointments';
 import ServiceProvidersServices from '../DataFromBE/ServiceProvidersServices';

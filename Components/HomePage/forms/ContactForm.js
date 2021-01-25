@@ -1,8 +1,12 @@
 /* eslint-disable no-unused-vars */
 import { useState, useRef, useEffect } from 'react';
 /* import axios from '../../../utils/Axios/axios-appointments'; */
-import useDeviceDetect from '../../../utils/UseDeviceDetect';
-import { updateObject, checkValidity, updateValidity } from '../../shared/utility';
+import {
+	useDeviceDetect,
+	updateObject,
+	checkValidity,
+	updateValidity,
+} from '../../../helpers/universalFunctions';
 import initState from './initState';
 
 import Input from '../../UI/Forms/Input';

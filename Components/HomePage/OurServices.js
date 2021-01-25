@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import useDeviceDetect from '../../utils/UseDeviceDetect';
+import { useDeviceDetect } from '../../helpers/universalFunctions';
 
 import classes from './HomePage.scss';
 

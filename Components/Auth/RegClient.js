@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-import axios from '../../utils/Axios';
-import useDeviceDetect from '../../utils/UseDeviceDetect';
+import axios from '../../helpers/Axios';
+import { useDeviceDetect } from '../../helpers/universalFunctions';
 
 import Select from '../UI/Select';
 import Input from '../UI/Forms/Input';

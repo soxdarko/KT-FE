@@ -6,7 +6,7 @@ import {
 	faSearch,
 	faLink,
 } from '@fortawesome/free-solid-svg-icons';
-import useDeviceDetect from '../../../../utils/UseDeviceDetect';
+import { useDeviceDetect } from '../../../../helpers/universalFunctions';
 
 import Distancer from '../../Distancer';
 import ListHeadButton from './ListHeadButton';

@@ -1,8 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from 'react';
-import axios from '../../utils/Axios';
-import useDeviceDetect from '../../utils/UseDeviceDetect';
-import { inputChangedHandler, updateValidity } from '../shared/utility';
+import axios from '../../helpers/Axios';
+import {
+	useDeviceDetect,
+	inputChangedHandler,
+	updateValidity,
+} from '../../helpers/universalFunctions';
 
 import Input from '../UI/Forms/Input';
 import PassRecovery from './PassRecovery/PassRecovery';

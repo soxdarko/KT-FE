@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 /* import axios from '../../../utils/Axios/axios-appointments'; */
-import useDeviceDetect from '../../../utils/UseDeviceDetect';
-import { inputChangedHandler } from '../../shared/utility';
+import { useDeviceDetect, inputChangedHandler } from '../../../helpers/universalFunctions';
 import initState from './initState';
 
 import DescriptionLabel from '../../UI/DescriptionLabel';
