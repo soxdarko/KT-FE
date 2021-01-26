@@ -1,7 +1,8 @@
 import axios from 'axios';
 
-export const fetchJson = (method, url, data, token) => {
-	const headers = new Headers({});
+export const fetchJson = (url, method, headers, data) => {
+	/* const headers = new Headers({}); */
+	const token = headers.Authorization;
 	const apiUrl = 'http://localhost:5000/';
 
 	const Axios = axios.create({

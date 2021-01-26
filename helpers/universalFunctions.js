@@ -1,9 +1,5 @@
 import { useEffect, useState } from 'react';
 
-export function cookieReqParser() {
-	return null;
-}
-
 export function useDeviceDetect() {
 	const [isMobile, setMobile] = useState(false);
 
@@ -16,6 +12,21 @@ export function useDeviceDetect() {
 	}, []);
 
 	return { isMobile };
+}
+
+export function cookieReqParser(cookiesString, cookieName) {
+	if (cookiesString != undefined) {
+		let numOfCookies = cookiesString.split(';').length;
+
+		for (var i = 0; i < numOfCookies; i++) {
+			let cookie = cookiesString.split(';')[i];
+
+			if (cookie.split('=')[0].trim() === cookieName) {
+				return cookie.split('=')[1].trim();
+			}
+		}
+	}
+	return '';
 }
 
 export function inputChangedHandler(e, inputIdentifier, state, setState) {
