@@ -1,22 +1,45 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { cookieReqParser } from '../../../helpers/universalFunctions';
 import { fetchJson } from '../../../API/fetchJson';
+import { userVerification } from '../../../API/userVerification';
 
 import Verified from '../../../Components/UI/Forms/Verified';
 
 const userVerificationPage = props => {
-	const [verificationType, setVerificationType] = useState(null);
+	const id = props.id.split('=')[1];
+	const type = props.type.split('=')[1];
+	const userData = {
+		userId: '?userId=' + id,
+		verificationType: '&verificationType=' + type,
+	};
+
+	const userVerificationHandler = () => {
+		const api = userVerification(userData)
+			.then(response => {
+				console.log(response);
+			})
+			.catch(error => {
+				if (error.response) {
+					console.log(error.response);
+				} else if (error.request) {
+					console.log(error.request);
+				} else {
+					console.log('nesto drugo');
+				}
+			});
+		api;
+	};
+
 	useEffect(() => {
-		const type = props.type;
-		setVerificationType(type.split('=')[1]);
+		userVerificationHandler();
 	}, []);
+
+	const typeString = type === 'phone' ? 'broj telefona' : 'e-mail adresu';
 
 	return (
 		<>
 			<Verified
-				message={`Uspesno ste verifikovali ${
-					verificationType === 'phone' ? 'broj telefona' : 'e-mail adresu'
-				}`}
+				message={`Uspesno ste verifikovali ${typeString}`}
 				display="block"
 				borderColor="green"
 				link="/"
@@ -31,7 +54,7 @@ userVerificationPage.getInitialProps = async ({ req, query }) => {
 	let token = cookieReqParser(cookiesString, 'pdfgen_token');
 
 	async function getUserParams() {
-		const userParams = await fetchJson('/user-verification?id=' + id + '&type=' + type, 'get', {
+		const userParams = await fetchJson('/user-verification' + id + '/' + type, 'get', {
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: 'Bearer ' + token,
