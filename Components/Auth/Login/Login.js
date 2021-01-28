@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-/* import axios from '../../../utils/Axios/axios-appointments'; */
+import { userLogin } from '../../../API/userLogin';
 import { useDeviceDetect, inputChangedHandler } from '../../../helpers/universalFunctions';
 import initState from './initState';
 
@@ -24,23 +24,35 @@ const Login = props => {
 		},
 	});
 
-	/* const loginHandler = () => {
-		const api = axios
-			.post('/', loginUser)
+	const userData = {
+		userName: loginUser.userName,
+		password: loginUser.password,
+	};
+
+	const loginHandler = () => {
+		const api = userLogin(userData)
 			.then(response => {
-				console.log(response), alert('Uspešno ste se prijavili');
+				console.log(response);
 			})
-			.catch(error => console.log(error));
+			.catch(error => {
+				if (error.response) {
+					console.log(error.response);
+				} else if (error.request) {
+					console.log(error.request);
+				} else {
+					console.log('nesto drugo');
+				}
+			});
 		api;
 		setFormInput(initState);
-	}; */
+	};
 
 	useEffect(() => {
 		if (isPageLoad.current) {
 			isPageLoad.current = false;
 			return;
 		}
-		/* loginHandler(); */
+		loginHandler();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [loginUser]);
 
@@ -120,7 +132,7 @@ const Login = props => {
 			});
 			alert('Morate uneti lozinku');
 		} else {
-			setLoginUser([...loginUser, formData]);
+			setLoginUser(formData);
 			props.setDisplayLogin('none');
 		}
 	};
@@ -133,7 +145,7 @@ const Login = props => {
 				type="text"
 				name="username"
 				value={formInput.userName.value}
-				placeholder="UNESITE EMAIL ili TELEFON"
+				placeholder="UNESITE KORISNIČKO IME"
 				className={inputClassName}
 				onChange={e => inputChangedHandler(e, 'userName', formInput, setFormInput)}
 				invalid={!formInput.userName.valid}

@@ -9,8 +9,8 @@ const userVerificationPage = props => {
 	const id = props.id.split('=')[1];
 	const type = props.type.split('=')[1];
 	const userData = {
-		userId: '?userId=' + id,
-		verificationType: '&verificationType=' + type,
+		userId: id,
+		verificationType: type,
 	};
 
 	const userVerificationHandler = () => {
