@@ -3,6 +3,7 @@ import {
 	useDeviceDetect,
 	inputChangedHandler,
 	updateValidity,
+	responseHandler,
 } from '../../../helpers/universalFunctions';
 import { newCompany } from '../../../API/userRegistration';
 import initState from './initState';
@@ -74,12 +75,12 @@ const RegServProv = props => {
 		const api = newCompany(companyData)
 			.then(response => {
 				console.log(response),
-					props.setResForm({
-						display: 'block',
-						message:
-							'Poslali smo Vam verifikacioni e-mail i sms. Klikom na link u e-mail-u i sms-u registracija će biti završena.',
-						border: 'green',
-					});
+					responseHandler(
+						props.setResForm,
+						'block',
+						'Poslali smo Vam verifikacioni e-mail i sms. Klikom na link u e-mail-u i sms-u registracija će biti završena.',
+						'green'
+					);
 				props.setIsLoading(false);
 				props.setDisplayRegServProv('none');
 			})
@@ -88,7 +89,7 @@ const RegServProv = props => {
 				if (error.response) {
 					error.response.data.map(err => {
 						const Input = err.type[0].toLowerCase() + err.type.slice(1);
-						props.setResForm({ display: 'block', message: err.errorMessage, border: 'red' });
+						responseHandler(props.setResForm, 'block', err.errorMessage, 'red');
 						updateValidity(setFormInput, Input, formInput, '', false);
 					});
 				} else if (error.request) {
@@ -127,35 +128,43 @@ const RegServProv = props => {
 		const numericPattern = /^\d+$/;
 		if (!formInput.name.value.trim()) {
 			updateValidity(setFormInput, 'name', formInput, '', false);
-			alert('Morate uneti Ime i prezime');
+			props.setResForm({
+				display: 'block',
+				message: 'Morate uneti Ime i prezime!',
+				border: 'red',
+			});
 		} else if (!formInput.userName.value.trim()) {
 			updateValidity(setFormInput, 'userName', formInput, '', false);
-			alert('Morate uneti korisničko ime');
+			props.setResForm({
+				display: 'block',
+				message: 'Morate uneti korisničko ime!',
+				border: 'red',
+			});
 		} else if (!formInput.companyName.value.trim()) {
 			updateValidity(setFormInput, 'companyName', formInput, '', false);
-			alert('Morate uneti naziv firme');
+			responseHandler(props.setResForm, 'block', 'Morate uneti naziv firme!', 'red');
 		} else if (!formInput.city.value.trim()) {
 			updateValidity(setFormInput, 'city', formInput, '', false);
-			alert('Morate uneti grad');
+			responseHandler(props.setResForm, 'block', 'Morate uneti grad!', 'red');
 		} else if (!formInput.mobOperator.value) {
 			updateValidity(setFormInput, 'mobOperator', formInput, '', false);
-			alert('Morate izabrati pozivni broj');
+			responseHandler(props.setResForm, 'block', 'Morate izabrati pozivni broj!', 'red');
 		} else if (
 			!formInput.phone.value.trim() ||
 			!numericPattern.test(formInput.phone.value) ||
 			formInput.phone.value.length < 6
 		) {
 			updateValidity(setFormInput, 'phone', formInput, '', false);
-			alert('Morate uneti validan broj telefona');
+			responseHandler(props.setResForm, 'block', 'Morate uneti validan broj telefona!', 'red');
 		} else if (!formInput.email.value.trim() || !emailPattern.test(formInput.email.value)) {
 			updateValidity(setFormInput, 'email', formInput, '', false);
-			alert('Morate uneti validnu e-mail adresu');
+			responseHandler(props.setResForm, 'block', 'Morate uneti validnu e-mail adresu!', 'red');
 		} else if (!formInput.password.value.trim()) {
 			updateValidity(setFormInput, 'password', formInput, '', false);
-			alert('Morate uneti lozinku');
+			responseHandler(props.setResForm, 'block', 'Morate uneti lozinku!', 'red');
 		} else if (!formInput.passConfirm.value.trim()) {
 			updateValidity(setFormInput, 'passConfirm', formInput, '', false);
-			alert('Morate uneti potvrdu izabrane lozinke');
+			responseHandler(props.setResForm, 'block', 'Morate uneti potvrdu izabrane lozinke!', 'red');
 		} else if (formInput.password.value.trim() !== formInput.passConfirm.value.trim()) {
 			setFormInput({
 				...formInput,
@@ -168,7 +177,7 @@ const RegServProv = props => {
 					valid: false,
 				},
 			});
-			alert('Lozinka i potvrda moraju biti jednake');
+			responseHandler(props.setResForm, 'block', 'Lozinka i potvrda moraju biti jednake!', 'red');
 		} else {
 			setCompanyData(formData);
 			props.setIsLoading(true);
@@ -178,7 +187,7 @@ const RegServProv = props => {
 	const inputClassName = isMobile ? classes.InputTextMob : classes.InputText;
 	return (
 		<form
-			style={{ display: props.displayRegServProv, position: 'absolute' }}
+			style={{ display: props.displayRegServProv }}
 			className={classes.Form}
 			onSubmit={onSubmit}>
 			<h2 className={isMobile ? classes.FormTitleMob : classes.FormTitle}>

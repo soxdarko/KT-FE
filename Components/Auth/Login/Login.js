@@ -1,6 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { userLogin } from '../../../API/userLogin';
-import { useDeviceDetect, inputChangedHandler } from '../../../helpers/universalFunctions';
+import {
+	useDeviceDetect,
+	inputChangedHandler,
+	responseHandler,
+	redirectUser,
+} from '../../../helpers/universalFunctions';
 import initState from './initState';
 
 import Input from '../../UI/Forms/Input';
@@ -33,6 +38,7 @@ const Login = props => {
 		const api = userLogin(userData)
 			.then(response => {
 				console.log(response);
+				redirectUser('/kalendar');
 			})
 			.catch(error => {
 				if (error.response) {
@@ -121,7 +127,7 @@ const Login = props => {
 					valid: false,
 				},
 			});
-			alert('Morate uneti korisničko ime');
+			responseHandler(props.setResForm, 'block', 'Morate uneti korisničko ime!', 'red');
 		} else if (!formInput.password.value.trim()) {
 			setFormInput({
 				...formInput,
@@ -130,7 +136,7 @@ const Login = props => {
 					valid: false,
 				},
 			});
-			alert('Morate uneti lozinku');
+			responseHandler(props.setResForm, 'block', 'Morate uneti lozinku!', 'red');
 		} else {
 			setLoginUser(formData);
 			props.setDisplayLogin('none');

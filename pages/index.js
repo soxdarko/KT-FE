@@ -90,6 +90,7 @@ const Index = () => {
 				setDisplayLogin={setDisplayLogin}
 				setDisplayPassRecovery={setDisplayPassRecovery}
 				setDisplayRegServProv={setDisplayRegServProv}
+				setResForm={setResForm}
 			/>
 			<RegServProv
 				displayRegServProv={displayRegServProv}

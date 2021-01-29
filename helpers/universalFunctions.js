@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Router from 'next/router';
 
 export function useDeviceDetect() {
 	const [isMobile, setMobile] = useState(false);
@@ -74,6 +75,14 @@ export function checkValidity(value, rules) {
 	return isValid;
 }
 
+export function responseHandler(setState, display, message, border) {
+	setState({
+		display: display,
+		message: message,
+		border: border,
+	});
+}
+
 export function updateValidity(setState, key, object, value, valid) {
 	setState({
 		...object,
@@ -88,3 +97,7 @@ export const updateObject = (oldObject, updatedProperties) => ({
 	...oldObject,
 	...updatedProperties,
 });
+
+export function redirectUser(location) {
+	Router.push(location);
+}

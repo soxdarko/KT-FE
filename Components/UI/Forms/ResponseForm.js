@@ -12,7 +12,10 @@ const ResponseForm = props => {
 			<Backdrop display={props.display} zIndex="499" />
 			<div
 				className={isMobile ? classes.ResponseMob : classes.Response}
-				style={{ display: props.display, borderColor: props.borderColor }}>
+				style={{
+					display: props.display,
+					borderColor: props.borderColor,
+				}}>
 				<p>{props.message}</p>
 				<Input type="button" value="OK" className={classes.Confirm} onClick={props.onClick} />
 			</div>
