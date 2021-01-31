@@ -2,7 +2,11 @@
 /* eslint-disable no-unused-vars */
 import { useState, useEffect, useRef } from 'react';
 import axios from '../../helpers/Axios';
-import { useDeviceDetect, inputChangedHandler } from '../../helpers/universalFunctions';
+import {
+	useDeviceDetect,
+	inputChangedHandler,
+	responseHandler,
+} from '../../helpers/universalFunctions';
 import { faSave, faCheckCircle, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 
 import ListHeadButton from '../UI/List/ListHead/ListHeadButton';
@@ -12,20 +16,29 @@ import ListBody from '../UI/List/ListBody/ListBody';
 import ListHead from '../UI/List/ListHead/ListHead';
 import ChangePass from '../Auth/ChangePass';
 import AddClientButton from '../UI/AddClientButton';
-import Confirmation from '../UI/Forms/Confirmation';
+import ConfirmModal from '../UI/Modal/ConfirmModal';
 import Backdrop from '../UI/Backdrop';
 import InviteClient from '../AddToList/InviteClient';
+import ResponseModal from '../UI/Modal/ResponseModal';
 
 import classes from '../UI/UI.module.scss';
 
 const Profile = props => {
 	const { isMobile } = useDeviceDetect();
 	const isPageLoad = useRef(true);
+	const modalAnimationIn = isMobile ? classes.modalInMob : classes.modalInPC;
+	const modalAnimationOut = isMobile ? classes.modalOutMob : classes.modalOutPC;
 	const [autorefreshIcon, setAutorefreshIcon] = useState(true);
 	const [displayConfirmation, setDisplayConfirmation] = useState('none');
 	const [displayChangePass, setDisplayChangePass] = useState('none');
 	const [displayInviteClient, setDisplayInviteClient] = useState('none');
-	const [backdrop, setBackdrop] = useState('none');
+	const [backdrop, setBackdrop] = useState('');
+	const [showResponseModal, setShowResponseModal] = useState({
+		animation: '',
+		message: null,
+		border: '',
+		backdrop: '',
+	});
 	const [userData, setUserData] = useState([]);
 	const [formInput, setFormInput] = useState({
 		name: {
@@ -94,7 +107,14 @@ const Profile = props => {
 		const api = axios
 			.post('/', userData)
 			.then(response => {
-				console.log(response), alert('Uspešno ste se prijavili');
+				console.log(response),
+					responseHandler({
+						setShowResponseModal,
+						animation: modalAnimationIn,
+						message: 'Uspešno ste se prijavili',
+						border: 'green',
+						backdrop: classes.backdropIn,
+					});
 			})
 			.catch(error => console.log(error));
 		api;
@@ -132,7 +152,13 @@ const Profile = props => {
 					valid: false,
 				},
 			});
-			alert('Morate uneti ime i prezime');
+			responseHandler(
+				setShowResponseModal,
+				modalAnimationIn,
+				'Morate uneti ime i prezime',
+				'red',
+				classes.backdropIn
+			);
 		} else if (!formInput.userName.value.trim()) {
 			setFormInput({
 				...formInput,
@@ -141,7 +167,13 @@ const Profile = props => {
 					valid: false,
 				},
 			});
-			alert('Morate uneti korisničko ime');
+			responseHandler(
+				setShowResponseModal,
+				modalAnimationIn,
+				'Morate uneti korisničko ime',
+				'red',
+				classes.backdropIn
+			);
 		} else if (!formInput.company.value.trim()) {
 			setFormInput({
 				...formInput,
@@ -150,7 +182,13 @@ const Profile = props => {
 					valid: false,
 				},
 			});
-			alert('Morate uneti naziv firme');
+			responseHandler(
+				setShowResponseModal,
+				modalAnimationIn,
+				'Morate uneti naziv firme',
+				'red',
+				classes.backdropIn
+			);
 		} else if (!formInput.email.value.trim()) {
 			setFormInput({
 				...formInput,
@@ -159,7 +197,13 @@ const Profile = props => {
 					valid: false,
 				},
 			});
-			alert('Morate uneti E-mail asresu');
+			responseHandler(
+				setShowResponseModal,
+				modalAnimationIn,
+				'Morate uneti E-mail asresu',
+				'red',
+				classes.backdropIn
+			);
 		} else if (!formInput.phone.value.trim()) {
 			setFormInput({
 				...formInput,
@@ -168,7 +212,13 @@ const Profile = props => {
 					valid: false,
 				},
 			});
-			alert('Morate uneti broj telefona');
+			responseHandler(
+				setShowResponseModal,
+				modalAnimationIn,
+				'Morate uneti broj telefona',
+				'red',
+				classes.backdropIn
+			);
 		} else if (!formInput.activity.value.trim()) {
 			setFormInput({
 				...formInput,
@@ -177,7 +227,13 @@ const Profile = props => {
 					valid: false,
 				},
 			});
-			alert('Morate uneti delatnost');
+			responseHandler(
+				setShowResponseModal,
+				modalAnimationIn,
+				'Morate uneti delatnost',
+				'red',
+				classes.backdropIn
+			);
 		} else if (!formInput.timePerField.value.trim()) {
 			setFormInput({
 				...formInput,
@@ -186,7 +242,13 @@ const Profile = props => {
 					valid: false,
 				},
 			});
-			alert('Morate uneti dužinu trajanja polja u kalendaru');
+			responseHandler(
+				setShowResponseModal,
+				modalAnimationIn,
+				'Morate uneti dužinu trajanja polja u kalendaru',
+				'red',
+				classes.backdropIn
+			);
 		} else if (!formInput.resLimit.value.trim()) {
 			setFormInput({
 				...formInput,
@@ -195,7 +257,13 @@ const Profile = props => {
 					valid: false,
 				},
 			});
-			alert('Morate uneti broj dozvoljenih rezervacija za period od 30 dana');
+			responseHandler(
+				setShowResponseModal,
+				modalAnimationIn,
+				'Morate uneti broj dozvoljenih rezervacija za period od 30 dana',
+				'red',
+				classes.backdropIn
+			);
 		} else {
 			setUserData([...userData, formData]);
 		}
@@ -205,21 +273,47 @@ const Profile = props => {
 		return (
 			<>
 				<Backdrop
-					display={backdrop}
+					backdropAnimation={backdrop}
 					onClick={() => {
-						setDisplayConfirmation('none'), setDisplayInviteClient('none'), setBackdrop('none');
+						setDisplayConfirmation('none'),
+							setDisplayInviteClient('none'),
+							setBackdrop(classes.backdropOut);
 					}}
 				/>
+				<ResponseModal
+					message={showResponseModal.message}
+					modalAnimation={showResponseModal.animation}
+					backdropAnimation={showResponseModal.backdrop}
+					displayLinkButton="none"
+					displayFormButton="block"
+					borderColor={showResponseModal.border}
+					link="/"
+					onClick={() =>
+						setShowResponseModal({
+							...showResponseModal,
+							animation: modalAnimationOut,
+							border: null,
+							backdrop: classes.backdropOut,
+						})
+					}
+				/>
 				<InviteClient display={displayInviteClient} />
-				<Confirmation
+				<ConfirmModal
 					display={displayConfirmation}
-					info="Da li sigurno želite deaktivirati profil? Deaktivacija profila onemogućuje Vas i klijente da Vam rezervišu termine !!!"
+					message="Da li sigurno želite deaktivirati profil? Deaktivacija profila onemogućuje Vas i klijente da Vam rezervišu termine !!!"
 					submitValue="DEAKTIVIRAJ"
 					onDecline={() => {
-						setDisplayConfirmation('none'), setBackdrop('none');
+						setDisplayConfirmation('none'),
+							setBackdrop(classes.backdropIn),
+							setShowResponseModal({
+								...showResponseModal,
+								animation: modalAnimationOut,
+								border: null,
+								backdrop: classes.backdropOut,
+							});
 					}}
 					onSubmit={() => {
-						setDisplayConfirmation('none'), setBackdrop('none');
+						setDisplayConfirmation('none'), setBackdrop(classes.backdropOut);
 					}}
 				/>
 				<ChangePass
@@ -351,7 +445,7 @@ const Profile = props => {
 								value="Deaktiviraj nalog"
 								className={[classes.ButtonMob, classes.Danger, classes.Deactivate].join(' ')}
 								onClick={() => {
-									setDisplayConfirmation('block'), setBackdrop('block');
+									setDisplayConfirmation('block'), setBackdrop(classes.backdropIn);
 								}}
 							/>
 						</div>
@@ -366,7 +460,7 @@ const Profile = props => {
 				/>
 				<AddClientButton
 					onClick={() => {
-						setDisplayInviteClient('block'), setBackdrop('block');
+						setDisplayInviteClient('block'), setBackdrop(classes.backdropIn);
 					}}
 				/>
 			</>
@@ -375,17 +469,35 @@ const Profile = props => {
 	return (
 		<>
 			<Backdrop display={displayConfirmation} onClick={() => setDisplayConfirmation('none')} />
-			<Confirmation
+			<ConfirmModal
 				display={displayConfirmation}
 				bottom="0"
-				info="Da li sigurno želite deaktivirati profil? Deaktivacija profila onemogućuje Vas i klijente da Vam rezervišu termine !!!"
+				message="Da li sigurno želite deaktivirati profil? Deaktivacija profila onemogućuje Vas i klijente da Vam rezervišu termine !!!"
 				submitValue="DEAKTIVIRAJ"
 				onDecline={() => setDisplayConfirmation('none')}
 				onSubmit={() => setDisplayConfirmation('none')}
 			/>
+			<ResponseModal
+				message={showResponseModal.message}
+				modalAnimation={showResponseModal.animation}
+				backdropAnimation={showResponseModal.backdrop}
+				displayLinkButton="none"
+				displayFormButton="block"
+				borderColor={showResponseModal.border}
+				link="/"
+				onClick={() =>
+					setShowResponseModal({
+						...showResponseModal,
+						animation: modalAnimationOut,
+						border: null,
+						backdrop: classes.backdropOut,
+					})
+				}
+			/>
 			<ChangePass
 				displayChangePass={displayChangePass}
 				setDisplayChangePass={setDisplayChangePass}
+				setShowResponseModal={setShowResponseModal}
 			/>
 			<ListHead
 				title="Podešavanje profila"

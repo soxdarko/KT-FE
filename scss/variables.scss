@@ -455,3 +455,137 @@ select {
 .Danger {
 	color: red !important;
 }
+
+@keyframes modalinPC {
+	0% {
+		margin-top: -100vh;
+		opacity: 0;
+	}
+	30% {
+		opacity: 0;
+	}
+	60% {
+		margin-top: 2vh;
+		opacity: 1;
+	}
+	100% {
+		opacity: 1;
+		margin-top: 0;
+	}
+}
+
+@keyframes modaloutPC {
+	0% {
+		margin-top: 0;
+		opacity: 1;
+	}
+	30% {
+		margin-top: 2vh;
+	}
+	50% {
+		opacity: 1;
+	}
+	70% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 0;
+		margin-top: -100vh;
+	}
+}
+
+.modalInPC {
+	animation: modalinPC 1000ms ease-in-out forwards;
+	-webkit-animation: modalinPC 1000ms ease-in-out forwards;
+}
+
+.modalOutPC {
+	animation: modaloutPC 1000ms ease-in-out forwards;
+	-webkit-animation: modaloutPC 1000ms ease-in-out forwards;
+}
+
+@keyframes modalinMob {
+	0% {
+		opacity: 0;
+		bottom: -100vh;
+	}
+	30% {
+		opacity: 0;
+	}
+	60% {
+		opacity: 1;
+		bottom: -5vh;
+	}
+	100% {
+		opacity: 1;
+		bottom: -7vh;
+	}
+}
+
+@keyframes modaloutMob {
+	0% {
+		opacity: 1;
+		bottom: -7vh;
+	}
+	30% {
+		bottom: -5vh;
+	}
+	50% {
+		opacity: 1;
+	}
+	70% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 0;
+		bottom: -100vh;
+	}
+}
+
+.modalInMob {
+	animation: modalinMob 1000ms ease-in-out forwards;
+	-webkit-animation: modalinMob 1000ms ease-in-out forwards;
+}
+
+.modalOutMob {
+	animation: modaloutMob 1000ms ease-in-out forwards;
+	-webkit-animation: modaloutMob 1000ms ease-in-out forwards;
+}
+
+@keyframes backdropin {
+	0% {
+		opacity: 0;
+		z-index: -1;
+	}
+	50% {
+		z-index: 499;
+	}
+	100% {
+		opacity: 1;
+		z-index: 499;
+	}
+}
+
+@keyframes backdropout {
+	0% {
+		opacity: 1;
+		z-index: 499;
+	}
+	70% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+		z-index: -1;
+	}
+}
+
+.backdropIn {
+	animation: backdropin 600ms ease-in-out forwards;
+	-webkit-animation: backdropin 600ms ease-in-out forwards;
+}
+
+.backdropOut {
+	animation: backdropout 600ms ease-in-out forwards;
+	-webkit-animation: backdropout 600ms ease-in-out forwards;
+}

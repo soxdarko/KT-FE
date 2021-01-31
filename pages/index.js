@@ -15,29 +15,26 @@ import ContactForm from '../Components/HomePage/forms/ContactForm';
 import Footer from '../Components/HomePage/Footer';
 import OurServices from '../Components/HomePage/OurServices/OurServices';
 import AuthButton from '../Components/HomePage/AuthButton';
-import ResponseForm from '../Components/UI/Forms/ResponseForm';
+import ResponseModal from '../Components/UI/Modal/ResponseModal';
 import Loader from '../Components/UI/Loader';
 
 import classes from '../Components/Navigation/Navigation.module.scss';
 
 const Index = () => {
 	const { isMobile } = useDeviceDetect();
+	const modalAnimation = isMobile ? classes.modalOutMob : classes.modalOutPC;
 	const [isLoading, setIsLoading] = useState(false);
 	const [displayLogin, setDisplayLogin] = useState('none');
 	const [displayRegServProv, setDisplayRegServProv] = useState('none');
 	/* const [displayRegClient, setDisplayRegClient] = useState('none'); */
 	const [displayClientVerify, setDisplayClientVerify] = useState('none');
 	const [displayPassRecovery, setDisplayPassRecovery] = useState('none');
-	const [resForm, setResForm] = useState({
-		display: 'none',
-		message: '',
+	const [showResponseModal, setShowResponseModal] = useState({
+		animation: '',
+		message: null,
 		border: '',
+		backdrop: '',
 	});
-	const resFormInit = {
-		display: 'none',
-		message: '',
-		border: '',
-	};
 
 	const Navigation = (
 		<NavItems display={isMobile ? 'none' : 'inherit'}>
@@ -76,27 +73,36 @@ const Index = () => {
 
 	const RegistrationAndLogin = (
 		<>
-			<ResponseForm
-				message={resForm.message}
-				display={resForm.display}
+			<ResponseModal
+				message={showResponseModal.message}
+				modalAnimation={showResponseModal.animation}
+				backdropAnimation={showResponseModal.backdrop}
 				displayLinkButton="none"
 				displayFormButton="block"
-				borderColor={resForm.border}
+				borderColor={showResponseModal.border}
 				link="/"
-				onClick={() => setResForm(resFormInit)}
+				onClick={() =>
+					setShowResponseModal({
+						...showResponseModal,
+						animation: modalAnimation,
+						border: null,
+						backdrop: classes.backdropOut,
+					})
+				}
 			/>
 			<Login
 				displayLogin={displayLogin}
+				modalAnimation={showResponseModal.animation}
 				setDisplayLogin={setDisplayLogin}
 				setDisplayPassRecovery={setDisplayPassRecovery}
 				setDisplayRegServProv={setDisplayRegServProv}
-				setResForm={setResForm}
+				setShowResponseModal={setShowResponseModal}
 			/>
 			<RegServProv
 				displayRegServProv={displayRegServProv}
 				setDisplayRegServProv={setDisplayRegServProv}
-				setResForm={setResForm}
 				setIsLoading={setIsLoading}
+				setShowResponseModal={setShowResponseModal}
 			/>
 			<ClientVerification
 				displayClientVerify={displayClientVerify}

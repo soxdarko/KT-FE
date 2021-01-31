@@ -5,6 +5,7 @@ import {
 	useDeviceDetect,
 	inputChangedHandler,
 	updateValidity,
+	responseHandler,
 } from '../../helpers/universalFunctions';
 
 import Input from '../UI/Forms/Input';
@@ -79,15 +80,34 @@ const ChangePass = props => {
 			newPass: formInput.newPass.value.trim(),
 		};
 
+		const modalAnimation = isMobile ? classes.modalInMob : classes.modalInPC;
 		if (!formInput.oldPass.value.trim()) {
 			updateValidity(setFormInput, 'oldPass', formInput, '', false);
-			alert('Morate uneti trenutnu lozinku');
+			responseHandler(
+				props.setShowResponseModal,
+				modalAnimation,
+				'Morate uneti trenutnu lozinku!',
+				'red',
+				classes.backdropIn
+			);
 		} else if (!formInput.newPass.value.trim()) {
 			updateValidity(setFormInput, 'newPass', formInput, '', false);
-			alert('Morate uneti novu lozinku');
+			responseHandler(
+				props.setShowResponseModal,
+				modalAnimation,
+				'Morate uneti novu lozinku!',
+				'red',
+				classes.backdropIn
+			);
 		} else if (!formInput.passConfirm.value.trim()) {
 			updateValidity(setFormInput, 'passConfirm', formInput, '', false);
-			alert('Morate potvditi nouv lozinku');
+			responseHandler(
+				props.setShowResponseModal,
+				modalAnimation,
+				'Morate potvditi nouv lozinku!',
+				'red',
+				classes.backdropIn
+			);
 		} else if (formInput.newPass.value.trim() !== formInput.passConfirm.value.trim()) {
 			setFormInput({
 				...formInput,
@@ -100,7 +120,13 @@ const ChangePass = props => {
 					valid: false,
 				},
 			});
-			alert('Nova lozinka i potvrda moraju biti jednake');
+			responseHandler(
+				props.setShowResponseModal,
+				modalAnimation,
+				'Nova lozinka i potvrda moraju biti jednake!',
+				'red',
+				classes.backdropIn
+			);
 		} else {
 			setChangePass(formData);
 			props.setDisplayChangePass('none');

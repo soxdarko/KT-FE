@@ -75,11 +75,12 @@ export function checkValidity(value, rules) {
 	return isValid;
 }
 
-export function responseHandler(setState, display, message, border) {
+export function responseHandler(setState, animation, message, border, backdrop) {
 	setState({
-		display: display,
+		animation: animation,
 		message: message,
 		border: border,
+		backdrop: backdrop,
 	});
 }
 

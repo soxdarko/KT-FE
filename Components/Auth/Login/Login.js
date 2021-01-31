@@ -113,6 +113,8 @@ const Login = props => {
 		</>
 	);
 
+	const modalAnimation = isMobile ? classes.modalInMob : classes.modalInPC;
+
 	const onSubmit = e => {
 		e.preventDefault();
 		const formData = {
@@ -127,7 +129,13 @@ const Login = props => {
 					valid: false,
 				},
 			});
-			responseHandler(props.setResForm, 'block', 'Morate uneti korisničko ime!', 'red');
+			responseHandler(
+				props.setShowResponseModal,
+				modalAnimation,
+				'Morate uneti korisničko ime!',
+				'red',
+				classes.backdropIn
+			);
 		} else if (!formInput.password.value.trim()) {
 			setFormInput({
 				...formInput,
@@ -136,7 +144,13 @@ const Login = props => {
 					valid: false,
 				},
 			});
-			responseHandler(props.setResForm, 'block', 'Morate uneti lozinku!', 'red');
+			responseHandler(
+				props.setShowResponseModal,
+				modalAnimation,
+				'Morate uneti lozinku!',
+				'red',
+				classes.backdropIn
+			);
 		} else {
 			setLoginUser(formData);
 			props.setDisplayLogin('none');

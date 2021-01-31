@@ -3,7 +3,7 @@ import { cookieReqParser } from '../../../helpers/universalFunctions';
 import { fetchJson } from '../../../API/fetchJson';
 import { userVerification } from '../../../API/userVerification';
 
-import Verified from '../../../Components/UI/Forms/Verified';
+import VerifyModal from '../../../Components/UI/Modal/VerifyModal';
 
 const userVerificationPage = props => {
 	const id = props.id.split('=')[1];
@@ -38,7 +38,7 @@ const userVerificationPage = props => {
 
 	return (
 		<>
-			<Verified
+			<VerifyModal
 				message={`Uspesno ste verifikovali ${typeString}`}
 				display="block"
 				borderColor="green"

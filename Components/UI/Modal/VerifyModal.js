@@ -1,18 +1,20 @@
 import { useDeviceDetect } from '../../../helpers/universalFunctions';
 
-import Input from './Input';
+import Input from '../Forms/Input';
 import Backdrop from '../Backdrop';
 import NavItem from '../../Navigation/NavItem';
 
 import classes from '../UI.module.scss';
 
-const Verified = props => {
+const VerifyModal = props => {
 	const { isMobile } = useDeviceDetect();
+	const className = [classes.Response, props.modalAnimation].join(' ');
+	const classNameMob = [classes.ResponseMob, props.modalAnimation].join(' ');
 	return (
 		<>
 			<Backdrop display={props.display} zIndex="499" />
 			<div
-				className={isMobile ? classes.ResponseMob : classes.Response}
+				className={isMobile ? classNameMob : className}
 				style={{ display: props.display, borderColor: props.borderColor }}>
 				<p>{props.message}</p>
 				<NavItem link={props.link} color="transparent">
@@ -23,4 +25,4 @@ const Verified = props => {
 	);
 };
 
-export default Verified;
+export default VerifyModal;
