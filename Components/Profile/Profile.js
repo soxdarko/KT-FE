@@ -14,12 +14,8 @@ import Input from '../UI/Forms/Input';
 import Label from '../UI/Forms/Label';
 import ListBody from '../UI/List/ListBody/ListBody';
 import ListHead from '../UI/List/ListHead/ListHead';
-import ChangePass from '../Auth/ChangePass';
 import AddClientButton from '../UI/AddClientButton';
-import ConfirmModal from '../UI/Modal/ConfirmModal';
-import Backdrop from '../UI/Backdrop';
 import InviteClient from '../AddToList/InviteClient';
-import ResponseModal from '../UI/Modal/ResponseModal';
 
 import classes from '../UI/UI.module.scss';
 
@@ -27,18 +23,8 @@ const Profile = props => {
 	const { isMobile } = useDeviceDetect();
 	const isPageLoad = useRef(true);
 	const modalAnimationIn = isMobile ? classes.modalInMob : classes.modalInPC;
-	const modalAnimationOut = isMobile ? classes.modalOutMob : classes.modalOutPC;
 	const [autorefreshIcon, setAutorefreshIcon] = useState(true);
-	const [displayConfirmation, setDisplayConfirmation] = useState('none');
-	const [displayChangePass, setDisplayChangePass] = useState('none');
 	const [displayInviteClient, setDisplayInviteClient] = useState('none');
-	const [backdrop, setBackdrop] = useState('');
-	const [showResponseModal, setShowResponseModal] = useState({
-		animation: '',
-		message: null,
-		border: '',
-		backdrop: '',
-	});
 	const [userData, setUserData] = useState([]);
 	const [formInput, setFormInput] = useState({
 		name: {
@@ -272,54 +258,7 @@ const Profile = props => {
 	if (isMobile) {
 		return (
 			<>
-				<Backdrop
-					backdropAnimation={backdrop}
-					onClick={() => {
-						setDisplayConfirmation('none'),
-							setDisplayInviteClient('none'),
-							setBackdrop(classes.backdropOut);
-					}}
-				/>
-				<ResponseModal
-					message={showResponseModal.message}
-					modalAnimation={showResponseModal.animation}
-					backdropAnimation={showResponseModal.backdrop}
-					displayLinkButton="none"
-					displayFormButton="block"
-					borderColor={showResponseModal.border}
-					link="/"
-					onClick={() =>
-						setShowResponseModal({
-							...showResponseModal,
-							animation: modalAnimationOut,
-							border: null,
-							backdrop: classes.backdropOut,
-						})
-					}
-				/>
 				<InviteClient display={displayInviteClient} />
-				<ConfirmModal
-					display={displayConfirmation}
-					message="Da li sigurno želite deaktivirati profil? Deaktivacija profila onemogućuje Vas i klijente da Vam rezervišu termine !!!"
-					submitValue="DEAKTIVIRAJ"
-					onDecline={() => {
-						setDisplayConfirmation('none'),
-							setBackdrop(classes.backdropIn),
-							setShowResponseModal({
-								...showResponseModal,
-								animation: modalAnimationOut,
-								border: null,
-								backdrop: classes.backdropOut,
-							});
-					}}
-					onSubmit={() => {
-						setDisplayConfirmation('none'), setBackdrop(classes.backdropOut);
-					}}
-				/>
-				<ChangePass
-					displayChangePass={displayChangePass}
-					setDisplayChangePass={setDisplayChangePass}
-				/>
 				<ListHead
 					title="Podešavanje profila"
 					displayCopy="none"
@@ -435,7 +374,7 @@ const Profile = props => {
 							<input
 								type="button"
 								value="Promeni lozinku"
-								onClick={() => setDisplayChangePass('block')}
+								onClick={() => props.setDisplayChangePass('block')}
 								className={[classes.FormButtonMob, classes.ListButtonMob].join(' ')}
 							/>
 						</div>
@@ -445,7 +384,7 @@ const Profile = props => {
 								value="Deaktiviraj nalog"
 								className={[classes.ButtonMob, classes.Danger, classes.Deactivate].join(' ')}
 								onClick={() => {
-									setDisplayConfirmation('block'), setBackdrop(classes.backdropIn);
+									props.setDisplayConfirmModal('block'), props.setShowBackdrop(classes.backdropIn);
 								}}
 							/>
 						</div>
@@ -460,7 +399,7 @@ const Profile = props => {
 				/>
 				<AddClientButton
 					onClick={() => {
-						setDisplayInviteClient('block'), setBackdrop(classes.backdropIn);
+						setDisplayInviteClient('block'), props.setShowBackdrop(classes.backdropIn);
 					}}
 				/>
 			</>
@@ -468,37 +407,6 @@ const Profile = props => {
 	}
 	return (
 		<>
-			<Backdrop display={displayConfirmation} onClick={() => setDisplayConfirmation('none')} />
-			<ConfirmModal
-				display={displayConfirmation}
-				bottom="0"
-				message="Da li sigurno želite deaktivirati profil? Deaktivacija profila onemogućuje Vas i klijente da Vam rezervišu termine !!!"
-				submitValue="DEAKTIVIRAJ"
-				onDecline={() => setDisplayConfirmation('none')}
-				onSubmit={() => setDisplayConfirmation('none')}
-			/>
-			<ResponseModal
-				message={showResponseModal.message}
-				modalAnimation={showResponseModal.animation}
-				backdropAnimation={showResponseModal.backdrop}
-				displayLinkButton="none"
-				displayFormButton="block"
-				borderColor={showResponseModal.border}
-				link="/"
-				onClick={() =>
-					setShowResponseModal({
-						...showResponseModal,
-						animation: modalAnimationOut,
-						border: null,
-						backdrop: classes.backdropOut,
-					})
-				}
-			/>
-			<ChangePass
-				displayChangePass={displayChangePass}
-				setDisplayChangePass={setDisplayChangePass}
-				setShowResponseModal={setShowResponseModal}
-			/>
 			<ListHead
 				title="Podešavanje profila"
 				displayCopy="none"
@@ -587,7 +495,7 @@ const Profile = props => {
 						<input
 							type="button"
 							value="Promeni lozinku"
-							onClick={() => setDisplayChangePass('block')}
+							onClick={() => props.setDisplayChangePass('block')}
 						/>
 					</div>
 					<div>
@@ -615,7 +523,9 @@ const Profile = props => {
 						<input
 							type="button"
 							value="Deaktiviraj"
-							onClick={() => setDisplayConfirmation('block')}
+							onClick={() => {
+								props.setDisplayConfirmModal('block'), props.setShowBackdrop(classes.backdropIn);
+							}}
 						/>
 					</div>
 				</div>

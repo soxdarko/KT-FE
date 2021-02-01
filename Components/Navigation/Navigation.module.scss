@@ -137,15 +137,16 @@
 
 .SideDrawerPC {
 	display: block;
-	position: absolute;
+	position: fixed;
 	width: 250px;
 	max-width: 70%;
-	height: calc(100% - 56px);
+	height: 100%;
 	left: -200px;
 	top: 56px;
 	padding: 32px 16px;
-	box-sizing: border-box;
+	overflow-y: hidden;
 	z-index: 300;
+	box-sizing: border-box;
 	transition: transform 0.8s ease-in;
 	background-color: $sidedrawer-background-color;
 	&:hover {
