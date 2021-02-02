@@ -22,7 +22,7 @@ import classes from '../Components/Navigation/Navigation.module.scss';
 
 const Index = () => {
 	const { isMobile } = useDeviceDetect();
-	const modalAnimation = isMobile ? classes.modalOutMob : classes.modalOutPC;
+	const modalAnimationOut = isMobile ? classes.modalOutMob : classes.modalOutPC;
 	const [isLoading, setIsLoading] = useState(false);
 	const [displayLogin, setDisplayLogin] = useState('none');
 	const [displayRegServProv, setDisplayRegServProv] = useState('none');
@@ -84,7 +84,7 @@ const Index = () => {
 				onClick={() =>
 					setShowResponseModal({
 						...showResponseModal,
-						animation: modalAnimation,
+						animation: modalAnimationOut,
 						border: null,
 						backdrop: classes.backdropOut,
 					})

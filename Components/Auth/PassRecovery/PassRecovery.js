@@ -1,6 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 /* import axios from '../../../utils/Axios/axios-appointments'; */
-import { useDeviceDetect, inputChangedHandler } from '../../../helpers/universalFunctions';
+import {
+	useDeviceDetect,
+	inputChangedHandler,
+	responseHandler,
+} from '../../../helpers/universalFunctions';
 import initState from './initState';
 
 import DescriptionLabel from '../../UI/DescriptionLabel';
@@ -83,7 +87,13 @@ const PassRecovery = props => {
 					valid: false,
 				},
 			});
-			alert('Unesite broj telefona ili validnu e-mail adresu');
+			responseHandler(
+				props.setShowResponseModal,
+				props.modalAnimationIn,
+				'Morate uneti broj telefona ili validnu e-mail adresu',
+				'red',
+				classes.backdropIn
+			);
 		}
 	};
 	const inputClassName = isMobile ? classes.InputTextMob : classes.InputText;

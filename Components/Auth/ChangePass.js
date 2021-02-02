@@ -9,14 +9,12 @@ import {
 } from '../../helpers/universalFunctions';
 
 import Input from '../UI/Forms/Input';
-import PassRecovery from './PassRecovery/PassRecovery';
 
 import classes from '../UI/UI.module.scss';
 
 const ChangePass = props => {
 	const { isMobile } = useDeviceDetect();
 	const isPageLoad = useRef(true);
-	const [displayPassRecovery, setDisplayPassRecovery] = useState('none');
 	const [changePass, setChangePass] = useState({});
 	const [formInput, setFormInput] = useState({
 		oldPass: {
@@ -60,7 +58,7 @@ const ChangePass = props => {
 			.then(response => {
 				console.log(response), alert('Uspešno ste premenili lozinku');
 			})
-			.catch(error => console.log(changePass));
+			.catch(error => console.log(error));
 		api;
 		setFormInput(initState);
 	};
@@ -80,12 +78,11 @@ const ChangePass = props => {
 			newPass: formInput.newPass.value.trim(),
 		};
 
-		const modalAnimation = isMobile ? classes.modalInMob : classes.modalInPC;
 		if (!formInput.oldPass.value.trim()) {
 			updateValidity(setFormInput, 'oldPass', formInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				modalAnimation,
+				props.modalAnimationIn,
 				'Morate uneti trenutnu lozinku!',
 				'red',
 				classes.backdropIn
@@ -94,7 +91,7 @@ const ChangePass = props => {
 			updateValidity(setFormInput, 'newPass', formInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				modalAnimation,
+				props.modalAnimationIn,
 				'Morate uneti novu lozinku!',
 				'red',
 				classes.backdropIn
@@ -103,7 +100,7 @@ const ChangePass = props => {
 			updateValidity(setFormInput, 'passConfirm', formInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				modalAnimation,
+				props.modalAnimationIn,
 				'Morate potvditi nouv lozinku!',
 				'red',
 				classes.backdropIn
@@ -122,7 +119,7 @@ const ChangePass = props => {
 			});
 			responseHandler(
 				props.setShowResponseModal,
-				modalAnimation,
+				props.modalAnimationIn,
 				'Nova lozinka i potvrda moraju biti jednake!',
 				'red',
 				classes.backdropIn
@@ -156,7 +153,7 @@ const ChangePass = props => {
 				margin="40px auto 5px auto"
 				onClick={() => {
 					props.setDisplayChangePass('none'),
-						setDisplayPassRecovery('block'),
+						props.setDisplayPassRecovery('block'),
 						setFormInput(initState);
 				}}
 			/>
@@ -176,51 +173,47 @@ const ChangePass = props => {
 			/>
 		</>
 	);
+
 	const inputClassName = isMobile ? classes.InputTextMob : classes.InputText;
+
 	return (
-		<>
-			<PassRecovery
-				displayPassRecovery={displayPassRecovery}
-				setDisplayPassRecovery={setDisplayPassRecovery}
+		<form
+			style={{ display: props.displayChangePass, position: 'absolute' }}
+			className={classes.Form}
+			onSubmit={onSubmit}>
+			<h2 className={classes.FormTitle}>PROMENA LOZINKE</h2>
+			<Input
+				type="password"
+				name="oldPass"
+				className={inputClassName}
+				placeholder="Uneti trenutnu lozinku"
+				value={formInput.oldPass.value}
+				maxLength="50"
+				onChange={e => inputChangedHandler(e, 'oldPass', formInput, setFormInput)}
+				invalid={!formInput.oldPass.valid}
 			/>
-			<form
-				style={{ display: props.displayChangePass, position: 'absolute' }}
-				className={classes.Form}
-				onSubmit={onSubmit}>
-				<h2 className={classes.FormTitle}>PROMENA LOZINKE</h2>
-				<Input
-					type="password"
-					name="oldPass"
-					className={inputClassName}
-					placeholder="Uneti trenutnu lozinku"
-					value={formInput.oldPass.value}
-					maxLength="50"
-					onChange={e => inputChangedHandler(e, 'oldPass', formInput, setFormInput)}
-					invalid={!formInput.oldPass.valid}
-				/>
-				<Input
-					type="password"
-					name="newPass"
-					className={inputClassName}
-					placeholder="Izabrati novu lozinku"
-					value={formInput.newPass.value}
-					maxLength="50"
-					onChange={e => inputChangedHandler(e, 'newPass', formInput, setFormInput)}
-					invalid={!formInput.newPass.valid}
-				/>
-				<Input
-					type="password"
-					name="passConfirm"
-					className={inputClassName}
-					placeholder="Potvrditi novu lozinku"
-					value={formInput.passConfirm.value}
-					maxLength="50"
-					onChange={e => inputChangedHandler(e, 'passConfirm', formInput, setFormInput)}
-					invalid={!formInput.passConfirm.valid}
-				/>
-				{buttonGroup}
-			</form>
-		</>
+			<Input
+				type="password"
+				name="newPass"
+				className={inputClassName}
+				placeholder="Izabrati novu lozinku"
+				value={formInput.newPass.value}
+				maxLength="50"
+				onChange={e => inputChangedHandler(e, 'newPass', formInput, setFormInput)}
+				invalid={!formInput.newPass.valid}
+			/>
+			<Input
+				type="password"
+				name="passConfirm"
+				className={inputClassName}
+				placeholder="Potvrditi novu lozinku"
+				value={formInput.passConfirm.value}
+				maxLength="50"
+				onChange={e => inputChangedHandler(e, 'passConfirm', formInput, setFormInput)}
+				invalid={!formInput.passConfirm.valid}
+			/>
+			{buttonGroup}
+		</form>
 	);
 };
 

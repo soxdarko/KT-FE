@@ -589,3 +589,35 @@ select {
 	animation: backdropout 600ms ease-in-out forwards;
 	-webkit-animation: backdropout 600ms ease-in-out forwards;
 }
+
+@keyframes modalup {
+	0% {
+		margin-bottom: -100vh;
+		opacity: 0;
+	}
+	100% {
+		margin-bottom: 0;
+		opacity: 1;
+	}
+}
+
+@keyframes modaldown {
+	0% {
+		margin-bottom: 0;
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+		margin-bottom: -100vh;
+	}
+}
+
+.modalUp {
+	animation: modalup 1000ms ease-in-out forwards;
+	-webkit-animation: modalup 1000ms ease-in-out forwards;
+}
+
+.modalDown {
+	animation: modaldown 1000ms ease-in-out forwards;
+	-webkit-animation: modaldown 1000ms ease-in-out forwards;
+}

@@ -22,7 +22,6 @@ import classes from '../UI/UI.module.scss';
 const Profile = props => {
 	const { isMobile } = useDeviceDetect();
 	const isPageLoad = useRef(true);
-	const modalAnimationIn = isMobile ? classes.modalInMob : classes.modalInPC;
 	const [autorefreshIcon, setAutorefreshIcon] = useState(true);
 	const [displayInviteClient, setDisplayInviteClient] = useState('none');
 	const [userData, setUserData] = useState([]);
@@ -94,13 +93,13 @@ const Profile = props => {
 			.post('/', userData)
 			.then(response => {
 				console.log(response),
-					responseHandler({
-						setShowResponseModal,
-						animation: modalAnimationIn,
-						message: 'Uspešno ste se prijavili',
-						border: 'green',
-						backdrop: classes.backdropIn,
-					});
+					responseHandler(
+						props.setShowResponseModal,
+						modalAnimationIn,
+						'Uspešno ste se prijavili',
+						'green',
+						classes.backdropIn
+					);
 			})
 			.catch(error => console.log(error));
 		api;
@@ -139,8 +138,8 @@ const Profile = props => {
 				},
 			});
 			responseHandler(
-				setShowResponseModal,
-				modalAnimationIn,
+				props.setShowResponseModal,
+				props.modalAnimationIn,
 				'Morate uneti ime i prezime',
 				'red',
 				classes.backdropIn
@@ -154,8 +153,8 @@ const Profile = props => {
 				},
 			});
 			responseHandler(
-				setShowResponseModal,
-				modalAnimationIn,
+				props.setShowResponseModal,
+				props.modalAnimationIn,
 				'Morate uneti korisničko ime',
 				'red',
 				classes.backdropIn
@@ -169,8 +168,8 @@ const Profile = props => {
 				},
 			});
 			responseHandler(
-				setShowResponseModal,
-				modalAnimationIn,
+				props.setShowResponseModal,
+				props.modalAnimationIn,
 				'Morate uneti naziv firme',
 				'red',
 				classes.backdropIn
@@ -184,8 +183,8 @@ const Profile = props => {
 				},
 			});
 			responseHandler(
-				setShowResponseModal,
-				modalAnimationIn,
+				props.setShowResponseModal,
+				props.modalAnimationIn,
 				'Morate uneti E-mail asresu',
 				'red',
 				classes.backdropIn
@@ -199,8 +198,8 @@ const Profile = props => {
 				},
 			});
 			responseHandler(
-				setShowResponseModal,
-				modalAnimationIn,
+				props.setShowResponseModal,
+				props.modalAnimationIn,
 				'Morate uneti broj telefona',
 				'red',
 				classes.backdropIn
@@ -214,8 +213,8 @@ const Profile = props => {
 				},
 			});
 			responseHandler(
-				setShowResponseModal,
-				modalAnimationIn,
+				props.setShowResponseModal,
+				props.modalAnimationIn,
 				'Morate uneti delatnost',
 				'red',
 				classes.backdropIn
@@ -229,8 +228,8 @@ const Profile = props => {
 				},
 			});
 			responseHandler(
-				setShowResponseModal,
-				modalAnimationIn,
+				props.setShowResponseModal,
+				props.modalAnimationIn,
 				'Morate uneti dužinu trajanja polja u kalendaru',
 				'red',
 				classes.backdropIn
@@ -244,8 +243,8 @@ const Profile = props => {
 				},
 			});
 			responseHandler(
-				setShowResponseModal,
-				modalAnimationIn,
+				props.setShowResponseModal,
+				props.modalAnimationIn,
 				'Morate uneti broj dozvoljenih rezervacija za period od 30 dana',
 				'red',
 				classes.backdropIn
@@ -384,7 +383,8 @@ const Profile = props => {
 								value="Deaktiviraj nalog"
 								className={[classes.ButtonMob, classes.Danger, classes.Deactivate].join(' ')}
 								onClick={() => {
-									props.setDisplayConfirmModal('block'), props.setShowBackdrop(classes.backdropIn);
+									props.setShowConfirmModal(classes.modalUp),
+										props.setShowBackdrop(classes.backdropIn);
 								}}
 							/>
 						</div>
@@ -524,7 +524,8 @@ const Profile = props => {
 							type="button"
 							value="Deaktiviraj"
 							onClick={() => {
-								props.setDisplayConfirmModal('block'), props.setShowBackdrop(classes.backdropIn);
+								props.setShowConfirmModal(classes.modalUp),
+									props.setShowBackdrop(classes.backdropIn);
 							}}
 						/>
 					</div>
