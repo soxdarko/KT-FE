@@ -1,11 +1,12 @@
 @import '../../scss/variables.scss';
 
-.InviteClient {
-	position: absolute;
+.InviteClientMob {
+	position: fixed;
 	width: calc(100vw - 5px);
-	margin: auto;
+	margin-left: 100%;
 	text-align: center;
-	z-index: 300;
+	opacity: 0;
+	z-index: 500;
 	border: 2px dashed $base-orange-color;
 	background-color: black;
 	p {
@@ -24,5 +25,15 @@
 	}
 	.line {
 		margin-top: 35px;
+	}
+}
+.InviteClient {
+	@extend .InviteClientMob;
+	bottom: 0;
+	p {
+		font-size: 20px;
+	}
+	input {
+		font-size: 24px;
 	}
 }

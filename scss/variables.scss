@@ -621,3 +621,33 @@ select {
 	animation: modaldown 1000ms ease-in-out forwards;
 	-webkit-animation: modaldown 1000ms ease-in-out forwards;
 }
+
+@keyframes slideinleft {
+	from {
+		margin-left: 100%;
+		opacity: 0;
+	}
+	to {
+		margin-left: 0;
+		opacity: 1;
+	}
+}
+
+@keyframes slideoutleft {
+	from {
+		margin-left: 0;
+		opacity: 1;
+	}
+	to {
+		margin-left: 100%;
+		opacity: 0;
+	}
+}
+
+.slideInLeft {
+	animation: slideinleft 1000ms ease-in-out forwards;
+}
+
+.slideOutLeft {
+	animation: slideoutleft 1000ms ease-in-out forwards;
+}

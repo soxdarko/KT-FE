@@ -1,12 +1,19 @@
 import Input from '../Forms/Input';
+import Backdrop from '../Backdrop';
 
 import classes from '../UI.module.scss';
 
 const ConfirmModal = props => {
-	const className = [classes.Confirmation, props.modalAnimation].join(' ');
+	const className = [classes.Confirmation, props.animation].join(' ');
 	return (
 		<>
-			<form style={{ display: props.display }} className={className}>
+			<Backdrop
+				backdropAnimation={props.backdropAnimation}
+				onClick={() => {
+					props.setShowConfirmModal(classes.modalDown), props.setShowBackdrop(classes.backdropOut);
+				}}
+			/>
+			<form className={className} style={{ display: props.display }}>
 				<p>{props.message}</p>
 				<Input
 					type="button"

@@ -1,5 +1,3 @@
-/* eslint-disable import/no-unresolved */
-/* eslint-disable no-unused-vars */
 import { useState, useEffect, useRef } from 'react';
 import axios from '../../helpers/Axios';
 import {
@@ -15,7 +13,6 @@ import Label from '../UI/Forms/Label';
 import ListBody from '../UI/List/ListBody/ListBody';
 import ListHead from '../UI/List/ListHead/ListHead';
 import AddClientButton from '../UI/AddClientButton';
-import InviteClient from '../AddToList/InviteClient';
 
 import classes from '../UI/UI.module.scss';
 
@@ -23,7 +20,6 @@ const Profile = props => {
 	const { isMobile } = useDeviceDetect();
 	const isPageLoad = useRef(true);
 	const [autorefreshIcon, setAutorefreshIcon] = useState(true);
-	const [displayInviteClient, setDisplayInviteClient] = useState('none');
 	const [userData, setUserData] = useState([]);
 	const [formInput, setFormInput] = useState({
 		name: {
@@ -103,7 +99,6 @@ const Profile = props => {
 			})
 			.catch(error => console.log(error));
 		api;
-		/* setFormInput(initState); */
 	};
 
 	useEffect(() => {
@@ -112,7 +107,6 @@ const Profile = props => {
 			return;
 		}
 		pushHandler();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userData]);
 
 	const onSubmit = e => {
@@ -257,7 +251,6 @@ const Profile = props => {
 	if (isMobile) {
 		return (
 			<>
-				<InviteClient display={displayInviteClient} />
 				<ListHead
 					title="Podešavanje profila"
 					displayCopy="none"
@@ -384,6 +377,8 @@ const Profile = props => {
 								className={[classes.ButtonMob, classes.Danger, classes.Deactivate].join(' ')}
 								onClick={() => {
 									props.setShowConfirmModal(classes.modalUp),
+										props.setDisplayConfirmModal('block'),
+										props.setDisplayInviteClient('none'),
 										props.setShowBackdrop(classes.backdropIn);
 								}}
 							/>
@@ -399,140 +394,153 @@ const Profile = props => {
 				/>
 				<AddClientButton
 					onClick={() => {
-						setDisplayInviteClient('block'), props.setShowBackdrop(classes.backdropIn);
+						props.setShowInviteClient(classes.slideInLeft),
+							props.setDisplayConfirmModal('none'),
+							props.setDisplayInviteClient('block');
+					}}
+				/>
+			</>
+		);
+	} else {
+		return (
+			<>
+				<ListHead
+					title="Podešavanje profila"
+					displayCopy="none"
+					displayPaste="none"
+					displaySearch="none"
+					displayAdd="none"
+					displayLink="none"
+					displaySelectWeek="none"
+					onSave={onSubmit}
+				/>
+				<ListBody>
+					<div className={classes.SettingName}>
+						<div>Ime i Prezime</div>
+						<div>Korisničko ime</div>
+						<div>Naziv firme</div>
+						<div>E-mail</div>
+						<div>Telefon</div>
+						<div>Mesto</div>
+						<div>Adresa</div>
+						<div>Delatnost</div>
+						<div>Lozinka</div>
+						<div>Dužina trajanja jednog polja u kalendaru</div>
+						<div>Broj dozvoljenih rezervacija za period od 30 dana</div>
+						<div>Automatsko osvežavanje novih zakazanih termina?</div>
+						<div>Link za kalendar i registraciju novih</div>
+						<div>Deaktivacija naloga</div>
+					</div>
+					<div className={classes.SettingProp}>
+						<div>
+							<input
+								type="text"
+								value={formInput.name.value}
+								onChange={e => inputChangedHandler(e, 'name', formInput, setFormInput)}
+							/>
+						</div>
+						<div>
+							<input
+								type="text"
+								value={formInput.userName.value}
+								onChange={e => inputChangedHandler(e, 'userName', formInput, setFormInput)}
+							/>
+						</div>
+						<div>
+							<input
+								type="text"
+								value={formInput.company.value}
+								onChange={e => inputChangedHandler(e, 'company', formInput, setFormInput)}
+							/>
+						</div>
+						<div>
+							<input
+								type="text"
+								value={formInput.email.value}
+								onChange={e => inputChangedHandler(e, 'email', formInput, setFormInput)}
+							/>
+						</div>
+						<div>
+							<input
+								type="number"
+								value={formInput.phone.value}
+								onChange={e => inputChangedHandler(e, 'phone', formInput, setFormInput)}
+							/>
+						</div>
+						<div>
+							<input
+								type="text"
+								value={formInput.city.value}
+								onChange={e => inputChangedHandler(e, 'city', formInput, setFormInput)}
+							/>
+						</div>
+						<div>
+							<input
+								type="text"
+								value={formInput.address.value}
+								onChange={e => inputChangedHandler(e, 'address', formInput, setFormInput)}
+							/>
+						</div>
+						<div>
+							<input
+								type="text"
+								value={formInput.activity.value}
+								onChange={e => inputChangedHandler(e, 'activity', formInput, setFormInput)}
+							/>
+						</div>
+						<div>
+							<input
+								type="button"
+								value="Promeni lozinku"
+								onClick={() => props.setDisplayChangePass('block')}
+							/>
+						</div>
+						<div>
+							<input
+								type="number"
+								value={formInput.timePerField.value}
+								onChange={e => inputChangedHandler(e, 'timePerField', formInput, setFormInput)}
+							/>
+						</div>
+						<div>
+							<input
+								type="number"
+								value={formInput.resLimit.value}
+								onChange={e => inputChangedHandler(e, 'resLimit', formInput, setFormInput)}
+							/>
+						</div>
+						<div>
+							<Input type="checkbox" id="autorefresh" />
+							<Label htmlFor="autorefresh" />
+						</div>
+						<div>
+							<input type="button" value="Kopiraj link" />
+						</div>
+						<div>
+							<input
+								type="button"
+								value="Deaktiviraj"
+								onClick={() => {
+									props.setShowConfirmModal(classes.modalUp),
+										props.setDisplayConfirmModal('block'),
+										props.setDisplayInviteClient('none'),
+										props.setShowBackdrop(classes.backdropIn);
+								}}
+							/>
+						</div>
+					</div>
+				</ListBody>
+				<AddClientButton
+					onClick={() => {
+						props.setShowInviteClient(classes.slideInLeft),
+							props.setDisplayInviteClient('block'),
+							props.setDisplayConfirmModal('none'),
+							props.setShowBackdrop(classes.backdropIn);
 					}}
 				/>
 			</>
 		);
 	}
-	return (
-		<>
-			<ListHead
-				title="Podešavanje profila"
-				displayCopy="none"
-				displayPaste="none"
-				displaySearch="none"
-				displayAdd="none"
-				displayLink="none"
-				displaySelectWeek="none"
-				onSave={onSubmit}
-			/>
-			<ListBody>
-				<div className={classes.SettingName}>
-					<div>Ime i Prezime</div>
-					<div>Korisničko ime</div>
-					<div>Naziv firme</div>
-					<div>E-mail</div>
-					<div>Telefon</div>
-					<div>Mesto</div>
-					<div>Adresa</div>
-					<div>Delatnost</div>
-					<div>Lozinka</div>
-					<div>Dužina trajanja jednog polja u kalendaru</div>
-					<div>Broj dozvoljenih rezervacija za period od 30 dana</div>
-					<div>Automatsko osvežavanje novih zakazanih termina?</div>
-					<div>Link za kalendar i registraciju novih</div>
-					<div>Deaktivacija naloga</div>
-				</div>
-				<div className={classes.SettingProp}>
-					<div>
-						<input
-							type="text"
-							value={formInput.name.value}
-							onChange={e => inputChangedHandler(e, 'name', formInput, setFormInput)}
-						/>
-					</div>
-					<div>
-						<input
-							type="text"
-							value={formInput.userName.value}
-							onChange={e => inputChangedHandler(e, 'userName', formInput, setFormInput)}
-						/>
-					</div>
-					<div>
-						<input
-							type="text"
-							value={formInput.company.value}
-							onChange={e => inputChangedHandler(e, 'company', formInput, setFormInput)}
-						/>
-					</div>
-					<div>
-						<input
-							type="text"
-							value={formInput.email.value}
-							onChange={e => inputChangedHandler(e, 'email', formInput, setFormInput)}
-						/>
-					</div>
-					<div>
-						<input
-							type="number"
-							value={formInput.phone.value}
-							onChange={e => inputChangedHandler(e, 'phone', formInput, setFormInput)}
-						/>
-					</div>
-					<div>
-						<input
-							type="text"
-							value={formInput.city.value}
-							onChange={e => inputChangedHandler(e, 'city', formInput, setFormInput)}
-						/>
-					</div>
-					<div>
-						<input
-							type="text"
-							value={formInput.address.value}
-							onChange={e => inputChangedHandler(e, 'address', formInput, setFormInput)}
-						/>
-					</div>
-					<div>
-						<input
-							type="text"
-							value={formInput.activity.value}
-							onChange={e => inputChangedHandler(e, 'activity', formInput, setFormInput)}
-						/>
-					</div>
-					<div>
-						<input
-							type="button"
-							value="Promeni lozinku"
-							onClick={() => props.setDisplayChangePass('block')}
-						/>
-					</div>
-					<div>
-						<input
-							type="number"
-							value={formInput.timePerField.value}
-							onChange={e => inputChangedHandler(e, 'timePerField', formInput, setFormInput)}
-						/>
-					</div>
-					<div>
-						<input
-							type="number"
-							value={formInput.resLimit.value}
-							onChange={e => inputChangedHandler(e, 'resLimit', formInput, setFormInput)}
-						/>
-					</div>
-					<div>
-						<Input type="checkbox" id="autorefresh" />
-						<Label htmlFor="autorefresh" />
-					</div>
-					<div>
-						<input type="button" value="Kopiraj link" />
-					</div>
-					<div>
-						<input
-							type="button"
-							value="Deaktiviraj"
-							onClick={() => {
-								props.setShowConfirmModal(classes.modalUp),
-									props.setShowBackdrop(classes.backdropIn);
-							}}
-						/>
-					</div>
-				</div>
-			</ListBody>
-		</>
-	);
 };
 
 export default Profile;
