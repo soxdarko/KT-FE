@@ -135,9 +135,9 @@ const Profile = props => {
 				props.setShowResponseModal,
 				props.modalAnimationIn,
 				'Morate uneti ime i prezime',
-				'red',
-				classes.backdropIn
+				'red'
 			);
+			props.setShowBackdrop(classes.backdropIn);
 		} else if (!formInput.userName.value.trim()) {
 			setFormInput({
 				...formInput,
@@ -150,9 +150,9 @@ const Profile = props => {
 				props.setShowResponseModal,
 				props.modalAnimationIn,
 				'Morate uneti korisničko ime',
-				'red',
-				classes.backdropIn
+				'red'
 			);
+			props.setShowBackdrop(classes.backdropIn);
 		} else if (!formInput.company.value.trim()) {
 			setFormInput({
 				...formInput,
@@ -165,9 +165,9 @@ const Profile = props => {
 				props.setShowResponseModal,
 				props.modalAnimationIn,
 				'Morate uneti naziv firme',
-				'red',
-				classes.backdropIn
+				'red'
 			);
+			props.setShowBackdrop(classes.backdropIn);
 		} else if (!formInput.email.value.trim()) {
 			setFormInput({
 				...formInput,
@@ -180,9 +180,9 @@ const Profile = props => {
 				props.setShowResponseModal,
 				props.modalAnimationIn,
 				'Morate uneti E-mail asresu',
-				'red',
-				classes.backdropIn
+				'red'
 			);
+			props.setShowBackdrop(classes.backdropIn);
 		} else if (!formInput.phone.value.trim()) {
 			setFormInput({
 				...formInput,
@@ -195,9 +195,9 @@ const Profile = props => {
 				props.setShowResponseModal,
 				props.modalAnimationIn,
 				'Morate uneti broj telefona',
-				'red',
-				classes.backdropIn
+				'red'
 			);
+			props.setShowBackdrop(classes.backdropIn);
 		} else if (!formInput.activity.value.trim()) {
 			setFormInput({
 				...formInput,
@@ -210,9 +210,9 @@ const Profile = props => {
 				props.setShowResponseModal,
 				props.modalAnimationIn,
 				'Morate uneti delatnost',
-				'red',
-				classes.backdropIn
+				'red'
 			);
+			props.setShowBackdrop(classes.backdropIn);
 		} else if (!formInput.timePerField.value.trim()) {
 			setFormInput({
 				...formInput,
@@ -225,9 +225,9 @@ const Profile = props => {
 				props.setShowResponseModal,
 				props.modalAnimationIn,
 				'Morate uneti dužinu trajanja polja u kalendaru',
-				'red',
-				classes.backdropIn
+				'red'
 			);
+			props.setShowBackdrop(classes.backdropIn);
 		} else if (!formInput.resLimit.value.trim()) {
 			setFormInput({
 				...formInput,
@@ -240,9 +240,9 @@ const Profile = props => {
 				props.setShowResponseModal,
 				props.modalAnimationIn,
 				'Morate uneti broj dozvoljenih rezervacija za period od 30 dana',
-				'red',
-				classes.backdropIn
+				'red'
 			);
+			props.setShowBackdrop(classes.backdropIn);
 		} else {
 			setUserData([...userData, formData]);
 		}
@@ -376,10 +376,10 @@ const Profile = props => {
 								value="Deaktiviraj nalog"
 								className={[classes.ButtonMob, classes.Danger, classes.Deactivate].join(' ')}
 								onClick={() => {
-									props.setShowConfirmModal(classes.modalUp),
-										props.setDisplayConfirmModal('block'),
-										props.setDisplayInviteClient('none'),
-										props.setShowBackdrop(classes.backdropIn);
+									props.setDisplayConfirmModal('block'),
+										props.setShowConfirmModal(classes.modalUp),
+										props.setShowBackdrop(classes.backdropIn),
+										props.setDisplayInviteClient('none');
 								}}
 							/>
 						</div>
@@ -521,10 +521,10 @@ const Profile = props => {
 								type="button"
 								value="Deaktiviraj"
 								onClick={() => {
-									props.setShowConfirmModal(classes.modalUp),
-										props.setDisplayConfirmModal('block'),
-										props.setDisplayInviteClient('none'),
-										props.setShowBackdrop(classes.backdropIn);
+									props.setDisplayConfirmModal('block'),
+										props.setShowConfirmModal(classes.modalUp),
+										props.setShowBackdrop(classes.backdropIn),
+										props.setDisplayInviteClient('none');
 								}}
 							/>
 						</div>

@@ -133,9 +133,9 @@ const Login = props => {
 				props.setShowResponseModal,
 				modalAnimation,
 				'Morate uneti korisničko ime!',
-				'red',
-				classes.backdropIn
+				'red'
 			);
+			props.setShowBackdrop(classes.backdropIn);
 		} else if (!formInput.password.value.trim()) {
 			setFormInput({
 				...formInput,
@@ -144,13 +144,8 @@ const Login = props => {
 					valid: false,
 				},
 			});
-			responseHandler(
-				props.setShowResponseModal,
-				modalAnimation,
-				'Morate uneti lozinku!',
-				'red',
-				classes.backdropIn
-			);
+			responseHandler(props.setShowResponseModal, modalAnimation, 'Morate uneti lozinku!', 'red');
+			props.setShowBackdrop(classes.backdropIn);
 		} else {
 			setLoginUser(formData);
 			props.setDisplayLogin('none');

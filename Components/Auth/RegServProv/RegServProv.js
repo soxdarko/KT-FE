@@ -16,6 +16,7 @@ import classes from '../../UI/UI.module.scss';
 const RegServProv = props => {
 	const { isMobile } = useDeviceDetect();
 	const isPageLoad = useRef(true);
+	const modalAnimation = isMobile ? classes.modalInMob : classes.modalInPC;
 	const [companyData, setCompanyData] = useState({});
 
 	const [formInput, setFormInput] = useState({
@@ -71,8 +72,6 @@ const RegServProv = props => {
 		},
 	});
 
-	const modalAnimation = isMobile ? classes.modalInMob : classes.modalInPC;
-
 	const regHandler = () => {
 		const api = newCompany(companyData)
 			.then(response => {
@@ -81,8 +80,7 @@ const RegServProv = props => {
 						props.setShowResponseModal,
 						modalAnimation,
 						'Poslali smo Vam verifikacioni e-mail i sms. Klikom na link u e-mail-u i sms-u registracija će biti završena.',
-						'green',
-						classes.backdropIn
+						'green'
 					);
 				props.setIsLoading(false);
 				props.setDisplayRegServProv('none');
@@ -92,14 +90,9 @@ const RegServProv = props => {
 				if (error.response) {
 					error.response.data.map(err => {
 						const Input = err.type[0].toLowerCase() + err.type.slice(1);
-						responseHandler(
-							props.setShowResponseModal,
-							modalAnimation,
-							err.errorMessage,
-							'red',
-							classes.backdropIn
-						);
+						responseHandler(props.setShowResponseModal, modalAnimation, err.errorMessage, 'red');
 						updateValidity(setFormInput, Input, formInput, '', false);
+						props.setShowBackdrop(classes.backdropIn);
 					});
 				} else if (error.request) {
 					console.log(error.request);
@@ -141,27 +134,27 @@ const RegServProv = props => {
 				props.setShowResponseModal,
 				modalAnimation,
 				'Morate uneti Ime i prezime!',
-				'red',
-				classes.backdropIn
+				'red'
 			);
+			props.setShowBackdrop(classes.backdropIn);
 		} else if (!formInput.userName.value.trim()) {
 			updateValidity(setFormInput, 'userName', formInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
 				modalAnimation,
 				'Morate uneti korisničko ime!',
-				'red',
-				classes.backdropIn
+				'red'
 			);
+			props.setShowBackdrop(classes.backdropIn);
 		} else if (!formInput.companyName.value.trim()) {
 			updateValidity(setFormInput, 'companyName', formInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
 				modalAnimation,
 				'Morate uneti naziv firme!',
-				'red',
-				classes.backdropIn
+				'red'
 			);
+			props.setShowBackdrop(classes.backdropIn);
 		} else if (!formInput.city.value.trim()) {
 			updateValidity(setFormInput, 'city', formInput, '', false);
 			responseHandler(props.setShowResponseModal, modalAnimation, 'Morate uneti grad!', 'red');
@@ -171,9 +164,9 @@ const RegServProv = props => {
 				props.setShowResponseModal,
 				modalAnimation,
 				'Morate izabrati pozivni broj!',
-				'red',
-				classes.backdropIn
+				'red'
 			);
+			props.setShowBackdrop(classes.backdropIn);
 		} else if (
 			!formInput.phone.value.trim() ||
 			!numericPattern.test(formInput.phone.value) ||
@@ -184,18 +177,18 @@ const RegServProv = props => {
 				props.setShowResponseModal,
 				modalAnimation,
 				'Morate uneti validan broj telefona!',
-				'red',
-				classes.backdropIn
+				'red'
 			);
+			props.setShowBackdrop(classes.backdropIn);
 		} else if (!formInput.email.value.trim() || !emailPattern.test(formInput.email.value)) {
 			updateValidity(setFormInput, 'email', formInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
 				modalAnimation,
 				'Morate uneti validnu e-mail adresu!',
-				'red',
-				classes.backdropIn
+				'red'
 			);
+			props.setShowBackdrop(classes.backdropIn);
 		} else if (!formInput.password.value.trim()) {
 			updateValidity(setFormInput, 'password', formInput, '', false);
 			responseHandler(props.setShowResponseModal, modalAnimation, 'Morate uneti lozinku!', 'red');
@@ -205,9 +198,9 @@ const RegServProv = props => {
 				props.setShowResponseModal,
 				modalAnimation,
 				'Morate uneti potvrdu izabrane lozinke!',
-				'red',
-				classes.backdropIn
+				'red'
 			);
+			props.setShowBackdrop(classes.backdropIn);
 		} else if (formInput.password.value.trim() !== formInput.passConfirm.value.trim()) {
 			setFormInput({
 				...formInput,
@@ -224,9 +217,9 @@ const RegServProv = props => {
 				props.setShowResponseModal,
 				modalAnimation,
 				'Lozinka i potvrda moraju biti jednake!',
-				'red',
-				classes.backdropIn
+				'red'
 			);
+			props.setShowBackdrop(classes.backdropIn);
 		} else {
 			setCompanyData(formData);
 			props.setIsLoading(true);

@@ -15,6 +15,7 @@ import classes from '../UI/UI.module.scss';
 const ChangePass = props => {
 	const { isMobile } = useDeviceDetect();
 	const isPageLoad = useRef(true);
+	const modalAnimation = isMobile ? classes.modalInMob : classes.modalInPC;
 	const [changePass, setChangePass] = useState({});
 	const [formInput, setFormInput] = useState({
 		oldPass: {
@@ -82,29 +83,29 @@ const ChangePass = props => {
 			updateValidity(setFormInput, 'oldPass', formInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				props.modalAnimationIn,
+				modalAnimation,
 				'Morate uneti trenutnu lozinku!',
-				'red',
-				classes.backdropIn
+				'red'
 			);
+			props.setShowBackdrop(classes.backdropIn);
 		} else if (!formInput.newPass.value.trim()) {
 			updateValidity(setFormInput, 'newPass', formInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				props.modalAnimationIn,
+				modalAnimation,
 				'Morate uneti novu lozinku!',
-				'red',
-				classes.backdropIn
+				'red'
 			);
+			props.setShowBackdrop(classes.backdropIn);
 		} else if (!formInput.passConfirm.value.trim()) {
 			updateValidity(setFormInput, 'passConfirm', formInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				props.modalAnimationIn,
+				modalAnimation,
 				'Morate potvditi nouv lozinku!',
-				'red',
-				classes.backdropIn
+				'red'
 			);
+			props.setShowBackdrop(classes.backdropIn);
 		} else if (formInput.newPass.value.trim() !== formInput.passConfirm.value.trim()) {
 			setFormInput({
 				...formInput,
@@ -119,11 +120,11 @@ const ChangePass = props => {
 			});
 			responseHandler(
 				props.setShowResponseModal,
-				props.modalAnimationIn,
+				modalAnimation,
 				'Nova lozinka i potvrda moraju biti jednake!',
-				'red',
-				classes.backdropIn
+				'red'
 			);
+			props.setShowBackdrop(classes.backdropIn);
 		} else {
 			setChangePass(formData);
 			props.setDisplayChangePass('none');

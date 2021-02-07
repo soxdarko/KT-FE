@@ -19,21 +19,21 @@ import ResponseModal from '../Components/UI/Modal/ResponseModal';
 import Loader from '../Components/UI/Loader';
 
 import classes from '../Components/Navigation/Navigation.module.scss';
+import Backdrop from '../Components/UI/Backdrop';
 
 const Index = () => {
 	const { isMobile } = useDeviceDetect();
 	const modalAnimationOut = isMobile ? classes.modalOutMob : classes.modalOutPC;
 	const [isLoading, setIsLoading] = useState(false);
+	const [showBackdrop, setShowBackdrop] = useState('');
 	const [displayLogin, setDisplayLogin] = useState('none');
 	const [displayRegServProv, setDisplayRegServProv] = useState('none');
-	/* const [displayRegClient, setDisplayRegClient] = useState('none'); */
 	const [displayClientVerify, setDisplayClientVerify] = useState('none');
 	const [displayPassRecovery, setDisplayPassRecovery] = useState('none');
 	const [showResponseModal, setShowResponseModal] = useState({
 		animation: '',
 		message: null,
 		border: '',
-		backdrop: '',
 	});
 
 	const Navigation = (
@@ -71,24 +71,26 @@ const Index = () => {
 		</NavItems>
 	);
 
-	const RegistrationAndLogin = (
+	const Authentifiacion = (
 		<>
+			<Backdrop backdropAnimation={showBackdrop} />
 			<ResponseModal
 				message={showResponseModal.message}
 				modalAnimation={showResponseModal.animation}
-				backdropAnimation={showResponseModal.backdrop}
 				displayLinkButton="none"
 				displayFormButton="block"
 				borderColor={showResponseModal.border}
 				link="/"
-				onClick={() =>
-					setShowResponseModal({
-						...showResponseModal,
-						animation: modalAnimationOut,
-						border: null,
-						backdrop: classes.backdropOut,
-					})
-				}
+				onClick={() => {
+					setShowResponseModal(
+						{
+							...showResponseModal,
+							animation: modalAnimationOut,
+							border: null,
+						},
+						setShowBackdrop(classes.backdropOut)
+					);
+				}}
 			/>
 			<Login
 				displayLogin={displayLogin}
@@ -96,12 +98,14 @@ const Index = () => {
 				setDisplayLogin={setDisplayLogin}
 				setDisplayPassRecovery={setDisplayPassRecovery}
 				setDisplayRegServProv={setDisplayRegServProv}
+				setShowBackdrop={setShowBackdrop}
 				setShowResponseModal={setShowResponseModal}
 			/>
 			<RegServProv
 				displayRegServProv={displayRegServProv}
 				setDisplayRegServProv={setDisplayRegServProv}
 				setIsLoading={setIsLoading}
+				setShowBackdrop={setShowBackdrop}
 				setShowResponseModal={setShowResponseModal}
 			/>
 			<ClientVerification
@@ -111,6 +115,8 @@ const Index = () => {
 			<PassRecovery
 				displayPassRecovery={displayPassRecovery}
 				setDisplayPassRecovery={setDisplayPassRecovery}
+				setShowBackdrop={setShowBackdrop}
+				setShowResponseModal={setShowResponseModal}
 			/>
 		</>
 	);
@@ -134,7 +140,7 @@ const Index = () => {
 				selectData={null}
 				backgroundColorLayout="#303030">
 				<Loader loading={isLoading} />
-				{RegistrationAndLogin}
+				{Authentifiacion}
 				{Navigation}
 				<Slider />
 				<OurServices />

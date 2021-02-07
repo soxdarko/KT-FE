@@ -839,12 +839,11 @@
 }
 
 .Confirmation {
+	position: fixed;
 	width: calc(100vw - 6px);
 	bottom: 0;
 	margin-bottom: -100vh;
 	opacity: 0;
-	position: fixed;
-	display: block;
 	z-index: 999999;
 	border: 3px dashed $base-orange-color;
 	p {

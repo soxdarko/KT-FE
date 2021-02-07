@@ -16,6 +16,7 @@ import classes from '../../UI/UI.module.scss';
 const PassRecovery = props => {
 	const { isMobile } = useDeviceDetect();
 	const isPageLoad = useRef(true);
+	const modalAnimation = isMobile ? classes.modalInMob : classes.modalInPC;
 	const [userData, setUserData] = useState([]);
 
 	const [formInput, setFormInput] = useState({
@@ -89,11 +90,11 @@ const PassRecovery = props => {
 			});
 			responseHandler(
 				props.setShowResponseModal,
-				props.modalAnimationIn,
+				modalAnimation,
 				'Morate uneti broj telefona ili validnu e-mail adresu',
-				'red',
-				classes.backdropIn
+				'red'
 			);
+			props.setShowBackdrop(classes.backdropIn);
 		}
 	};
 	const inputClassName = isMobile ? classes.InputTextMob : classes.InputText;

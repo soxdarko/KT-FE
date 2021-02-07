@@ -5,6 +5,7 @@ import ServiceProvidersEmployees from '../Components/DataFromBE/ServiceProviders
 
 import Layout from '../Components/hoc/Layout/Layout';
 import Profile from '../Components/Profile/Profile';
+import Backdrop from '../Components/UI/Backdrop';
 import ConfirmModal from '../Components/UI/Modal/ConfirmModal';
 import ResponseModal from '../Components/UI/Modal/ResponseModal';
 import ChangePass from '../Components/Auth/ChangePass';
@@ -28,7 +29,6 @@ const profil = () => {
 		animation: '',
 		message: null,
 		border: '',
-		backdrop: '',
 	});
 	return (
 		<>
@@ -53,27 +53,34 @@ const profil = () => {
 				sms="10"
 				license="5"
 			/>
+			<Backdrop
+				backdropAnimation={showBackdrop}
+				onClick={() => {
+					setShowBackdrop(classes.backdropOut),
+						setShowConfirmModal(classes.modalDown),
+						setShowInviteClient(classes.slideOutLeft);
+				}}
+			/>
 			<ResponseModal
 				modalAnimation={showResponseModal.animation}
-				backdropAnimation={showResponseModal.backdrop}
 				message={showResponseModal.message}
 				displayLinkButton="none"
 				displayFormButton="block"
 				borderColor={showResponseModal.border}
 				link="/"
 				onClick={() =>
-					setShowResponseModal({
-						...showResponseModal,
-						animation: modalAnimationOut,
-						border: null,
-						backdrop: classes.backdropOut,
-					})
+					setShowResponseModal(
+						{
+							...showResponseModal,
+							animation: modalAnimationOut,
+							border: null,
+						},
+						setShowBackdrop(classes.backdropOut)
+					)
 				}
 			/>
 			<ConfirmModal
 				display={displayConfirmModal}
-				setShowBackdrop={setShowBackdrop}
-				setShowConfirmModal={setShowConfirmModal}
 				animation={showConfirmModal}
 				message="Da li sigurno želite deaktivirati profil? Deaktivacija profila onemogućuje Vas i klijente da Vam rezervišu termine !!!"
 				submitValue="DEAKTIVIRAJ"
@@ -96,12 +103,14 @@ const profil = () => {
 				setDisplayPassRecovery={setDisplayPassRecovery}
 				setShowResponseModal={setShowResponseModal}
 				modalAnimationIn={modalAnimationIn}
+				setShowBackdrop={setShowBackdrop}
 			/>
 			<ChangePass
 				displayChangePass={displayChangePass}
 				setDisplayChangePass={setDisplayChangePass}
 				setDisplayPassRecovery={setDisplayPassRecovery}
 				setShowResponseModal={setShowResponseModal}
+				setShowBackdrop={setShowBackdrop}
 				modalAnimationIn={modalAnimationIn}
 			/>
 			<Profile

@@ -75,12 +75,11 @@ export function checkValidity(value, rules) {
 	return isValid;
 }
 
-export function responseHandler(setState, animation, message, border, backdrop) {
+export function responseHandler(setState, animation, message, border) {
 	setState({
 		animation: animation,
 		message: message,
 		border: border,
-		backdrop: backdrop,
 	});
 }
 
@@ -101,4 +100,17 @@ export const updateObject = (oldObject, updatedProperties) => ({
 
 export function redirectUser(location) {
 	Router.push(location);
+}
+
+export function debounce(func, duration) {
+	let shouldWait = false;
+	return function (...args) {
+		if (!shouldWait) {
+			func.apply(this, args);
+			shouldWait = true;
+			setTimeout(function () {
+				shouldWait = false;
+			}, duration);
+		}
+	};
 }

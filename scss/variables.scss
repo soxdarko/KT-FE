@@ -591,24 +591,24 @@ select {
 }
 
 @keyframes modalup {
-	0% {
+	from {
 		margin-bottom: -100vh;
 		opacity: 0;
 	}
-	100% {
+	to {
 		margin-bottom: 0;
 		opacity: 1;
 	}
 }
 
 @keyframes modaldown {
-	0% {
+	from {
 		margin-bottom: 0;
 		opacity: 1;
 	}
-	100% {
-		opacity: 0;
+	to {
 		margin-bottom: -100vh;
+		opacity: 0;
 	}
 }
 

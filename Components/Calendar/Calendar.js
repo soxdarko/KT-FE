@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 import moment from 'moment';
 /* import axios from '../../utils/Axios/axios-appointments'; */
-import { useDeviceDetect } from '../../helpers/universalFunctions';
+import { useDeviceDetect, debounce } from '../../helpers/universalFunctions';
 import Clients from '../DataFromBE/Clients';
 import Appointments from '../DataFromBE/Appointments';
 import ServiceProvidersServices from '../DataFromBE/ServiceProvidersServices';
@@ -61,15 +61,15 @@ const Calendar = props => {
 	const cloneScrollTop = useRef(null);
 	const cloneHeadScrollLeft = useRef(null);
 
-	function scrollPos() {
-		const body = cloneDiv.current.scrollTop;
-		cloneScrollTop.current.scrollTop = body;
-	}
+	let VerticalTaxing = debounce(() => {
+		const scroll = cloneDiv.current.scrollTop;
+		cloneScrollTop.current.scrollTop = scroll;
+	}, 0);
 
-	function scrollPosHead() {
-		const body = cloneDiv.current.scrollLeft;
-		cloneHeadScrollLeft.current.scrollLeft = body;
-	}
+	let HorisontalTaxing = debounce(() => {
+		const scroll = cloneDiv.current.scrollLeft;
+		cloneHeadScrollLeft.current.scrollLeft = scroll;
+	}, 0);
 
 	/// ////////////// Date menagemant start/////////////////
 	const currYear = moment().format('YYYY');
@@ -141,8 +141,7 @@ const Calendar = props => {
 					ref={cloneDiv}
 					style={{ width: isMobile ? '100%' : '97%' }}
 					onScroll={() => {
-						scrollPos();
-						scrollPosHead();
+						VerticalTaxing(), HorisontalTaxing();
 					}}>
 					{WorkingHours.map((obj, i) => (
 						<CalBodyRow
