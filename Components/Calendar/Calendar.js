@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import moment from 'moment';
 /* import axios from '../../utils/Axios/axios-appointments'; */
 import { useDeviceDetect, debounce } from '../../helpers/universalFunctions';
@@ -57,19 +57,19 @@ const Calendar = props => {
 	const [week, setWeek] = useState(0);
 	const [displayRegCodeClient, setDisplayRegCodeClient] = useState('none');
 
-	const cloneDiv = useRef(null);
-	const cloneScrollTop = useRef(null);
-	const cloneHeadScrollLeft = useRef(null);
+	const cloneDiv = useRef(0);
+	const cloneScrollTop = useRef(0);
+	const cloneHeadScrollLeft = useRef(0);
 
-	let VerticalTaxing = debounce(() => {
+	const VerticalTaxing = () => {
 		const scroll = cloneDiv.current.scrollTop;
 		cloneScrollTop.current.scrollTop = scroll;
-	}, 0);
+	};
 
-	let HorisontalTaxing = debounce(() => {
+	const HorisontalTaxing = () => {
 		const scroll = cloneDiv.current.scrollLeft;
 		cloneHeadScrollLeft.current.scrollLeft = scroll;
-	}, 0);
+	};
 
 	/// ////////////// Date menagemant start/////////////////
 	const currYear = moment().format('YYYY');
@@ -132,7 +132,7 @@ const Calendar = props => {
 			<table className={classes.calRightTable}>
 				<thead ref={cloneHeadScrollLeft} style={{ width: isMobile ? '100%' : '97%' }}>
 					<tr>
-						{WorkingHours.map((obj, i) => (
+						{WorkingHours.map(obj => (
 							<Days days={obj.daysInWeek} key={obj.daysInWeek} date={currMondayName} />
 						))}
 					</tr>

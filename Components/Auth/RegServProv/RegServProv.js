@@ -5,7 +5,7 @@ import {
 	updateValidity,
 	responseHandler,
 } from '../../../helpers/universalFunctions';
-import { newCompany } from '../../../API/userRegistration';
+import { newCompany } from '../../../pages/api/userRegistration';
 import initState from './initState';
 
 import Select from '../../UI/Select';

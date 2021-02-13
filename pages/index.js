@@ -2,8 +2,11 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Head from 'next/head';
 import { useDeviceDetect } from '../helpers/universalFunctions';
+import { setInfo } from '../redux/actions/main';
+import { connect } from 'react-redux';
 
 import Layout from '../Components/hoc/Layout/Layout';
+import Backdrop from '../Components/UI/Backdrop';
 import NavItem from '../Components/Navigation/NavItem';
 import NavItems from '../Components/Navigation/NavItems';
 import Slider from '../Components/HomePage/Slider';
@@ -19,9 +22,9 @@ import ResponseModal from '../Components/UI/Modal/ResponseModal';
 import Loader from '../Components/UI/Loader';
 
 import classes from '../Components/Navigation/Navigation.module.scss';
-import Backdrop from '../Components/UI/Backdrop';
 
-const Index = () => {
+const Index = props => {
+	const { userInfo, setInfo } = props;
 	const { isMobile } = useDeviceDetect();
 	const modalAnimationOut = isMobile ? classes.modalOutMob : classes.modalOutPC;
 	const [isLoading, setIsLoading] = useState(false);
@@ -154,10 +157,22 @@ const Index = () => {
 						displayLogin === 'block' ? 'block' : displayRegServProv === 'block' ? 'block' : 'none'
 					}
 				/>
+				<button onClick={() => console.log(userInfo)}></button> {/* test za redux */}
 				<Footer />
 			</Layout>
 		</>
 	);
 };
 
-export default Index;
+/* test za redux */
+const mapStateToProps = state => ({
+	userInfo: state.main,
+});
+
+const mapDispatchToProps = {
+	setInfo: setInfo,
+};
+
+/* test za redux */
+
+export default connect(mapStateToProps, mapDispatchToProps)(Index);

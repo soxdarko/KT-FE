@@ -1,8 +1,7 @@
 import axios from 'axios';
 
-export const fetchJson = (url, method, headers, data) => {
-	/* const headers = new Headers({}); */
-	const token = headers.Authorization;
+export const fetchJson = (url, method, headers, body) => {
+	const token = headers.Auth;
 	const apiUrl = 'http://localhost:5000/';
 
 	const Axios = axios.create({
@@ -10,13 +9,13 @@ export const fetchJson = (url, method, headers, data) => {
 	});
 
 	if (token) {
-		headers.append('Authorization', `Bearer ${token}`);
+		headers.append('Auth', `Bearer ${token}`);
 	}
 
 	return Axios({
 		method: method,
 		url: url,
-		data: data,
+		data: body,
 		headers,
 	}).then(checkStatus);
 };

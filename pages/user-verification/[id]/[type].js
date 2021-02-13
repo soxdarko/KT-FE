@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { cookieReqParser } from '../../../helpers/universalFunctions';
 import { fetchJson } from '../../../API/fetchJson';
 import { userVerification } from '../../../API/userVerification';
+import { myGet } from "../../../API/myGet";
 
 import VerifyModal from '../../../Components/UI/Modal/VerifyModal';
 
@@ -48,7 +49,7 @@ const userVerificationPage = props => {
 	);
 };
 
-userVerificationPage.getInitialProps = async ({ req, query }) => {
+/* userVerificationPage.getInitialProps = async ({ req, query }) => {
 	const { id, type } = query;
 	let cookiesString = req != undefined ? req.headers.cookie : '';
 	let token = cookieReqParser(cookiesString, 'pdfgen_token');
@@ -76,6 +77,13 @@ userVerificationPage.getInitialProps = async ({ req, query }) => {
 		id: id,
 		type: type,
 	};
-};
+}; */
 
-export default userVerificationPage;
+
+
+userVerificationPage.getInitialProps = async ctx => {
+    const userParams = await myGet('http://localhost:3000/api/people', ctx);
+    return userParams
+}
+
+export default userVerificationPage
