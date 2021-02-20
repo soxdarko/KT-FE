@@ -1,9 +1,11 @@
 import { useState } from 'react';
+import { connect } from 'react-redux';
+import authenticate from '../redux/actions/authActions';
+/* import initialize from '../helpers/initialize'; */
 import Link from 'next/link';
 import Head from 'next/head';
 import { useDeviceDetect } from '../helpers/universalFunctions';
-import { setInfo } from '../redux/actions/main';
-import { connect } from 'react-redux';
+/* import { setCookie, getCookie, removeCookie } from '../helpers/cookie'; */
 
 import Layout from '../Components/hoc/Layout/Layout';
 import Backdrop from '../Components/UI/Backdrop';
@@ -23,7 +25,7 @@ import Loader from '../Components/UI/Loader';
 
 import classes from '../Components/Navigation/Navigation.module.scss';
 
-const Index = props => {
+const Index = ({ token }, props) => {
 	const { userInfo, setInfo } = props;
 	const { isMobile } = useDeviceDetect();
 	const modalAnimationOut = isMobile ? classes.modalOutMob : classes.modalOutPC;
@@ -103,6 +105,7 @@ const Index = props => {
 				setDisplayRegServProv={setDisplayRegServProv}
 				setShowBackdrop={setShowBackdrop}
 				setShowResponseModal={setShowResponseModal}
+				/* setCookie={setCookie} */
 			/>
 			<RegServProv
 				displayRegServProv={displayRegServProv}
@@ -157,22 +160,22 @@ const Index = props => {
 						displayLogin === 'block' ? 'block' : displayRegServProv === 'block' ? 'block' : 'none'
 					}
 				/>
-				<button onClick={() => console.log(userInfo)}></button> {/* test za redux */}
+				<button onClick={() => console.log(authenticate)}></button> {/* test za redux */}
+				<h2>{token}</h2>
 				<Footer />
 			</Layout>
 		</>
 	);
 };
 
-/* test za redux */
-const mapStateToProps = state => ({
-	userInfo: state.main,
-});
+/* export function getServerSideProps({ req, res }) {
+	return console.log(req), { props: { token: req.headers.cookie || '' } };
+}
 
-const mapDispatchToProps = {
-	setInfo: setInfo,
-};
 
-/* test za redux */
+Index.getInitialProps = async ctx => {
+	const userParams = await myGet('http://localhost:3000/api/people', ctx);
+	return userParams;
+}; */
 
-export default connect(mapStateToProps, mapDispatchToProps)(Index);
+export default Index;

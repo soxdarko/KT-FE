@@ -1,6 +1,7 @@
 import { useDeviceDetect } from '../../helpers/universalFunctions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarAlt, faAddressBook, faCut, faCog } from '@fortawesome/free-solid-svg-icons';
+import { removeCookie } from '../../helpers/cookie';
 
 import NavItems from './NavItems';
 import NavItem from './NavItem';
@@ -133,6 +134,23 @@ const SideDrawer = props => {
 								<Input
 									type="button"
 									value="Moj profil"
+									className={props.classNameProfile}
+									fontSize="1rem"
+								/>
+							</NavItem>
+							<FontAwesomeIcon
+								icon={faCog}
+								className={classes.sideDrawerIconPC}
+								style={{ color: props.colorProfileIcon }}
+							/>
+							<NavItem
+								display="block"
+								className={classes.NavItemServiceProviderPC}
+								link="#"
+								onClick={() => removeCookie('token')}>
+								<Input
+									type="button"
+									value="Odajava"
 									className={props.classNameProfile}
 									fontSize="1rem"
 								/>

@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import moment from 'moment';
 /* import axios from '../../utils/Axios/axios-appointments'; */
 import { useDeviceDetect, debounce } from '../../helpers/universalFunctions';

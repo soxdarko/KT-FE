@@ -1,4 +1,4 @@
-import { fetchJson } from './fetchJson';
+/* import { fetchJson } from './fetchJson';
 
 export const userLogin = userData => {
 	return fetchJson(
@@ -9,4 +9,14 @@ export const userLogin = userData => {
 		},
 		userData
 	);
+}; */
+
+import { fetchJson } from './fetchJson';
+import axios from 'axios';
+
+export const userLogin = userData => {
+	return axios.post('http://localhost:3000/api/login', {
+		'Content-Type': 'application/json',
+		userData: userData,
+	});
 };

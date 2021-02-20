@@ -1,12 +1,17 @@
-import { useEffect } from 'react';
-import { cookieReqParser } from '../../../helpers/universalFunctions';
-import { fetchJson } from '../../../API/fetchJson';
-import { userVerification } from '../../../API/userVerification';
-import { myGet } from "../../../API/myGet";
+import { useState, useEffect } from 'react';
+import { useDeviceDetect, cookieReqParser } from '../../../helpers/universalFunctions';
+import { fetchJson } from '../../api/fetchJson';
+import { userVerification } from '../../api/userVerification';
 
 import VerifyModal from '../../../Components/UI/Modal/VerifyModal';
 
+import classes from '../../../Components/UI/UI.module.scss';
+
 const userVerificationPage = props => {
+	const { isMobile } = useDeviceDetect();
+	const modalAnimationIn = isMobile ? classes.modalInMob : classes.modalInPC;
+	const [showResponseModal, setShowResponseModal] = useState('');
+
 	const id = props.id.split('=')[1];
 	const type = props.type.split('=')[1];
 	const userData = {
@@ -18,6 +23,7 @@ const userVerificationPage = props => {
 		const api = userVerification(userData)
 			.then(response => {
 				console.log(response);
+				setShowResponseModal(modalAnimationIn);
 			})
 			.catch(error => {
 				if (error.response) {
@@ -44,12 +50,13 @@ const userVerificationPage = props => {
 				display="block"
 				borderColor="green"
 				link="/"
+				modalAnimation={showResponseModal}
 			/>
 		</>
 	);
 };
 
-/* userVerificationPage.getInitialProps = async ({ req, query }) => {
+userVerificationPage.getInitialProps = async ({ req, query }) => {
 	const { id, type } = query;
 	let cookiesString = req != undefined ? req.headers.cookie : '';
 	let token = cookieReqParser(cookiesString, 'pdfgen_token');
@@ -77,13 +84,6 @@ const userVerificationPage = props => {
 		id: id,
 		type: type,
 	};
-}; */
+};
 
-
-
-userVerificationPage.getInitialProps = async ctx => {
-    const userParams = await myGet('http://localhost:3000/api/people', ctx);
-    return userParams
-}
-
-export default userVerificationPage
+export default userVerificationPage;

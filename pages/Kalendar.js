@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import ServiceProvidersEmployees from '../Components/DataFromBE/ServiceProvidersEmployees';
+import Auth from '../middleware/auth';
 
 import Head from 'next/head';
 import Layout from '../Components/hoc/Layout/Layout';

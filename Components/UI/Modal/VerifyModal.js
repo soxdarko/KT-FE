@@ -12,13 +12,17 @@ const VerifyModal = props => {
 	const classNameMob = [classes.ResponseMob, props.modalAnimation].join(' ');
 	return (
 		<>
-			<Backdrop display={props.display} zIndex="499" />
+			<Backdrop display="block" zIndex="499" />
 			<div
 				className={isMobile ? classNameMob : className}
 				style={{ display: props.display, borderColor: props.borderColor }}>
 				<p>{props.message}</p>
 				<NavItem link={props.link} color="transparent">
-					<Input type="button" value="OK" className={classes.Confirm} />
+					<Input
+						type="button"
+						value="OK"
+						className={classes.Confirm} /* onClick={props.onClick} */
+					/>
 				</NavItem>
 			</div>
 		</>

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import axios from 'axios';
 import { userLogin } from '../.././../pages/api/userLogin';
 import {
 	useDeviceDetect,
@@ -15,6 +16,7 @@ import classes from '../../UI/UI.module.scss';
 const Login = props => {
 	const { isMobile } = useDeviceDetect();
 	const isPageLoad = useRef(true);
+	const [cookie, setCookie] = [''];
 	const [loginUser, setLoginUser] = useState([]);
 	const [formInput, setFormInput] = useState({
 		userName: {
@@ -37,8 +39,9 @@ const Login = props => {
 	const loginHandler = () => {
 		const api = userLogin(userData)
 			.then(response => {
-				console.log(response);
+				/* props.setCookie('token', response.data.access_token); */
 				redirectUser('/kalendar');
+				console.log(response);
 			})
 			.catch(error => {
 				if (error.response) {
@@ -151,6 +154,8 @@ const Login = props => {
 			props.setDisplayLogin('none');
 		}
 	};
+
+	console.log(cookie);
 
 	const inputClassName = isMobile ? classes.InputTextMob : classes.InputText;
 	return (
