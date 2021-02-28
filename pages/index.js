@@ -2,12 +2,9 @@ import { useState } from 'react';
 import { connect } from 'react-redux';
 import authenticate from '../redux/actions/authActions';
 import nextCookie from 'next-cookies';
-/* import initialize from '../helpers/initialize'; */
 import Link from 'next/link';
 import Head from 'next/head';
 import { useDeviceDetect } from '../helpers/universalFunctions';
-import { redirectUser } from '../helpers/universalFunctions';
-/* import { setCookie, getCookie, removeCookie } from '../helpers/cookie'; */
 
 import Layout from '../Components/hoc/Layout/Layout';
 import Backdrop from '../Components/UI/Backdrop';
