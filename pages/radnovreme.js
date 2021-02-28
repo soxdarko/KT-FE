@@ -1,9 +1,9 @@
 const radnovreme = () => {
-    return (
-        <div>
-            <div></div>
-        </div>
-    )
-}
+	return (
+		<div>
+			<div>zdravo</div>
+		</div>
+	);
+};
 
-export default radnovreme
+export default radnovreme;

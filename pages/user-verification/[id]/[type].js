@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useDeviceDetect, cookieReqParser } from '../../../helpers/universalFunctions';
-import { fetchJson } from '../../api/fetchJson';
+import { fetchJson } from '../../../api/fetchJson';
 import { userVerification } from '../../api/userVerification';
 
 import VerifyModal from '../../../Components/UI/Modal/VerifyModal';

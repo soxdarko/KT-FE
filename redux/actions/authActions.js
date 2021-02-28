@@ -1,5 +1,5 @@
 import Router from 'next/router';
-import { fetchJson } from '../../pages/api/fetchJson';
+import { fetchJson } from '../../api/fetchJson';
 import { AUTHENTICATE, DEAUTHENTICATE } from '../types';
 /* import { API } from '../../config'; */
 import { setCookie, removeCookie } from '../../helpers/cookie';

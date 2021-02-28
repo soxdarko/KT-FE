@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import ServiceProvidersEmployees from '../Components/DataFromBE/ServiceProvidersEmployees';
-import Auth from '../middleware/auth';
+import axios from 'axios';
+import { auth } from '../helpers/auth';
+import { withAuthSync } from '../helpers/withAuthSync';
 
 import Head from 'next/head';
 import Layout from '../Components/hoc/Layout/Layout';
@@ -49,4 +51,19 @@ const kalendar = () => {
 	);
 };
 
-export default kalendar;
+/* export async function getServerSideProps(ctx) {
+	const url = 'http://localhost:3000/api/auth';
+	const token = ctx.req.headers.cookie;
+	const res = await axios
+		.post(url, {
+			headers: { Authorization: 'Bearer ' + token },
+		})
+		.then(response => {
+			return response;
+		});
+	const data = res.json();
+
+	return { props: { data } };
+} */
+
+export default withAuthSync(kalendar);

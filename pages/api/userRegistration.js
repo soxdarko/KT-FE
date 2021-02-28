@@ -1,4 +1,4 @@
-import { fetchJson } from './fetchJson';
+import { fetchJson } from '../../api/fetchJson';
 
 export const newCompany = companyData => {
 	return fetchJson(

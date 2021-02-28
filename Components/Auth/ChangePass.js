@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from 'react';
-import axios from '../../helpers/Axios';
+import axios from 'axios';
 import {
 	useDeviceDetect,
 	inputChangedHandler,

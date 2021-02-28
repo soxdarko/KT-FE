@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { connect } from 'react-redux';
 import authenticate from '../redux/actions/authActions';
+import nextCookie from 'next-cookies';
 /* import initialize from '../helpers/initialize'; */
 import Link from 'next/link';
 import Head from 'next/head';
 import { useDeviceDetect } from '../helpers/universalFunctions';
+import { redirectUser } from '../helpers/universalFunctions';
 /* import { setCookie, getCookie, removeCookie } from '../helpers/cookie'; */
 
 import Layout from '../Components/hoc/Layout/Layout';
@@ -25,7 +27,7 @@ import Loader from '../Components/UI/Loader';
 
 import classes from '../Components/Navigation/Navigation.module.scss';
 
-const Index = ({ token }, props) => {
+const Index = props => {
 	const { userInfo, setInfo } = props;
 	const { isMobile } = useDeviceDetect();
 	const modalAnimationOut = isMobile ? classes.modalOutMob : classes.modalOutPC;
@@ -40,6 +42,14 @@ const Index = ({ token }, props) => {
 		message: null,
 		border: '',
 	});
+
+	/* const isVerified = token => {
+		if (token) {
+			redirectUser('/kalendar');
+		}
+	}; */
+
+	/* isVerified(token); */
 
 	const Navigation = (
 		<NavItems display={isMobile ? 'none' : 'inherit'}>
@@ -161,21 +171,20 @@ const Index = ({ token }, props) => {
 					}
 				/>
 				<button onClick={() => console.log(authenticate)}></button> {/* test za redux */}
-				<h2>{token}</h2>
 				<Footer />
 			</Layout>
 		</>
 	);
 };
 
-/* export function getServerSideProps({ req, res }) {
-	return console.log(req), { props: { token: req.headers.cookie || '' } };
+export async function getServerSideProps(ctx) {
+	const token = await nextCookie(ctx);
+
+	if (token) {
+		return console.log('autorizovani ste'), { props: { token: true } };
+	} else {
+		return console.log('niste autorizovani'), { props: { token: false } };
+	}
 }
-
-
-Index.getInitialProps = async ctx => {
-	const userParams = await myGet('http://localhost:3000/api/people', ctx);
-	return userParams;
-}; */
 
 export default Index;
