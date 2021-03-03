@@ -298,7 +298,8 @@ footer {
 	}
 }
 
-form {
+form,
+.FormLayout {
 	position: absolute;
 	text-align: center;
 	z-index: 301;
