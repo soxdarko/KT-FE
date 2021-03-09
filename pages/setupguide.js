@@ -11,11 +11,15 @@ import Input from '../Components/UI/Forms/Input';
 import Select from '../Components/UI/Select';
 import DescriptionLabel from '../Components/UI/DescriptionLabel';
 import Backdrop from '../Components/UI/Backdrop';
-import AddSaloonForm from '../Components/SetupForms/addSaloonForm';
+import AddSaloonForm from '../Components/SetupForms/AddSaloonForm';
 import AddEmployeeForm from '../Components/SetupForms/AddEmployeeForm';
 import ResponseModal from '../Components/UI/Modal/ResponseModal';
 
 import classes from '../Components/UI/UI.module.scss';
+import TeamStatusForm from '../Components/SetupForms/TeamStatusForm';
+import GreetingForm from '../Components/SetupForms/GreetingForm';
+import AddServicesForm from '../Components/SetupForms/AddServicesForm';
+import WorkingTimeForm from '../Components/SetupForms/WorkingTimeForm';
 
 const setupguide = () => {
 	const { isMobile } = useDeviceDetect();
@@ -30,87 +34,13 @@ const setupguide = () => {
 	const [displayGreeting, setDisplayGreeting] = useState('none');
 	const [displayteamStatusForm, setDisplayteamStatusForm] = useState('none');
 	const [displayAddSaloonForm, setDisplayAddSaloonForm] = useState('none');
-	const [displayAddEmployeeForm, setDisplayAddEmployeeForm] = useState('block');
-	const [newEmployee, setNewEmployee] = useState('none');
-	const [question, setQuestion] = useState({
-		message: 'Da li imate više salona?',
-		displaySaloon: 'block',
-		displayEmployee: 'none',
-	});
+	const [displayAddEmployeeForm, setDisplayAddEmployeeForm] = useState('none');
+	const [displayAddServicesForm, setDisplayAddServicesForm] = useState('none');
+	const [displayWorkingTimeForm, setDisplayWorkingTimeForm] = useState('block');
 
 	const nextStep = () => setStepCounter(setCounter => setCounter + 1);
 
 	const inputClassName = isMobile ? classes.InputTextMob : classes.InputText;
-
-	const greetingForm = (
-		<form style={{ display: displayGreeting }} className={classes.GuideForm}>
-			<h3>Dobrodošli!</h3>
-			<DescriptionLabel
-				text={
-					'Čestitamo na odluci koja će unaprediti Vaše poslovanje. Napisati tekst koji će navesti usera da isprati vodič do kraja'
-				}
-				className={classes.DesciptionLabel}
-				margin="20px 0 50px 0"
-				color="orange"
-			/>
-			<Input
-				type="button"
-				value="nastavi >>>"
-				className={classes.Forward}
-				onClick={() => {
-					setDisplayGreeting('none'), setDisplayteamStatusForm('block'), nextStep();
-				}}
-			/>
-		</form>
-	);
-
-	const teamStatusForm = (
-		<form style={{ display: displayteamStatusForm }} className={classes.GuideForm}>
-			<h3>{question.message}</h3>
-			<div className={classes.ChoiceButtonCountainer} style={{ display: question.displaySaloon }}>
-				<Input
-					type="button"
-					value="DA"
-					className={[classes.ChoiceButton, classes.Confirm].join(' ')}
-					onClick={() => {
-						setDisplayteamStatusForm('none'), setDisplayAddSaloonForm('block'), nextStep();
-					}}
-				/>
-				<Input
-					type="button"
-					value="NE"
-					className={[classes.ChoiceButton, classes.Deny].join(' ')}
-					onClick={() => {
-						nextStep(),
-							setQuestion({
-								...question,
-								message: 'Da li ste jedini zaposleni?',
-								displaySaloon: 'none',
-								displayEmployee: 'block',
-							});
-					}}
-				/>
-			</div>
-			<div className={classes.ChoiceButtonCountainer} style={{ display: question.displayEmployee }}>
-				<Input
-					type="button"
-					value="DA" //Unos radnika u bazu na osnovu registracionih podataka
-					className={[classes.ChoiceButton, classes.Confirm].join(' ')}
-					onClick={() => {
-						setDisplayteamStatusForm('none'), nextStep();
-					}}
-				/>
-				<Input
-					type="button"
-					value="NE"
-					className={[classes.ChoiceButton, classes.Deny].join(' ')}
-					onClick={() => {
-						setDisplayteamStatusForm('none'), nextStep();
-					}}
-				/>
-			</div>
-		</form>
-	);
 
 	return (
 		<>
@@ -153,8 +83,18 @@ const setupguide = () => {
 					<h2 className={isMobile ? classes.FormTitleMob : classes.FormTitle}>
 						VODIČ ZA PODEŠAVANJE
 					</h2>
-					{greetingForm}
-					{teamStatusForm}
+					<GreetingForm
+						displayGreeting={displayGreeting}
+						setDisplayGreeting={setDisplayGreeting}
+						setDisplayteamStatusForm={setDisplayteamStatusForm}
+						nextStep={nextStep}
+					/>
+					<TeamStatusForm
+						displayteamStatusForm={displayteamStatusForm}
+						setDisplayteamStatusForm={setDisplayteamStatusForm}
+						setDisplayAddSaloonForm={setDisplayAddSaloonForm}
+						nextStep={nextStep}
+					/>
 					<AddSaloonForm
 						displayAddSaloonForm={displayAddSaloonForm}
 						setDisplayAddSaloonForm={setDisplayAddSaloonForm}
@@ -168,6 +108,20 @@ const setupguide = () => {
 						setDisplayAddEmployeeForm={setDisplayAddEmployeeForm}
 						nextStep={nextStep}
 						modalAnimation={showResponseModal.animation}
+						setShowResponseModal={setShowResponseModal}
+						setShowBackdrop={setShowBackdrop}
+					/>
+					<AddServicesForm
+						displayAddServicesForm={displayAddServicesForm}
+						setDisplayAddServicesForm={setDisplayAddServicesForm}
+						nextStep={nextStep}
+						setShowResponseModal={setShowResponseModal}
+						setShowBackdrop={setShowBackdrop}
+					/>
+					<WorkingTimeForm
+						displayWorkingTimeForm={displayWorkingTimeForm}
+						setDisplayWorkingTimeForm={setDisplayWorkingTimeForm}
+						nextStep={nextStep}
 						setShowResponseModal={setShowResponseModal}
 						setShowBackdrop={setShowBackdrop}
 					/>

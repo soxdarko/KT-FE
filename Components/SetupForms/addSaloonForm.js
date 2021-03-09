@@ -7,8 +7,8 @@ import {
 } from '../../helpers/universalFunctions';
 import initSaloonForm from './initSaloonForm';
 
-import Input from '../../Components/UI/Forms/Input';
-import Select from '../../Components/UI/Select';
+import Input from '../UI/Forms/Input';
+import Select from '../UI/Select';
 
 import classes from '../../Components/UI/UI.module.scss';
 
@@ -222,7 +222,7 @@ const addSaloonForm = props => {
 				value="nastavi >>>"
 				className={classes.Forward}
 				onClick={() => {
-					setDisplayAddSaloonForm('none'), setDisplayGreeting('none'), nextStep();
+					props.setDisplayAddSaloonForm('none'), props.nextStep();
 				}}
 			/>
 		</div>

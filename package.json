@@ -38,6 +38,7 @@
 		"react-router-dom": "^5.2.0",
 		"react-scroll": "^1.8.1",
 		"react-share": "^4.3.1",
+		"react-simple-timefield": "^3.2.3",
 		"react-spinners": "^0.10.4",
 		"react-textarea-autosize": "^8.2.0",
 		"redux": "^4.0.5",

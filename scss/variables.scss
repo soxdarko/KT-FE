@@ -28,6 +28,11 @@ $list-title-color: rgba(34, 34, 34, 0.794);
 $list-name-color: rgba(255, 255, 255, 0.801);
 $list-prop-color: $base-orange-color;
 
+.Spacer {
+	display: flex;
+	flex: 1;
+}
+
 .Loader {
 	position: fixed;
 	top: 45vh;
@@ -163,6 +168,12 @@ hr {
 	height: 3px;
 	border: none;
 	background-image: $orange-line-color;
+}
+
+@mixin flexBoxCenter {
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 @mixin buttonMob {

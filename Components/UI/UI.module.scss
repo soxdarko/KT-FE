@@ -946,6 +946,13 @@
 	margin-top: 30px;
 }
 
+.Save {
+	width: auto;
+	padding: 5px 10px;
+	margin: auto;
+	margin-top: 30px;
+}
+
 .Forward {
 	@include button;
 	display: inline-block;
@@ -972,7 +979,13 @@
 	}
 }
 
-.checkboxRemove {
+.addForSelectedWrapper {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+}
+
+.addForSelected + label {
 	height: 20px !important;
 	width: 20px !important;
 	top: 3px;
@@ -1009,4 +1022,44 @@
 			color: #fffdfd;
 		}
 	}
+}
+
+.addForSelected:checked + label {
+	&:before {
+		content: '✔';
+		display: inline-block;
+		position: absolute;
+		height: 20px !important;
+		width: 20px !important;
+		margin: 0 0 0 -10px !important;
+		font: {
+			size: 26.66667px;
+			weight: bold;
+		}
+		text-align: center;
+		line-height: 20px !important;
+		color: green;
+		background-color: $base-orange-color;
+	}
+	&:after {
+		content: '';
+		display: block;
+		position: relative;
+		z-index: 100;
+		background-color: #40e0d0;
+	}
+}
+
+.pickDuratuion {
+	display: block;
+	width: 400px !important;
+	margin: 20px auto 5px auto;
+	font-size: 18px !important;
+}
+
+.pickDuratuionMob {
+	display: block;
+	width: 400px !important;
+	margin: 20px auto 5px auto;
+	font-size: 18px !important;
 }

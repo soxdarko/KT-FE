@@ -41,6 +41,8 @@ const Input = props => {
 				maxWidth: props.maxWidth,
 				height: props.height,
 				margin: props.margin,
+				marginTop: props.marginTop,
+				marginBottom: props.marginBottom,
 				float: props.float,
 				fontSize: props.fontSize,
 				color: props.color,

@@ -7,8 +7,8 @@ import {
 } from '../../helpers/universalFunctions';
 import initEmployeeForm from './initEmployeeForm';
 
-import Input from '../../Components/UI/Forms/Input';
-import Select from '../../Components/UI/Select';
+import Input from '../UI/Forms/Input';
+import Select from '../UI/Select';
 
 import classes from '../../Components/UI/UI.module.scss';
 
