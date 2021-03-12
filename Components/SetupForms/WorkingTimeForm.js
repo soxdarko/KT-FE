@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
+import moment from 'moment';
 import {
 	useDeviceDetect,
 	inputChangedHandler,
 	updateValidity,
 	responseHandler,
+	currDayFormat,
 } from '../../helpers/universalFunctions';
 import initServicesForm from './initServicesForm';
 
@@ -21,30 +23,66 @@ const WorkingTimeForm = props => {
 	const [workingTimeData, setWorkingTime] = useState({});
 
 	const [formInput, setFormInput] = useState({
-		serviceName: {
-			value: '',
-			touched: false,
-			valid: true,
-		},
-		description: {
-			value: '',
-			touched: false,
-			valid: true,
-		},
-		duration: {
-			value: '',
-			touched: false,
-			valid: true,
-		},
-		price: {
+		monday: {
 			value: '',
 			touched: false,
 			valid: true,
 		},
 	});
 
-	const d = new Date();
-	const today = d.getDate();
+	const d_Start = new Date(),
+		d_End = new Date(),
+		year = d_Start.getFullYear(),
+		mondays = [],
+		mondaysInMiliseconds = [];
+
+	d_Start.setDate(1);
+	d_End.setDate(7);
+
+	const today = d_Start.getDate();
+
+	function currMonday(d) {
+		const day = d_Start.getDay(),
+			diff = d_Start.getDate() - day + (day == 0 ? -6 : 1); // adjust when day is sunday
+		return new Date(d_Start.setDate(diff));
+	}
+	// Get the first Monday in the month
+	while (d_Start.getDay() !== 1) {
+		d_Start.setDate(d_Start.getDate() + 1);
+	}
+
+	const currMondayMs = currMonday(new Date()).getTime();
+	const currSundayMs = parseInt(currMondayMs) + 1000 * 60 * 60 * 24 * 6;
+	const currMondayISO = new Date(currMondayMs);
+
+	// Get all the other Mondays in the month
+
+	while (d_Start.getFullYear() < parseInt(year) + 2) {
+		let pushMondays = new Date(d_Start.getTime());
+		let pushSundays = new Date(d_End.getTime());
+		mondays.push(
+			(pushMondays.getDate() < 10 ? '0' : '') +
+				pushMondays.getDate() +
+				'.' +
+				(pushMondays.getMonth() < 9 ? '0' : '') +
+				(pushMondays.getMonth() + 1) +
+				'.' +
+				pushMondays.getFullYear() +
+				'.' +
+				' - ' +
+				(pushSundays.getDate() < 10 ? '0' : '') +
+				pushSundays.getDate() +
+				'.' +
+				(pushSundays.getMonth() < 9 ? '0' : '') +
+				(pushSundays.getMonth() + 1) +
+				'.' +
+				pushSundays.getFullYear() +
+				'.'
+		);
+		d_Start.setDate(d_Start.getDate() + 7);
+		d_End.setDate(d_End.getDate() + 7);
+		mondaysInMiliseconds.push(d_Start.getTime());
+	}
 
 	const demodays = [
 		{
@@ -183,7 +221,17 @@ const WorkingTimeForm = props => {
 		<div style={{ display: props.displayworkingTimeForm }}>
 			<h3>Unesite radno vreme</h3>
 			<div className={classes.WorkingTimeHeader}>
-				<Select />
+				<Select
+					name="monday"
+					onChange={e => inputChangedHandler(e, 'monday', formInput, setFormInput)}>
+					{mondays.map((monday, i) => {
+						return (
+							<option key={monday} name="monday" value={mondaysInMiliseconds[i]}>
+								{monday}
+							</option>
+						);
+					})}
+				</Select>
 				<Input type="button" value="Kopiraj" />
 				<Input type="button" value="Nalepi" />
 			</div>
@@ -234,7 +282,6 @@ const WorkingTimeForm = props => {
 					</div>
 					<div className={classes.WorkingTimeAbsence}>
 						{demodays.map((day, i) => {
-							console.log(day.ned);
 							return (
 								<div className={classes.AbsencePairsContainer} key={i}>
 									<div className={classes.AbsenceRadioContainer}>
@@ -287,6 +334,7 @@ const WorkingTimeForm = props => {
 				value="Sačuvaj"
 				className={[classes.ChoiceButton, classes.Save].join(' ')}
 				display="block"
+				onClick={() => console.log(formInput)}
 				/* onClick={onSubmit} */
 			/>
 			<Input

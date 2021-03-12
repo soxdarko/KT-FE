@@ -114,3 +114,9 @@ export function debounce(func, duration) {
 		}
 	};
 }
+
+export const currDayFormat = day => {
+	const currDay = day.getDate() + '.' + (day.getMonth() + 1) + '.' + day.getFullYear() + '.';
+
+	return currDay;
+};
