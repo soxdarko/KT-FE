@@ -203,7 +203,9 @@ const AddServicesForm = props => {
 				value="nastavi >>>"
 				className={classes.Forward}
 				onClick={() => {
-					props.setDisplayAddServicesForm('none'), props.nextStep();
+					props.setDisplayAddServicesForm('none'),
+						props.setDisplayWorkingTimeForm('block'),
+						props.nextStep();
 				}}
 			/>
 		</div>

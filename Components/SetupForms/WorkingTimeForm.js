@@ -217,136 +217,271 @@ const WorkingTimeForm = props => {
 
 	const inputClassName = isMobile ? classes.InputTextMob : classes.InputText;
 	const pickDurationClassName = isMobile ? classes.pickDuratuionMob : classes.pickDuratuion;
-	return (
-		<div style={{ display: props.displayworkingTimeForm }}>
-			<h3>Unesite radno vreme</h3>
-			<div className={classes.WorkingTimeHeader}>
-				<Select
-					name="monday"
-					onChange={e => inputChangedHandler(e, 'monday', formInput, setFormInput)}>
-					{mondays.map((monday, i) => {
-						return (
-							<option key={monday} name="monday" value={mondaysInMiliseconds[i]}>
-								{monday}
-							</option>
-						);
-					})}
-				</Select>
-				<Input type="button" value="Kopiraj" />
-				<Input type="button" value="Nalepi" />
-			</div>
-			<div className={classes.WorkingTimeContainer}>
-				<div className={classes.WorkingTimeHead}>
-					<div className={classes.WorkingTimeHead} style={{ width: '7vw' }}>
-						Dan
+	if (isMobile) {
+		return (
+			<div style={{ display: props.displayWorkingTimeForm }}>
+				<h3>Unesite radno vreme</h3>
+				<div className={classes.WorkingTimeHeader}>
+					<Input type="button" value="Kopiraj" />
+					<Select
+						name="monday"
+						onChange={e => inputChangedHandler(e, 'monday', formInput, setFormInput)}>
+						{mondays.map((monday, i) => {
+							return (
+								<option key={monday} name="monday" value={mondaysInMiliseconds[i]}>
+									{monday}
+								</option>
+							);
+						})}
+					</Select>
+					<Input type="button" value="Nalepi" />
+				</div>
+				<div className={classes.WorkingTimeContainer}>
+					<div className={classes.WorkingTimeHead}>
+						<div className={classes.WorkingTimeHead} style={{ width: '7vw' }}>
+							Dan
+						</div>
+						<div className={classes.WorkingTimeHead} style={{ width: '30vw' }}>
+							Prvi deo
+						</div>
+						<div className={classes.WorkingTimeHead} style={{ width: '30vw' }}>
+							Drugi deo
+						</div>
+						<div className={classes.WorkingTimeHead} style={{ width: '33vw' }}>
+							Odsustvo
+						</div>
 					</div>
-					<div className={classes.WorkingTimeHead} style={{ width: '30vw' }}>
-						Prvi deo
-					</div>
-					<div className={classes.WorkingTimeHead} style={{ width: '30vw' }}>
-						Drugi deo
-					</div>
-					<div className={classes.WorkingTimeHead} style={{ width: '33vw' }}>
-						Odsustvo
+					<div className={classes.WorkingTimeBody}>
+						<div className={classes.WorkingTimeDays}>
+							<div>Pon</div>
+							<div>Uto</div>
+							<div>Sre</div>
+							<div>Čet</div>
+							<div>Pet</div>
+							<div>Sub</div>
+							<div>Ned</div>
+						</div>
+						<div className={classes.WorkingTimeBlock}>
+							{demodays.map((day, i) => {
+								return (
+									<div className={classes.WorkingTimePairsContainer} key={i}>
+										<Input type="time" className={classes.WorkingTimePairs} />
+										<p className={classes.WorkingTimePairsLine}>-</p>
+										<Input type="time" className={classes.WorkingTimePairs} />
+									</div>
+								);
+							})}
+						</div>
+						<div className={classes.WorkingTimeBlock}>
+							{demodays.map((day, i) => {
+								return (
+									<div className={classes.WorkingTimePairsContainer} key={i}>
+										<Input type="time" className={classes.WorkingTimePairs} />
+										<p className={classes.WorkingTimePairsLine}>-</p>
+										<Input type="time" className={classes.WorkingTimePairs} />
+									</div>
+								);
+							})}
+						</div>
+						<div className={classes.WorkingTimeAbsence}>
+							{demodays.map((day, i) => {
+								return (
+									<div className={classes.AbsencePairsContainer} key={i}>
+										<div className={classes.AbsenceRadioContainer}>
+											<div className={classes.Radio_p_Container}>
+												<AbsenceRadio
+													htmlFor={`${day.date}prvi`}
+													name={day.name}
+													id={`${day.date}prvi`}
+													defaultChecked
+												/>
+												<p>Nema odsustva</p>
+											</div>
+											<div className={classes.Radio_p_Container}>
+												<AbsenceRadio
+													htmlFor={`${day.date}drugi`}
+													name={day.name}
+													id={`${day.date}drugi`}
+												/>
+												<p>Godišnji odmor</p>
+											</div>
+										</div>
+										<da className={classes.Spacer}></da>
+										<div className={classes.AbsenceRadioContainer}>
+											<div className={classes.Radio_p_Container}>
+												<AbsenceRadio
+													htmlFor={`${day.date}treci`}
+													name={day.name}
+													id={`${day.date}treci`}
+												/>
+												<p>Praznik</p>
+											</div>
+											<div className={classes.Radio_p_Container}>
+												<AbsenceRadio
+													htmlFor={`${day.date}cetvrti`}
+													name={day.name}
+													id={`${day.date}cetvrti`}
+												/>
+												<p>Bolovanje</p>
+											</div>
+										</div>
+										<div className={classes.AbsenceRadioContainer}></div>
+									</div>
+								);
+							})}
+						</div>
 					</div>
 				</div>
-				<div className={classes.WorkingTimeBody}>
-					<div className={classes.WorkingTimeDays}>
-						<div>Pon</div>
-						<div>Uto</div>
-						<div>Sre</div>
-						<div>Čet</div>
-						<div>Pet</div>
-						<div>Sub</div>
-						<div>Ned</div>
-					</div>
-					<div className={classes.WorkingTimeBlock}>
-						{demodays.map((day, i) => {
+				<Input
+					type="button"
+					value="Sačuvaj"
+					className={[classes.ChoiceButton, classes.Save].join(' ')}
+					display="block"
+					/* onClick={onSubmit} */
+				/>
+				<Input
+					type="button"
+					value="nastavi >>>"
+					className={classes.Forward}
+					onClick={() => {
+						props.setDisplayWorkingTimeForm('none'), props.nextStep();
+					}}
+				/>
+			</div>
+		);
+	} else {
+		return (
+			<div style={{ display: props.displayWorkingTimeForm }}>
+				<h3>Unesite radno vreme</h3>
+				<div className={classes.WorkingTimeHeader}>
+					<Input type="button" value="Kopiraj" />
+					<Select
+						name="monday"
+						onChange={e => inputChangedHandler(e, 'monday', formInput, setFormInput)}>
+						{mondays.map((monday, i) => {
 							return (
-								<div className={classes.WorkingTimePairsContainer} key={i}>
-									<Input type="time" className={classes.WorkingTimePairs} />-
-									<Input type="time" className={classes.WorkingTimePairs} />
-								</div>
+								<option key={monday} name="monday" value={mondaysInMiliseconds[i]}>
+									{monday}
+								</option>
 							);
 						})}
+					</Select>
+					<Input type="button" value="Nalepi" />
+				</div>
+				<div className={classes.WorkingTimeContainer}>
+					<div className={classes.WorkingTimeHead}>
+						<div className={classes.WorkingTimeHead} style={{ width: '7vw' }}>
+							Dan
+						</div>
+						<div className={classes.WorkingTimeHead} style={{ width: '30vw' }}>
+							Prvi deo
+						</div>
+						<div className={classes.WorkingTimeHead} style={{ width: '30vw' }}>
+							Drugi deo
+						</div>
+						<div className={classes.WorkingTimeHead} style={{ width: '33vw' }}>
+							Odsustvo
+						</div>
 					</div>
-					<div className={classes.WorkingTimeBlock}>
-						{demodays.map((day, i) => {
-							return (
-								<div className={classes.WorkingTimePairsContainer} key={i}>
-									<Input type="time" className={classes.WorkingTimePairs} />-
-									<Input type="time" className={classes.WorkingTimePairs} />
-								</div>
-							);
-						})}
-					</div>
-					<div className={classes.WorkingTimeAbsence}>
-						{demodays.map((day, i) => {
-							return (
-								<div className={classes.AbsencePairsContainer} key={i}>
-									<div className={classes.AbsenceRadioContainer}>
-										<div className={classes.Radio_p_Container}>
-											<AbsenceRadio
-												htmlFor={`${day.date}prvi`}
-												name={day.name}
-												id={`${day.date}prvi`}
-												defaultChecked
-											/>
-											<p>Nema odsustva</p>
-										</div>
-										<div className={classes.Radio_p_Container}>
-											<AbsenceRadio
-												htmlFor={`${day.date}drugi`}
-												name={day.name}
-												id={`${day.date}drugi`}
-											/>
-											<p>Godišnji odmor</p>
-										</div>
+					<div className={classes.WorkingTimeBody}>
+						<div className={classes.WorkingTimeDays}>
+							<div>Pon</div>
+							<div>Uto</div>
+							<div>Sre</div>
+							<div>Čet</div>
+							<div>Pet</div>
+							<div>Sub</div>
+							<div>Ned</div>
+						</div>
+						<div className={classes.WorkingTimeBlock}>
+							{demodays.map((day, i) => {
+								return (
+									<div className={classes.WorkingTimePairsContainer} key={i}>
+										<Input type="time" className={classes.WorkingTimePairs} />
+										<p className={classes.WorkingTimePairsLine}>-</p>
+										<Input type="time" className={classes.WorkingTimePairs} />
 									</div>
-									<da className={classes.Spacer}></da>
-									<div className={classes.AbsenceRadioContainer}>
-										<div className={classes.Radio_p_Container}>
-											<AbsenceRadio
-												htmlFor={`${day.date}treci`}
-												name={day.name}
-												id={`${day.date}treci`}
-											/>
-											<p>Praznik</p>
-										</div>
-										<div className={classes.Radio_p_Container}>
-											<AbsenceRadio
-												htmlFor={`${day.date}cetvrti`}
-												name={day.name}
-												id={`${day.date}cetvrti`}
-											/>
-											<p>Bolovanje</p>
-										</div>
+								);
+							})}
+						</div>
+						<div className={classes.WorkingTimeBlock}>
+							{demodays.map((day, i) => {
+								return (
+									<div className={classes.WorkingTimePairsContainer} key={i}>
+										<Input type="time" className={classes.WorkingTimePairs} />
+										<p className={classes.WorkingTimePairsLine}>-</p>
+										<Input type="time" className={classes.WorkingTimePairs} />
 									</div>
-									<div className={classes.AbsenceRadioContainer}></div>
-								</div>
-							);
-						})}
+								);
+							})}
+						</div>
+						<div className={classes.WorkingTimeAbsence}>
+							{demodays.map((day, i) => {
+								return (
+									<div className={classes.AbsencePairsContainer} key={i}>
+										<div className={classes.AbsenceRadioContainer}>
+											<div className={classes.Radio_p_Container}>
+												<AbsenceRadio
+													htmlFor={`${day.date}prvi`}
+													name={day.name}
+													id={`${day.date}prvi`}
+													defaultChecked
+												/>
+												<p>Nema odsustva</p>
+											</div>
+											<div className={classes.Radio_p_Container}>
+												<AbsenceRadio
+													htmlFor={`${day.date}drugi`}
+													name={day.name}
+													id={`${day.date}drugi`}
+												/>
+												<p>Godišnji odmor</p>
+											</div>
+										</div>
+										<da className={classes.Spacer}></da>
+										<div className={classes.AbsenceRadioContainer}>
+											<div className={classes.Radio_p_Container}>
+												<AbsenceRadio
+													htmlFor={`${day.date}treci`}
+													name={day.name}
+													id={`${day.date}treci`}
+												/>
+												<p>Praznik</p>
+											</div>
+											<div className={classes.Radio_p_Container}>
+												<AbsenceRadio
+													htmlFor={`${day.date}cetvrti`}
+													name={day.name}
+													id={`${day.date}cetvrti`}
+												/>
+												<p>Bolovanje</p>
+											</div>
+										</div>
+										<div className={classes.AbsenceRadioContainer}></div>
+									</div>
+								);
+							})}
+						</div>
 					</div>
 				</div>
+				<Input
+					type="button"
+					value="Sačuvaj"
+					className={[classes.ChoiceButton, classes.Save].join(' ')}
+					display="block"
+					/* onClick={onSubmit} */
+				/>
+				<Input
+					type="button"
+					value="nastavi >>>"
+					className={classes.Forward}
+					onClick={() => {
+						props.setDisplayWorkingTimeForm('none'), props.nextStep();
+					}}
+				/>
 			</div>
-			<Input
-				type="button"
-				value="Sačuvaj"
-				className={[classes.ChoiceButton, classes.Save].join(' ')}
-				display="block"
-				onClick={() => console.log(formInput)}
-				/* onClick={onSubmit} */
-			/>
-			<Input
-				type="button"
-				value="nastavi >>>"
-				className={classes.Forward}
-				/* onClick={() => {
-					props.setDisplayAddSaloonForm('none'), props.nextStep();
-				}} */
-			/>
-		</div>
-	);
+		);
+	}
 };
 
 export default WorkingTimeForm;

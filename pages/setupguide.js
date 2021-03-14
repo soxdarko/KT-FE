@@ -1,15 +1,14 @@
 import { useState } from 'react';
+import { fetchJson } from '../api/fetchJson';
+import { withAuthSync } from '../helpers/withAuthSync';
 import {
 	useDeviceDetect,
 	inputChangedHandler,
 	updateValidity,
+	cookieReqParser,
 } from '../helpers/universalFunctions';
 import Head from 'next/head';
 import Layout from '../Components/hoc/Layout/Layout';
-import Form from '../Components/UI/Forms/Form';
-import Input from '../Components/UI/Forms/Input';
-import Select from '../Components/UI/Select';
-import DescriptionLabel from '../Components/UI/DescriptionLabel';
 import Backdrop from '../Components/UI/Backdrop';
 import AddSaloonForm from '../Components/SetupForms/AddSaloonForm';
 import AddEmployeeForm from '../Components/SetupForms/AddEmployeeForm';
@@ -21,7 +20,7 @@ import GreetingForm from '../Components/SetupForms/GreetingForm';
 import AddServicesForm from '../Components/SetupForms/AddServicesForm';
 import WorkingTimeForm from '../Components/SetupForms/WorkingTimeForm';
 
-const setupguide = () => {
+const setupguide = props => {
 	const { isMobile } = useDeviceDetect();
 	const modalAnimationOut = isMobile ? classes.modalOutMob : classes.modalOutPC;
 	const [stepCounter, setStepCounter] = useState(1);
@@ -31,16 +30,14 @@ const setupguide = () => {
 		message: null,
 		border: '',
 	});
-	const [displayGreeting, setDisplayGreeting] = useState('none');
+	const [displayGreeting, setDisplayGreeting] = useState('block');
 	const [displayteamStatusForm, setDisplayteamStatusForm] = useState('none');
 	const [displayAddSaloonForm, setDisplayAddSaloonForm] = useState('none');
 	const [displayAddEmployeeForm, setDisplayAddEmployeeForm] = useState('none');
 	const [displayAddServicesForm, setDisplayAddServicesForm] = useState('none');
-	const [displayWorkingTimeForm, setDisplayWorkingTimeForm] = useState('block');
+	const [displayWorkingTimeForm, setDisplayWorkingTimeForm] = useState('none');
 
 	const nextStep = () => setStepCounter(setCounter => setCounter + 1);
-
-	const inputClassName = isMobile ? classes.InputTextMob : classes.InputText;
 
 	return (
 		<>
@@ -93,11 +90,16 @@ const setupguide = () => {
 						displayteamStatusForm={displayteamStatusForm}
 						setDisplayteamStatusForm={setDisplayteamStatusForm}
 						setDisplayAddSaloonForm={setDisplayAddSaloonForm}
+						setDisplayAddEmployeeForm={setDisplayAddEmployeeForm}
+						setDisplayAddServicesForm={setDisplayAddServicesForm}
+						setShowResponseModal={setShowResponseModal}
 						nextStep={nextStep}
+						token={props.token}
 					/>
 					<AddSaloonForm
 						displayAddSaloonForm={displayAddSaloonForm}
 						setDisplayAddSaloonForm={setDisplayAddSaloonForm}
+						setDisplayAddEmployeeForm={setDisplayAddEmployeeForm}
 						nextStep={nextStep}
 						modalAnimation={showResponseModal.animation}
 						setShowResponseModal={setShowResponseModal}
@@ -106,6 +108,7 @@ const setupguide = () => {
 					<AddEmployeeForm
 						displayAddEmployeeForm={displayAddEmployeeForm}
 						setDisplayAddEmployeeForm={setDisplayAddEmployeeForm}
+						setDisplayAddServicesForm={setDisplayAddServicesForm}
 						nextStep={nextStep}
 						modalAnimation={showResponseModal.animation}
 						setShowResponseModal={setShowResponseModal}
@@ -114,6 +117,7 @@ const setupguide = () => {
 					<AddServicesForm
 						displayAddServicesForm={displayAddServicesForm}
 						setDisplayAddServicesForm={setDisplayAddServicesForm}
+						setDisplayWorkingTimeForm={setDisplayWorkingTimeForm}
 						nextStep={nextStep}
 						setShowResponseModal={setShowResponseModal}
 						setShowBackdrop={setShowBackdrop}
@@ -132,4 +136,36 @@ const setupguide = () => {
 	);
 };
 
-export default setupguide;
+/* setupguide.getInitialProps = async ({ req, query }) => {
+	const { id, type } = query;
+	let cookiesString = req != undefined ? req.headers.cookie : '';
+	let token = cookieReqParser(cookiesString, 'pdfgen_token');
+
+	async function getUserParams() {
+		const userParams = await fetchJson('/user-verification' + id + '/' + type, 'get', {
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: 'Bearer ' + token,
+			},
+		})
+			.then(res => (res.status === 200 ? res.text() : ''))
+			.catch(error => {
+				console.log(error);
+				return [];
+			});
+
+		if (userParams != undefined) {
+			return userParams;
+		}
+	}
+
+	return {
+		getUserParams: await getUserParams(),
+		id: id,
+		type: type,
+		token: token,
+	};
+};
+
+export default setupguide; */
+export default withAuthSync(setupguide);

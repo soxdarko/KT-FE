@@ -207,7 +207,9 @@ const addEmployeeForm = props => {
 				value="nastavi >>>"
 				className={classes.Forward}
 				onClick={() => {
-					setDisplayAddEmployeeForm('none'), setDisplayGreeting('none'), nextStep();
+					props.setDisplayAddEmployeeForm('none'),
+						props.setDisplayAddServicesForm('block'),
+						props.nextStep();
 				}}
 			/>
 		</div>

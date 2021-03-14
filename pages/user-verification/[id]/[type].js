@@ -12,12 +12,14 @@ const userVerificationPage = props => {
 	const modalAnimationIn = isMobile ? classes.modalInMob : classes.modalInPC;
 	const [showResponseModal, setShowResponseModal] = useState('');
 
-	const id = props.id.split('=')[1];
-	const type = props.type.split('=')[1];
+	const id = props.id;
+	const type = props.type;
 	const userData = {
 		userId: id,
 		verificationType: type,
 	};
+
+	console.log(type);
 
 	const userVerificationHandler = () => {
 		const api = userVerification(userData)

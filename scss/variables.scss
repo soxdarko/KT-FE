@@ -1,3 +1,4 @@
+$small: 700px;
 $base-background-color: #303030;
 $alt-background-color: #303030;
 $header-background-color: #202020;
@@ -146,10 +147,17 @@ i {
 	-ms-transform: translate(-50%, -50%);
 }
 
-@mixin RoundBottomBorders {
+@mixin RoundBottomBorders($value) {
 	border: {
-		bottom-left-radius: 20px;
-		bottom-right-radius: 20px;
+		bottom-left-radius: $value;
+		bottom-right-radius: $value;
+	}
+}
+
+@mixin RoundTopBorders($value) {
+	border: {
+		top-left-radius: $value;
+		top-right-radius: $value;
 	}
 }
 

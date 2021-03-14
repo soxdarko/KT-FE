@@ -14,7 +14,7 @@
 }
 
 .Rounded {
-	@include RoundBottomBorders;
+	@include RoundBottomBorders(20px);
 }
 
 .InputText {
@@ -672,7 +672,7 @@
 }
 
 .ListBodyMob {
-	@include RoundBottomBorders;
+	@include RoundBottomBorders(20px);
 	display: flex;
 	position: relative;
 	width: 100vw;

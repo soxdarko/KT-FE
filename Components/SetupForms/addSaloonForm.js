@@ -222,7 +222,9 @@ const addSaloonForm = props => {
 				value="nastavi >>>"
 				className={classes.Forward}
 				onClick={() => {
-					props.setDisplayAddSaloonForm('none'), props.nextStep();
+					props.setDisplayAddSaloonForm('none'),
+						props.setDisplayAddEmployeeForm('block'),
+						props.nextStep();
 				}}
 			/>
 		</div>
