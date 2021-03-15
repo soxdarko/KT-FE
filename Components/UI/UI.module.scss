@@ -194,18 +194,6 @@
 		margin-bottom: 0;
 		color: rgba(black, 0.5);
 	}
-	.GuideForm {
-		position: relative;
-		margin: 25px auto;
-		background-color: transparent;
-	}
-	.StepCounter {
-		position: absolute;
-		width: 100vw;
-		text-align: center;
-		bottom: 5px;
-		color: rgba($base-orange-color, 0.5);
-	}
 }
 
 .FormTitle {
@@ -953,32 +941,6 @@
 	margin-top: 30px;
 }
 
-.Forward {
-	@include button;
-	display: inline-block;
-	width: auto;
-	align-self: flex-end;
-	position: relative;
-	margin: 0 5px 10px 350px;
-	padding: 4px 8px;
-}
-
-.Review {
-	width: 400px;
-	margin: 20px auto;
-	padding: 5px 0 5px 0;
-	border-radius: 10px;
-	background-color: rgb(185, 185, 185);
-	cursor: default;
-	h4 {
-		margin: 0 0 20px 0;
-		text-decoration: underline;
-	}
-	p {
-		margin: 5px 0;
-	}
-}
-
 .addForSelectedWrapper {
 	display: flex;
 	flex-direction: row;
@@ -1048,18 +1010,4 @@
 		z-index: 100;
 		background-color: #40e0d0;
 	}
-}
-
-.pickDuratuion {
-	display: block;
-	width: 400px !important;
-	margin: 20px auto 5px auto;
-	font-size: 18px !important;
-}
-
-.pickDuratuionMob {
-	display: block;
-	width: 400px !important;
-	margin: 20px auto 5px auto;
-	font-size: 18px !important;
 }

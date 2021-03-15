@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import moment from 'moment';
+import { FaCopy, FaPaste } from 'react-icons/fa';
 import {
 	useDeviceDetect,
 	inputChangedHandler,
@@ -218,11 +219,14 @@ const WorkingTimeForm = props => {
 	const inputClassName = isMobile ? classes.InputTextMob : classes.InputText;
 	const pickDurationClassName = isMobile ? classes.pickDuratuionMob : classes.pickDuratuion;
 	if (isMobile) {
+		/* **************** MOB ****************/
 		return (
 			<div style={{ display: props.displayWorkingTimeForm }}>
 				<h3>Unesite radno vreme</h3>
-				<div className={classes.WorkingTimeHeader}>
-					<Input type="button" value="Kopiraj" />
+				<div className={classes.WorkingTimeHeaderMob}>
+					<i>
+						<FaCopy className={classes.Icon} />
+					</i>
 					<Select
 						name="monday"
 						onChange={e => inputChangedHandler(e, 'monday', formInput, setFormInput)}>
@@ -234,7 +238,9 @@ const WorkingTimeForm = props => {
 							);
 						})}
 					</Select>
-					<Input type="button" value="Nalepi" />
+					<i style={{ marginLeft: '10px' }}>
+						<FaPaste className={classes.Icon} />
+					</i>
 				</div>
 				<div className={classes.WorkingTimeContainer}>
 					<div className={classes.WorkingTimeHead}>
@@ -342,7 +348,7 @@ const WorkingTimeForm = props => {
 				<Input
 					type="button"
 					value="nastavi >>>"
-					className={classes.Forward}
+					className={classes.ForwardMob}
 					onClick={() => {
 						props.setDisplayWorkingTimeForm('none'), props.nextStep();
 					}}
@@ -350,6 +356,7 @@ const WorkingTimeForm = props => {
 			</div>
 		);
 	} else {
+		/* **************** DESKTOP ****************/
 		return (
 			<div style={{ display: props.displayWorkingTimeForm }}>
 				<h3>Unesite radno vreme</h3>

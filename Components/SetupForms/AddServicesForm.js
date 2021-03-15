@@ -11,7 +11,7 @@ import Input from '../UI/Forms/Input';
 import Label from '../UI/Forms/Label';
 import Select from '../UI/Select';
 
-import classes from '../../Components/UI/UI.module.scss';
+import classes from '../../Components/SetupForms/SetupForms.module.scss';
 
 const AddServicesForm = props => {
 	const { isMobile } = useDeviceDetect();
@@ -185,7 +185,7 @@ const AddServicesForm = props => {
 				onChange={e => inputChangedHandler(e, 'price', formInput, setFormInput)}
 				invalid={!formInput.price.valid}
 			/>
-			<div className={classes.Review}>
+			<div className={isMobile ? classes.ReviewMob : classes.Review}>
 				<h4>Izaberite radnike kojima želite dodeliti uslugu</h4>
 				<div>{employeesList()}</div>
 			</div>
@@ -201,7 +201,7 @@ const AddServicesForm = props => {
 			<Input
 				type="button"
 				value="nastavi >>>"
-				className={classes.Forward}
+				className={isMobile ? classes.ForwardMob : classes.Forward}
 				onClick={() => {
 					props.setDisplayAddServicesForm('none'),
 						props.setDisplayWorkingTimeForm('block'),

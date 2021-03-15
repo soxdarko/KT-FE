@@ -10,7 +10,7 @@ import initEmployeeForm from './initEmployeeForm';
 import Input from '../UI/Forms/Input';
 import Select from '../UI/Select';
 
-import classes from '../../Components/UI/UI.module.scss';
+import classes from '../../Components/SetupForms/SetupForms.module.scss';
 
 const addEmployeeForm = props => {
 	const { isMobile } = useDeviceDetect();
@@ -198,14 +198,14 @@ const addEmployeeForm = props => {
 				display="block"
 				onClick={onSubmit}
 			/>
-			<div className={classes.Review}>
+			<div className={isMobile ? classes.ReviewMob : classes.Review}>
 				<h4>Vaši radnici</h4>
 				<div>{employeesPreview()}</div>
 			</div>
 			<Input
 				type="button"
 				value="nastavi >>>"
-				className={classes.Forward}
+				className={isMobile ? classes.ForwardMob : classes.Forward}
 				onClick={() => {
 					props.setDisplayAddEmployeeForm('none'),
 						props.setDisplayAddServicesForm('block'),

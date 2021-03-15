@@ -13,12 +13,12 @@ import Backdrop from '../Components/UI/Backdrop';
 import AddSaloonForm from '../Components/SetupForms/AddSaloonForm';
 import AddEmployeeForm from '../Components/SetupForms/AddEmployeeForm';
 import ResponseModal from '../Components/UI/Modal/ResponseModal';
-
-import classes from '../Components/UI/UI.module.scss';
 import TeamStatusForm from '../Components/SetupForms/TeamStatusForm';
 import GreetingForm from '../Components/SetupForms/GreetingForm';
 import AddServicesForm from '../Components/SetupForms/AddServicesForm';
 import WorkingTimeForm from '../Components/SetupForms/WorkingTimeForm';
+
+import classes from '../Components/SetupForms/SetupForms.module.scss';
 
 const setupguide = props => {
 	const { isMobile } = useDeviceDetect();
@@ -30,12 +30,12 @@ const setupguide = props => {
 		message: null,
 		border: '',
 	});
-	const [displayGreeting, setDisplayGreeting] = useState('block');
+	const [displayGreeting, setDisplayGreeting] = useState('none');
 	const [displayteamStatusForm, setDisplayteamStatusForm] = useState('none');
 	const [displayAddSaloonForm, setDisplayAddSaloonForm] = useState('none');
 	const [displayAddEmployeeForm, setDisplayAddEmployeeForm] = useState('none');
 	const [displayAddServicesForm, setDisplayAddServicesForm] = useState('none');
-	const [displayWorkingTimeForm, setDisplayWorkingTimeForm] = useState('none');
+	const [displayWorkingTimeForm, setDisplayWorkingTimeForm] = useState('block');
 
 	const nextStep = () => setStepCounter(setCounter => setCounter + 1);
 
@@ -129,7 +129,9 @@ const setupguide = props => {
 						setShowResponseModal={setShowResponseModal}
 						setShowBackdrop={setShowBackdrop}
 					/>
-					<h4 className={classes.StepCounter}>Korak {stepCounter} od 10</h4>
+					<h4 className={isMobile ? classes.StepCounterMob : classes.StepCounter}>
+						Korak {stepCounter} od 10
+					</h4>
 				</div>
 			</Layout>
 		</>
@@ -167,5 +169,5 @@ const setupguide = props => {
 	};
 };
 
-export default setupguide; */
-export default withAuthSync(setupguide);
+*/ export default setupguide;
+/* export default withAuthSync(setupguide); */

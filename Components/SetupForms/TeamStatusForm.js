@@ -3,7 +3,7 @@ import { addNewServiceProvider } from '../../api/addNewServiceProvider';
 
 import Input from '../UI/Forms/Input';
 
-import classes from '../UI/UI.module.scss';
+import classes from '../SetupForms/SetupForms.module.scss';
 
 const TeamStatusForm = props => {
 	const isPageLoad = useRef(true);
@@ -15,7 +15,7 @@ const TeamStatusForm = props => {
 	const [singleCompany, setSingleCompany] = useState(false);
 
 	const addNewServiceProviderHandler = () => {
-		const api = addNewServiceProvider(question)
+		const api = addNewServiceProvider({})
 			.then(response => {
 				console.log(response),
 					/* props.setIsLoading(false); */
