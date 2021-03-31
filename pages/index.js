@@ -178,7 +178,7 @@ export async function getServerSideProps(ctx) {
 	const token = await nextCookie(ctx);
 
 	if (token) {
-		return console.log('autorizovani ste'), { props: { token: true } };
+		return console.log(token), { props: { token: true } };
 	} else {
 		return console.log('niste autorizovani'), { props: { token: false } };
 	}

@@ -1,4 +1,9 @@
 const initEmployeeForm = {
+	serviceProvider: {
+		value: '',
+		touched: false,
+		valid: true,
+	},
 	name: {
 		value: '',
 		touched: false,
@@ -15,6 +20,21 @@ const initEmployeeForm = {
 		valid: true,
 	},
 	phone: {
+		value: '',
+		touched: false,
+		valid: true,
+	},
+	userName: {
+		value: '',
+		touched: false,
+		valid: true,
+	},
+	password: {
+		value: '',
+		touched: false,
+		valid: true,
+	},
+	passConfirm: {
 		value: '',
 		touched: false,
 		valid: true,

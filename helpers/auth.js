@@ -14,4 +14,6 @@ export async function auth(ctx) {
 		console.log(token);
 		Router.push('/');
 	}
+
+	return token;
 }

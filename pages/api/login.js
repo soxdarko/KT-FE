@@ -6,11 +6,9 @@ export default async (req, res) => {
 	const password = req.body.userData.password;
 	const url = `users/login?username=${userName}&password=${password}`;
 
-	const token = await fetchJson(url, 'get', { 'Content-Type': 'application/json' }).then(
-		response => {
-			return response.data.access_token;
-		}
-	);
+	const token = await fetchJson(url, 'get', {}).then(response => {
+		return response.data.access_token;
+	});
 
 	const request_config = res.setHeader(
 		'Set-Cookie',

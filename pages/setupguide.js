@@ -1,6 +1,6 @@
 import { useState } from 'react';
+import { auth } from '../helpers/auth';
 import { fetchJson } from '../api/fetchJson';
-import { withAuthSync } from '../helpers/withAuthSync';
 import {
 	useDeviceDetect,
 	inputChangedHandler,
@@ -10,34 +10,45 @@ import {
 import Head from 'next/head';
 import Layout from '../Components/hoc/Layout/Layout';
 import Backdrop from '../Components/UI/Backdrop';
-import AddSaloonForm from '../Components/SetupForms/AddSaloonForm';
+import AddServiceProvidersForm from '../Components/SetupForms/AddServiceProvidersForm';
 import AddEmployeeForm from '../Components/SetupForms/AddEmployeeForm';
 import ResponseModal from '../Components/UI/Modal/ResponseModal';
-import TeamStatusForm from '../Components/SetupForms/TeamStatusForm';
+import ServiceProviderQuestionForm from '../Components/SetupForms/ServiceProviderQuestionForm';
+import EmployeeQuestionForm from '../Components/SetupForms/EmployeesQuestionForm';
 import GreetingForm from '../Components/SetupForms/GreetingForm';
 import AddServicesForm from '../Components/SetupForms/AddServicesForm';
 import WorkingTimeForm from '../Components/SetupForms/WorkingTimeForm';
+import Loader from '../Components/UI/Loader';
 
 import classes from '../Components/SetupForms/SetupForms.module.scss';
 
 const setupguide = props => {
 	const { isMobile } = useDeviceDetect();
 	const modalAnimationOut = isMobile ? classes.modalOutMob : classes.modalOutPC;
-	const [stepCounter, setStepCounter] = useState(1);
+
+	const serviceProvidersSSR = props.serviceProviders.map(item => {
+		return item.id;
+	});
+	const [serviceProviderId, setServiceProviderId] = useState(serviceProvidersSSR);
+	const isServiceProvider = serviceProvidersSSR.length !== 0 ? true : false;
+	const [singleEmployee, setSingleEmployee] = useState(false);
+
+	const [isLoading, setIsLoading] = useState(false);
 	const [showBackdrop, setShowBackdrop] = useState('');
 	const [showResponseModal, setShowResponseModal] = useState({
 		animation: '',
 		message: null,
 		border: '',
 	});
-	const [displayGreeting, setDisplayGreeting] = useState('none');
-	const [displayteamStatusForm, setDisplayteamStatusForm] = useState('none');
-	const [displayAddSaloonForm, setDisplayAddSaloonForm] = useState('none');
+	const [displayGreeting, setDisplayGreeting] = useState('block');
+	const [displayServiceProviderQuestionForm, setDisplayServiceProviderQuestionForm] = useState(
+		'none'
+	);
+	const [displayEmployeeQuestionForm, setDisplayEmployeeQuestionForm] = useState('none');
+	const [displayAddServiceProvidersForm, setDisplayAddServiceProvidersForm] = useState('none');
 	const [displayAddEmployeeForm, setDisplayAddEmployeeForm] = useState('none');
 	const [displayAddServicesForm, setDisplayAddServicesForm] = useState('none');
-	const [displayWorkingTimeForm, setDisplayWorkingTimeForm] = useState('block');
-
-	const nextStep = () => setStepCounter(setCounter => setCounter + 1);
+	const [displayWorkingTimeForm, setDisplayWorkingTimeForm] = useState('none');
 
 	return (
 		<>
@@ -76,6 +87,7 @@ const setupguide = props => {
 				classNameProfile={classes.sideDrawerButton}
 				selectData={null}
 				backgroundColorLayout="#303030">
+				<Loader loading={isLoading} />
 				<div className={[classes.Form, classes.FormLayout].join(' ')}>
 					<h2 className={isMobile ? classes.FormTitleMob : classes.FormTitle}>
 						VODIČ ZA PODEŠAVANJE
@@ -83,91 +95,104 @@ const setupguide = props => {
 					<GreetingForm
 						displayGreeting={displayGreeting}
 						setDisplayGreeting={setDisplayGreeting}
-						setDisplayteamStatusForm={setDisplayteamStatusForm}
-						nextStep={nextStep}
+						setDisplayServiceProviderQuestionForm={setDisplayServiceProviderQuestionForm}
+						setDisplayEmployeeQuestionForm={setDisplayEmployeeQuestionForm}
+						token={props.token}
+						setServiceProviderId={setServiceProviderId}
+						isServiceProvider={isServiceProvider}
 					/>
-					<TeamStatusForm
-						displayteamStatusForm={displayteamStatusForm}
-						setDisplayteamStatusForm={setDisplayteamStatusForm}
-						setDisplayAddSaloonForm={setDisplayAddSaloonForm}
+					<ServiceProviderQuestionForm
+						displayServiceProviderQuestionForm={displayServiceProviderQuestionForm}
+						setDisplayServiceProviderQuestionForm={setDisplayServiceProviderQuestionForm}
+						setDisplayEmployeeQuestionForm={setDisplayEmployeeQuestionForm}
+						setDisplayAddServiceProvidersForm={setDisplayAddServiceProvidersForm}
+						token={props.token}
+						isServiceProvider={isServiceProvider}
+						setServiceProviderId={setServiceProviderId}
+						setIsLoading={setIsLoading}
+					/>
+					<EmployeeQuestionForm
+						setDisplayEmployeeQuestionForm={setDisplayEmployeeQuestionForm}
+						displayEmployeeQuestionForm={displayEmployeeQuestionForm}
 						setDisplayAddEmployeeForm={setDisplayAddEmployeeForm}
 						setDisplayAddServicesForm={setDisplayAddServicesForm}
-						setShowResponseModal={setShowResponseModal}
-						nextStep={nextStep}
+						singleEmployee={singleEmployee}
+						setSingleEmployee={setSingleEmployee}
 						token={props.token}
+						isServiceProvider={isServiceProvider}
+						serviceProviderId={serviceProviderId}
+						setIsLoading={setIsLoading}
 					/>
-					<AddSaloonForm
-						displayAddSaloonForm={displayAddSaloonForm}
-						setDisplayAddSaloonForm={setDisplayAddSaloonForm}
+					<AddServiceProvidersForm
+						displayAddServiceProvidersForm={displayAddServiceProvidersForm}
+						setDisplayAddServiceProvidersForm={setDisplayAddServiceProvidersForm}
 						setDisplayAddEmployeeForm={setDisplayAddEmployeeForm}
-						nextStep={nextStep}
 						modalAnimation={showResponseModal.animation}
 						setShowResponseModal={setShowResponseModal}
 						setShowBackdrop={setShowBackdrop}
+						token={props.token}
+						serviceProviders={props.serviceProviders}
+						setIsLoading={setIsLoading}
 					/>
 					<AddEmployeeForm
 						displayAddEmployeeForm={displayAddEmployeeForm}
 						setDisplayAddEmployeeForm={setDisplayAddEmployeeForm}
 						setDisplayAddServicesForm={setDisplayAddServicesForm}
-						nextStep={nextStep}
 						modalAnimation={showResponseModal.animation}
 						setShowResponseModal={setShowResponseModal}
 						setShowBackdrop={setShowBackdrop}
+						token={props.token}
+						serviceProviders={props.serviceProviders}
+						setIsLoading={setIsLoading}
 					/>
 					<AddServicesForm
 						displayAddServicesForm={displayAddServicesForm}
 						setDisplayAddServicesForm={setDisplayAddServicesForm}
 						setDisplayWorkingTimeForm={setDisplayWorkingTimeForm}
-						nextStep={nextStep}
+						serviceProviders={props.serviceProviders}
+						singleEmployee={singleEmployee}
+						setSingleEmployee={setSingleEmployee}
 						setShowResponseModal={setShowResponseModal}
 						setShowBackdrop={setShowBackdrop}
+						token={props.token}
+						employees={props.employees}
+						setIsLoading={setIsLoading}
 					/>
 					<WorkingTimeForm
 						displayWorkingTimeForm={displayWorkingTimeForm}
 						setDisplayWorkingTimeForm={setDisplayWorkingTimeForm}
-						nextStep={nextStep}
 						setShowResponseModal={setShowResponseModal}
 						setShowBackdrop={setShowBackdrop}
+						setIsLoading={setIsLoading}
 					/>
-					<h4 className={isMobile ? classes.StepCounterMob : classes.StepCounter}>
-						Korak {stepCounter} od 10
-					</h4>
 				</div>
 			</Layout>
 		</>
 	);
 };
 
-/* setupguide.getInitialProps = async ({ req, query }) => {
-	const { id, type } = query;
-	let cookiesString = req != undefined ? req.headers.cookie : '';
-	let token = cookieReqParser(cookiesString, 'pdfgen_token');
+export async function getServerSideProps(ctx) {
+	const token = await auth(ctx);
+	const serviceProvidersUrl = `users/getAllServiceProviders`;
+	const resServiceProviders = await fetchJson(serviceProvidersUrl, 'get', token);
+	const employeesUrl = `users/getAllEmployees`;
+	const resEmployees = await fetchJson(employeesUrl, 'get', token);
 
-	async function getUserParams() {
-		const userParams = await fetchJson('/user-verification' + id + '/' + type, 'get', {
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: 'Bearer ' + token,
-			},
-		})
-			.then(res => (res.status === 200 ? res.text() : ''))
-			.catch(error => {
-				console.log(error);
-				return [];
-			});
+	const serviceProviders = resServiceProviders.data.map(name => {
+		return name;
+	});
 
-		if (userParams != undefined) {
-			return userParams;
-		}
-	}
+	const employees = resEmployees.data.map(name => {
+		return name;
+	});
 
 	return {
-		getUserParams: await getUserParams(),
-		id: id,
-		type: type,
-		token: token,
+		props: {
+			token,
+			serviceProviders,
+			employees,
+		},
 	};
-};
+}
 
-*/ export default setupguide;
-/* export default withAuthSync(setupguide); */
+export default setupguide;

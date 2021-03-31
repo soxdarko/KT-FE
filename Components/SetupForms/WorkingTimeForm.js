@@ -85,7 +85,7 @@ const WorkingTimeForm = props => {
 		mondaysInMiliseconds.push(d_Start.getTime());
 	}
 
-	const demodays = [
+	const weekDays = [
 		{
 			name: 'pon',
 			date: today,
@@ -242,96 +242,74 @@ const WorkingTimeForm = props => {
 						<FaPaste className={classes.Icon} />
 					</i>
 				</div>
-				<div className={classes.WorkingTimeContainer}>
-					<div className={classes.WorkingTimeHead}>
-						<div className={classes.WorkingTimeHead} style={{ width: '7vw' }}>
-							Dan
+				<div>
+					<div className={classes.WorkingTimeContainerMob}>
+						<div className={classes.WorkingTimeHead}>
+							<div className={classes.DayTitleMob} style={{ width: '10vw' }}>
+								<p>Dan</p>
+							</div>
+							<div style={{ width: '43.5vw' }}>Od</div>
+							<div style={{ width: '43.5vw' }}>Do</div>
 						</div>
-						<div className={classes.WorkingTimeHead} style={{ width: '30vw' }}>
-							Prvi deo
-						</div>
-						<div className={classes.WorkingTimeHead} style={{ width: '30vw' }}>
-							Drugi deo
-						</div>
-						<div className={classes.WorkingTimeHead} style={{ width: '33vw' }}>
-							Odsustvo
-						</div>
-					</div>
-					<div className={classes.WorkingTimeBody}>
-						<div className={classes.WorkingTimeDays}>
-							<div>Pon</div>
-							<div>Uto</div>
-							<div>Sre</div>
-							<div>Čet</div>
-							<div>Pet</div>
-							<div>Sub</div>
-							<div>Ned</div>
-						</div>
-						<div className={classes.WorkingTimeBlock}>
-							{demodays.map((day, i) => {
+						<div className={classes.WorkingTimeBodyMob}>
+							{weekDays.map(day => {
 								return (
-									<div className={classes.WorkingTimePairsContainer} key={i}>
-										<Input type="time" className={classes.WorkingTimePairs} />
-										<p className={classes.WorkingTimePairsLine}>-</p>
-										<Input type="time" className={classes.WorkingTimePairs} />
-									</div>
-								);
-							})}
-						</div>
-						<div className={classes.WorkingTimeBlock}>
-							{demodays.map((day, i) => {
-								return (
-									<div className={classes.WorkingTimePairsContainer} key={i}>
-										<Input type="time" className={classes.WorkingTimePairs} />
-										<p className={classes.WorkingTimePairsLine}>-</p>
-										<Input type="time" className={classes.WorkingTimePairs} />
-									</div>
-								);
-							})}
-						</div>
-						<div className={classes.WorkingTimeAbsence}>
-							{demodays.map((day, i) => {
-								return (
-									<div className={classes.AbsencePairsContainer} key={i}>
-										<div className={classes.AbsenceRadioContainer}>
-											<div className={classes.Radio_p_Container}>
-												<AbsenceRadio
-													htmlFor={`${day.date}prvi`}
-													name={day.name}
-													id={`${day.date}prvi`}
-													defaultChecked
-												/>
-												<p>Nema odsustva</p>
+									<div key={day} className={classes.WorkingTimeBodyBlockMob}>
+										<div className={classes.WorkingTimeDaysMob}>
+											<p>{day.name}</p>
+										</div>
+										<div className={classes.WorkingTimeBlockMob}>
+											<div className={classes.WorkingTimePairsContainerMob}>
+												<Input type="time" className={classes.WorkingTimePairsMob} />
+												<Input type="time" className={classes.WorkingTimePairsMob} />
 											</div>
-											<div className={classes.Radio_p_Container}>
-												<AbsenceRadio
-													htmlFor={`${day.date}drugi`}
-													name={day.name}
-													id={`${day.date}drugi`}
-												/>
-												<p>Godišnji odmor</p>
+											<div className={classes.WorkingTimePairsContainerMob}>
+												<Input type="time" className={classes.WorkingTimePairsMob} />
+												<Input type="time" className={classes.WorkingTimePairsMob} />
+											</div>
+
+											<div className={classes.AbsencePairsContainer}>
+												<div className={classes.AbsenceRadioContainerMob}>
+													<div className={classes.Radio_p_ContainerMob}>
+														<AbsenceRadio
+															htmlFor={`${day.date}prvi`}
+															name={day.name}
+															id={`${day.date}prvi`}
+															defaultChecked
+														/>
+														<p>Nema odsustva</p>
+													</div>
+													<div className={classes.Radio_p_ContainerMob}>
+														<AbsenceRadio
+															htmlFor={`${day.date}drugi`}
+															name={day.name}
+															id={`${day.date}drugi`}
+														/>
+														<p>Godišnji odmor</p>
+													</div>
+												</div>
+												<da className={classes.Spacer}></da>
+												<div className={classes.AbsenceRadioContainerMob}>
+													<div className={classes.Radio_p_ContainerMob}>
+														<AbsenceRadio
+															htmlFor={`${day.date}treci`}
+															name={day.name}
+															id={`${day.date}treci`}
+														/>
+														<p>Praznik</p>
+													</div>
+													<div className={classes.Radio_p_ContainerMob}>
+														<AbsenceRadio
+															htmlFor={`${day.date}cetvrti`}
+															name={day.name}
+															id={`${day.date}cetvrti`}
+														/>
+														<p>Bolovanje</p>
+													</div>
+												</div>
+												<div className={classes.AbsenceRadioContainer}></div>
 											</div>
 										</div>
-										<da className={classes.Spacer}></da>
-										<div className={classes.AbsenceRadioContainer}>
-											<div className={classes.Radio_p_Container}>
-												<AbsenceRadio
-													htmlFor={`${day.date}treci`}
-													name={day.name}
-													id={`${day.date}treci`}
-												/>
-												<p>Praznik</p>
-											</div>
-											<div className={classes.Radio_p_Container}>
-												<AbsenceRadio
-													htmlFor={`${day.date}cetvrti`}
-													name={day.name}
-													id={`${day.date}cetvrti`}
-												/>
-												<p>Bolovanje</p>
-											</div>
-										</div>
-										<div className={classes.AbsenceRadioContainer}></div>
 									</div>
 								);
 							})}
@@ -343,6 +321,8 @@ const WorkingTimeForm = props => {
 					value="Sačuvaj"
 					className={[classes.ChoiceButton, classes.Save].join(' ')}
 					display="block"
+					float="left"
+					marginLeft="8px"
 					/* onClick={onSubmit} */
 				/>
 				<Input
@@ -401,7 +381,7 @@ const WorkingTimeForm = props => {
 							<div>Ned</div>
 						</div>
 						<div className={classes.WorkingTimeBlock}>
-							{demodays.map((day, i) => {
+							{weekDays.map((day, i) => {
 								return (
 									<div className={classes.WorkingTimePairsContainer} key={i}>
 										<Input type="time" className={classes.WorkingTimePairs} />
@@ -412,7 +392,7 @@ const WorkingTimeForm = props => {
 							})}
 						</div>
 						<div className={classes.WorkingTimeBlock}>
-							{demodays.map((day, i) => {
+							{weekDays.map((day, i) => {
 								return (
 									<div className={classes.WorkingTimePairsContainer} key={i}>
 										<Input type="time" className={classes.WorkingTimePairs} />
@@ -423,7 +403,7 @@ const WorkingTimeForm = props => {
 							})}
 						</div>
 						<div className={classes.WorkingTimeAbsence}>
-							{demodays.map((day, i) => {
+							{weekDays.map((day, i) => {
 								return (
 									<div className={classes.AbsencePairsContainer} key={i}>
 										<div className={classes.AbsenceRadioContainer}>

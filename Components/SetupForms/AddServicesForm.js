@@ -4,7 +4,10 @@ import {
 	inputChangedHandler,
 	updateValidity,
 	responseHandler,
+	checkBoxGroupToArrayHandler,
 } from '../../helpers/universalFunctions';
+import { addNewServiceToMany } from '../../api/addNewServiceToMany';
+import { addNewService } from '../../api/addNewService';
 import initServicesForm from './initServicesForm';
 
 import Input from '../UI/Forms/Input';
@@ -17,7 +20,8 @@ const AddServicesForm = props => {
 	const { isMobile } = useDeviceDetect();
 	const isPageLoad = useRef(true);
 	const modalAnimation = isMobile ? classes.modalInMob : classes.modalInPC;
-	const [servicesData, setServicesData] = useState({});
+	const [serviceData, setServiceData] = useState({});
+	const [checkedEmployees, setCheckedEmployees] = useState([]);
 
 	const [formInput, setFormInput] = useState({
 		serviceName: {
@@ -42,65 +46,92 @@ const AddServicesForm = props => {
 		},
 	});
 
-	const employeeList = ['Emlpoyee1', 'Emlpoyee2', 'Emlpoyee3', 'Emlpoyee4', 'Emlpoyee5'];
 	const duration = ['15', '30', '45', '60'];
 
-	/* const saloonsPreview = () => {
-		const listItems = saloonsList.map(data => {
-			return <p>{data}</p>;
+	const durationList = () => {
+		return duration.map((time, i) => <option key={i}>{time}</option>);
+	};
+
+	const employeesList = employees => {
+		const listItems = employees.map(employee => {
+			return (
+				<div key={employee.id} className={classes.addForSelectedWrapper}>
+					<Input
+						type="checkbox"
+						id={employee.id}
+						className={classes.addForSelected}
+						onChange={e => checkBoxGroupToArrayHandler(e, checkedEmployees, setCheckedEmployees)}
+					/>
+					<Label htmlFor={employee.id} />
+					<p className={classes.addForSelceted_p}>{employee.name}</p>
+				</div>
+			);
 		});
 		return listItems;
-	}; */
+	};
 
-	const addServicesHandler = () => {
-		/* const api = newCompany(companyData)
+	const addServiceHandler = () => {
+		const employee = props.employee.id;
+		const api = addNewService(serviceData, employee)
 			.then(response => {
-				console.log(response),
-					responseHandler(
-						props.setShowResponseModal,
-						modalAnimation,
-						'Poslali smo Vam verifikacioni e-mail i sms. Klikom na link u e-mail-u i sms-u registracija će biti završena.',
-						'green'
-					);
-				props.setIsLoading(false);
-				props.setDisplayRegServProv('none');
+				console.log(response), props.setIsLoading(false);
+				setFormInput(initServicesForm);
 			})
 			.catch(error => {
 				props.setIsLoading(false);
 				if (error.response) {
-					error.response.data.map(err => {
-						const Input = err.type[0].toLowerCase() + err.type.slice(1);
-						responseHandler(props.setShowResponseModal, modalAnimation, err.errorMessage, 'red');
-						updateValidity(setFormInput, Input, formInput, '', false);
-						props.setShowBackdrop(classes.backdropIn);
-					});
+					console.log(error.response);
 				} else if (error.request) {
 					console.log(error.request);
 				} else {
 					console.log('nesto drugo');
 				}
 			});
-		api; */
-		console.log('service added');
+		api;
 	};
+
+	const addServiceToManyHandler = () => {
+		const api = addNewServiceToMany(serviceData)
+			.then(response => {
+				console.log(response), props.setIsLoading(false);
+				setFormInput(initServicesForm);
+			})
+			.catch(error => {
+				props.setIsLoading(false);
+				if (error.response) {
+					console.log(error.response);
+				} else if (error.request) {
+					console.log(error.request);
+				} else {
+					console.log('nesto drugo');
+				}
+			});
+		api;
+	};
+
+	console.log(props.employees.length);
 
 	useEffect(() => {
 		if (isPageLoad.current) {
 			isPageLoad.current = false;
 			return;
 		}
-		addServicesHandler();
 
+		/* addServiceToManyHandler(); */
+		props.employees.length < 1 ? addServiceHandler() : addServiceToManyHandler();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [servicesData]);
+	}, [serviceData]);
 
 	const onSubmit = e => {
 		e.preventDefault();
 		const formData = {
-			serviceName: formInput.serviceName.value.trim(),
-			description: formInput.description.value.trim(),
-			duration: formInput.duration.value.trim(),
-			price: formInput.price.value.trim(),
+			NewService: {
+				Name: formInput.serviceName.value.trim(),
+				Price: parseFloat(formInput.price.value.trim()),
+				Duration: parseInt(formInput.duration.value),
+				Description: formInput.description.value.trim(),
+			},
+			Employees: checkedEmployees,
 		};
 
 		if (!formInput.serviceName.value.trim()) {
@@ -122,24 +153,9 @@ const AddServicesForm = props => {
 			);
 			props.setShowBackdrop(classes.backdropIn);
 		} else {
-			setServicesData(formData);
-			setFormInput(initServicesForm);
-			/* props.setIsLoading(true); */
+			setServiceData(formData);
+			props.setIsLoading(true);
 		}
-	};
-
-	const durationList = () => {
-		return duration.map((time, i) => <option key={i}>{time}</option>);
-	};
-
-	const employeesList = () => {
-		return employeeList.map((user, i) => (
-			<div key={i} className={classes.addForSelectedWrapper}>
-				<Input type="checkbox" id={`chkbox${i}`} className={classes.addForSelected} />
-				<Label htmlFor={`chkbox${i}`} />
-				<p className={classes.addForSelceted_p}>{user}</p>
-			</div>
-		));
 	};
 
 	const inputClassName = isMobile ? classes.InputTextMob : classes.InputText;
@@ -147,6 +163,12 @@ const AddServicesForm = props => {
 	return (
 		<div style={{ display: props.displayAddServicesForm }}>
 			<h3>Unesite usluge</h3>
+			<div
+				className={isMobile ? classes.ReviewMob : classes.Review}
+				style={{ display: props.employees.length < 2 ? 'none' : 'block' }}>
+				<h4>Izaberite radnike kojima dodeljujete usluge</h4>
+				<div>{employeesList(props.employees)}</div>
+			</div>
 			<Input
 				type="text"
 				name="serviceName"
@@ -185,16 +207,15 @@ const AddServicesForm = props => {
 				onChange={e => inputChangedHandler(e, 'price', formInput, setFormInput)}
 				invalid={!formInput.price.valid}
 			/>
-			<div className={isMobile ? classes.ReviewMob : classes.Review}>
-				<h4>Izaberite radnike kojima želite dodeliti uslugu</h4>
-				<div>{employeesList()}</div>
-			</div>
 			<Input
 				type="button"
 				value="dodaj"
-				className={[classes.ChoiceButton, classes.Add].join(' ')}
+				className={
+					isMobile
+						? [classes.ChoiceButton, classes.AddMob].join(' ')
+						: [classes.ChoiceButton, classes.Add].join(' ')
+				}
 				display="block"
-				marginTop="-10px"
 				marginBottom="20px"
 				onClick={onSubmit}
 			/>

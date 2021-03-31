@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { addNewServiceProvider } from '../../api/addNewServiceProvider';
+import { addNewEmployee } from '../../api/addNewEmployee';
 
 import Input from '../UI/Forms/Input';
 
@@ -13,13 +14,14 @@ const TeamStatusForm = props => {
 		displayEmployee: 'none',
 	});
 	const [singleCompany, setSingleCompany] = useState(false);
+	const [singleEmployee, setSingleEmployee] = useState(false);
 
 	const addNewServiceProviderHandler = () => {
-		const api = addNewServiceProvider({})
+		const api = addNewServiceProvider({}, props.token)
 			.then(response => {
-				console.log(response),
-					/* props.setIsLoading(false); */
-					props.nextStep(),
+				console.log(response);
+				props.setIsLoading(false);
+				props.nextStep(),
 					setQuestion({
 						...question,
 						message: 'Da li ste jedini zaposleni?',
@@ -28,13 +30,10 @@ const TeamStatusForm = props => {
 					});
 			})
 			.catch(error => {
-				/* props.setIsLoading(false); */
+				props.setIsLoading(false);
 				if (error.response) {
-					/* error.response.data.map(err => {
-						responseHandler(props.setShowResponseModal, modalAnimation, err.errorMessage, 'red');
-						props.setShowBackdrop(classes.backdropIn);
-					}); */
 					console.log(error.response);
+					window.location = '/';
 				} else if (error.request) {
 					console.log(error.request);
 				} else {
@@ -42,7 +41,28 @@ const TeamStatusForm = props => {
 				}
 			});
 		api;
-		console.log('one company');
+	};
+
+	const addNewEmployeeHandler = () => {
+		const api = addNewEmployee(props.token)
+			.then(response => {
+				console.log(response);
+				props.setIsLoading(false);
+				props.nextStep();
+				props.setDisplayteamStatusForm('none');
+			})
+			.catch(error => {
+				props.setIsLoading(false);
+				if (error.response) {
+					console.log(error.response);
+					/* window.location = '/'; */
+				} else if (error.request) {
+					console.log(error.request);
+				} else {
+					console.log('nesto drugo');
+				}
+			});
+		api;
 	};
 
 	useEffect(() => {
@@ -55,10 +75,26 @@ const TeamStatusForm = props => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [singleCompany]);
 
+	useEffect(() => {
+		if (isPageLoad.current) {
+			isPageLoad.current = false;
+			return;
+		}
+		addNewEmployeeHandler();
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [singleEmployee]);
+
 	const singleCompanyHandler = e => {
 		e.preventDefault();
 		setSingleCompany(true);
-		/* props.setIsLoading(true); */
+		props.setIsLoading(true);
+	};
+
+	const singleEmployeeHandler = e => {
+		e.preventDefault();
+		setSingleEmployee(true);
+		props.setIsLoading(true);
 	};
 
 	return (
@@ -87,11 +123,7 @@ const TeamStatusForm = props => {
 					type="button"
 					value="DA" //Unos radnika u bazu na osnovu registracionih podataka
 					className={[classes.ChoiceButton, classes.Confirm].join(' ')}
-					onClick={() => {
-						props.setDisplayteamStatusForm('none'),
-							props.setDisplayAddServicesForm('block'),
-							props.nextStep();
-					}}
+					onClick={e => singleEmployeeHandler(e)}
 				/>
 				<Input
 					type="button"

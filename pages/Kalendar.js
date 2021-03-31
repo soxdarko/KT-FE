@@ -2,7 +2,6 @@ import { useState } from 'react';
 import ServiceProvidersEmployees from '../Components/DataFromBE/ServiceProvidersEmployees';
 import axios from 'axios';
 import { auth } from '../helpers/auth';
-import { withAuthSync } from '../helpers/withAuthSync';
 
 import Head from 'next/head';
 import Layout from '../Components/hoc/Layout/Layout';
@@ -66,4 +65,4 @@ const kalendar = () => {
 	return { props: { data } };
 } */
 
-export default withAuthSync(kalendar);
+export default kalendar;

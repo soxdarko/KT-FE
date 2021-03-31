@@ -120,3 +120,11 @@ export const currDayFormat = day => {
 
 	return currDay;
 };
+
+export const checkBoxGroupToArrayHandler = (e, state, setState) => {
+	if (e.target.checked) {
+		setState([...state, e.target.id]);
+	} else {
+		setState(state.filter(item => item !== e.target.id));
+	}
+};

@@ -5,6 +5,7 @@ import {
 	updateValidity,
 	responseHandler,
 } from '../../helpers/universalFunctions';
+import { addNewServiceProvider } from '../../api/addNewServiceProvider';
 import initSaloonForm from './initSaloonForm';
 
 import Input from '../UI/Forms/Input';
@@ -12,12 +13,12 @@ import Select from '../UI/Select';
 
 import classes from '../../Components/SetupForms/SetupForms.module.scss';
 
-const addSaloonForm = props => {
+const AddServiceProvidersForm = props => {
 	const { isMobile } = useDeviceDetect();
 	const isPageLoad = useRef(true);
 	const modalAnimation = isMobile ? classes.modalInMob : classes.modalInPC;
-	const [saloonData, setSaloonData] = useState({});
-	const [saloonsList, setSaloonsList] = useState([]);
+	const [serviceProviderData, setServiceProviderData] = useState([]);
+	const [serviceProvidersList, setServiceProvidersList] = useState([]);
 
 	const [formInput, setFormInput] = useState({
 		saloonName: {
@@ -47,25 +48,17 @@ const addSaloonForm = props => {
 		},
 	});
 
-	const saloonsPreview = () => {
-		const listItems = saloonsList.map(data => {
-			return <p>{data}</p>;
+	const serviceProvidersPreview = serviceProviders => {
+		const listItems = serviceProviders.map(data => {
+			return <p key={data}>{data.name}</p>;
 		});
 		return listItems;
 	};
 
-	const addSaloonHandler = () => {
-		/* const api = newCompany(companyData)
+	const addServiceProviderHandler = () => {
+		const api = addNewServiceProvider(serviceProviderData)
 			.then(response => {
-				console.log(response),
-					responseHandler(
-						props.setShowResponseModal,
-						modalAnimation,
-						'Poslali smo Vam verifikacioni e-mail i sms. Klikom na link u e-mail-u i sms-u registracija će biti završena.',
-						'green'
-					);
-				props.setIsLoading(false);
-				props.setDisplayRegServProv('none');
+				console.log(response), props.setIsLoading(false);
 			})
 			.catch(error => {
 				props.setIsLoading(false);
@@ -82,8 +75,7 @@ const addSaloonForm = props => {
 					console.log('nesto drugo');
 				}
 			});
-		api; */
-		console.log('saloon added');
+		api;
 	};
 
 	useEffect(() => {
@@ -91,10 +83,9 @@ const addSaloonForm = props => {
 			isPageLoad.current = false;
 			return;
 		}
-		addSaloonHandler();
-
+		addServiceProviderHandler();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [saloonData]);
+	}, [serviceProviderData]);
 
 	const onSubmit = e => {
 		e.preventDefault();
@@ -142,16 +133,16 @@ const addSaloonForm = props => {
 			);
 			props.setShowBackdrop(classes.backdropIn);
 		} else {
-			setSaloonData(formData);
-			setSaloonsList([...saloonsList, formData.name]);
+			setServiceProviderData(formData);
+			setServiceProvidersList([...serviceProvidersList, formData.name]);
 			setFormInput(initSaloonForm);
-			/* props.setIsLoading(true); */
+			props.setIsLoading(true);
 		}
 	};
 
 	const inputClassName = isMobile ? classes.InputTextMob : classes.InputText;
 	return (
-		<div style={{ display: props.displayAddSaloonForm }}>
+		<div style={{ display: props.displayAddServiceProvidersForm }}>
 			<h3>Unesite podatke salona</h3>
 			<Input
 				type="text"
@@ -215,14 +206,17 @@ const addSaloonForm = props => {
 			/>
 			<div className={isMobile ? classes.ReviewMob : classes.Review}>
 				<h4>Vaši saloni</h4>
-				<div>{saloonsPreview()}</div>
+				<div>
+					{serviceProvidersPreview(props.serviceProviders)}
+					{serviceProvidersPreview(serviceProvidersList)}
+				</div>
 			</div>
 			<Input
 				type="button"
 				value="nastavi >>>"
 				className={isMobile ? classes.ForwardMob : classes.Forward}
 				onClick={() => {
-					props.setDisplayAddSaloonForm('none'),
+					props.setDisplayAddServiceProvidersForm('none'),
 						props.setDisplayAddEmployeeForm('block'),
 						props.nextStep();
 				}}
@@ -231,4 +225,4 @@ const addSaloonForm = props => {
 	);
 };
 
-export default addSaloonForm;
+export default AddServiceProvidersForm;
