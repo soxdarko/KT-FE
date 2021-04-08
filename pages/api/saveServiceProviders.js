@@ -1,25 +1,23 @@
 import { fetchJson } from '../../api/fetchJson';
 
 export default async (req, res) => {
+	const obj = req.body.userData;
 	const cookie = req.headers.cookie;
 	const token = cookie.substring(cookie.indexOf('=') + 1);
-	const serviceProviderId = req.body.serviceProviderId;
-	const url = `users/getAllEmployees?serviceProviderId=${serviceProviderId}`;
+	const url = `users/saveServiceProviders`;
 
-	async function getAllEmployees() {
-		const api = await fetchJson(url, 'get', token)
+	async function saveServiceProviders() {
+		const serviceProviders = await fetchJson(url, 'post', token, obj)
 			.then(res => {
 				return res.data;
 			})
 			.catch(err => {
 				console.log(err);
 			});
-
-		return api;
+		return serviceProviders;
 	}
 
-	const data = getAllEmployees();
-
+	const data = saveServiceProviders();
 	res.statusCode = 200;
 	res.json(await data);
 };

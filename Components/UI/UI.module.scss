@@ -950,7 +950,9 @@
 .addForSelectedWrapper {
 	display: flex;
 	flex-direction: row;
-	justify-content: center;
+	justify-content: left;
+	padding-left: 10%;
+	word-break: break-all;
 }
 
 .addForSelected + label {

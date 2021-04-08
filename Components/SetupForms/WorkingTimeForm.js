@@ -11,21 +11,52 @@ import {
 import initServicesForm from './initServicesForm';
 
 import Input from '../UI/Forms/Input';
-import Label from '../UI/Forms/Label';
 import Select from '../UI/Select';
 import AbsenceRadio from './AbsenceRadio';
+import UsersList from './UsersList';
 
-import classes from '../SetupForms/SetupForms.module.scss';
+import classes from './SetupForms.module.scss';
 
 const WorkingTimeForm = props => {
 	const { isMobile } = useDeviceDetect();
 	const isPageLoad = useRef(true);
 	const modalAnimation = isMobile ? classes.modalInMob : classes.modalInPC;
-	const [workingTimeData, setWorkingTime] = useState({});
+	const [workingTimeData, setWorkingTimeData] = useState({});
+	const [checkedEmployees, setCheckedEmployees] = useState([]);
 
 	const [formInput, setFormInput] = useState({
-		monday: {
+		IdAbsenceType: {
+			value: 0,
+			touched: false,
+			valid: true,
+		},
+		Date: {
 			value: '',
+			touched: false,
+			valid: true,
+		},
+		FirstStartHour: {
+			value: '',
+			touched: false,
+			valid: true,
+		},
+		FirstEndtHour: {
+			value: '',
+			touched: false,
+			valid: true,
+		},
+		SecondStartHour: {
+			value: '',
+			touched: false,
+			valid: true,
+		},
+		SecondEndHour: {
+			value: '',
+			touched: false,
+			valid: true,
+		},
+		Duration: {
+			value: 15,
 			touched: false,
 			valid: true,
 		},
@@ -87,31 +118,31 @@ const WorkingTimeForm = props => {
 
 	const weekDays = [
 		{
-			name: 'pon',
+			name: 'Pon',
 			date: today,
 		},
 		{
-			name: 'uto',
+			name: 'Uto',
 			date: today + 1,
 		},
 		{
-			name: 'sre',
+			name: 'Sre',
 			date: today + 2,
 		},
 		{
-			name: 'cet',
+			name: 'Čet',
 			date: today + 3,
 		},
 		{
-			name: 'pet',
+			name: 'Pet',
 			date: today + 4,
 		},
 		{
-			name: 'sub',
+			name: 'Sub',
 			date: today + 5,
 		},
 		{
-			name: 'ned',
+			name: 'Ned',
 			date: today + 6,
 		},
 	];
@@ -206,17 +237,6 @@ const WorkingTimeForm = props => {
 		return duration.map((time, i) => <option key={i}>{time}</option>);
 	};
 
-	const employeesList = () => {
-		return employeeList.map((user, i) => (
-			<div key={i} className={classes.addForSelectedWrapper}>
-				<Input type="checkbox" id={`chkbox${i}`} className={classes.addForSelected} />
-				<Label htmlFor={`chkbox${i}`} />
-				<p className={classes.addForSelceted_p}>{user}</p>
-			</div>
-		));
-	};
-
-	const inputClassName = isMobile ? classes.InputTextMob : classes.InputText;
 	const pickDurationClassName = isMobile ? classes.pickDuratuionMob : classes.pickDuratuion;
 	if (isMobile) {
 		/* **************** MOB ****************/
@@ -242,6 +262,14 @@ const WorkingTimeForm = props => {
 						<FaPaste className={classes.Icon} />
 					</i>
 				</div>
+				<UsersList
+					title="Izaberite radnike"
+					listOfUsers={props.listOfEmployees}
+					checkedUsers={checkedEmployees}
+					setCheckedUsers={setCheckedEmployees}
+					addForSelectedClassName={classes.addForSelected}
+					component="workingTime"
+				/>
 				<div>
 					<div className={classes.WorkingTimeContainerMob}>
 						<div className={classes.WorkingTimeHead}>
@@ -329,9 +357,7 @@ const WorkingTimeForm = props => {
 					type="button"
 					value="nastavi >>>"
 					className={classes.ForwardMob}
-					onClick={() => {
-						props.setDisplayWorkingTimeForm('none'), props.nextStep();
-					}}
+					onClick={() => props.setDisplayWorkingTimeForm('none')}
 				/>
 			</div>
 		);
@@ -355,6 +381,14 @@ const WorkingTimeForm = props => {
 					</Select>
 					<Input type="button" value="Nalepi" />
 				</div>
+				<UsersList
+					title="Izaberite radnike"
+					listOfUsers={props.listOfEmployees}
+					checkedUsers={checkedEmployees}
+					setCheckedUsers={setCheckedEmployees}
+					addForSelectedClassName={classes.addForSelected}
+					component="workingTime"
+				/>
 				<div className={classes.WorkingTimeContainer}>
 					<div className={classes.WorkingTimeHead}>
 						<div className={classes.WorkingTimeHead} style={{ width: '7vw' }}>
@@ -372,19 +406,20 @@ const WorkingTimeForm = props => {
 					</div>
 					<div className={classes.WorkingTimeBody}>
 						<div className={classes.WorkingTimeDays}>
-							<div>Pon</div>
-							<div>Uto</div>
-							<div>Sre</div>
-							<div>Čet</div>
-							<div>Pet</div>
-							<div>Sub</div>
-							<div>Ned</div>
+							{weekDays.map(day => {
+								return <div key={day}>{day.name}</div>;
+							})}
 						</div>
 						<div className={classes.WorkingTimeBlock}>
 							{weekDays.map((day, i) => {
 								return (
 									<div className={classes.WorkingTimePairsContainer} key={i}>
-										<Input type="time" className={classes.WorkingTimePairs} />
+										<Input
+											type="time"
+											name={`${day.name}`}
+											className={classes.WorkingTimePairs}
+											onChange={e => inputChangedHandler(e, 'duration', formInput, setFormInput)}
+										/>
 										<p className={classes.WorkingTimePairsLine}>-</p>
 										<Input type="time" className={classes.WorkingTimePairs} />
 									</div>
@@ -462,9 +497,7 @@ const WorkingTimeForm = props => {
 					type="button"
 					value="nastavi >>>"
 					className={classes.Forward}
-					onClick={() => {
-						props.setDisplayWorkingTimeForm('none'), props.nextStep();
-					}}
+					onClick={() => props.setDisplayWorkingTimeForm('none')}
 				/>
 			</div>
 		);

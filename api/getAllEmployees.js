@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-export const getAllEmployees = token => {
-	return axios.get('http://localhost:3000/api/getAllEmployees', {
-		token,
+export const getAllEmployees = serviceProviderId => {
+	return axios.post('http://localhost:3000/api/getAllEmployees', {
+		serviceProviderId: serviceProviderId,
 	});
 };

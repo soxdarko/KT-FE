@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
-import { addNewEmployee } from '../../api/addNewEmployee';
+import { useEffect, useRef } from 'react';
+import { saveEmployees } from '../../api/saveEmployees';
 
 import QuestionForm from './QuestionForm/QuestionForm';
 
@@ -14,8 +14,9 @@ const EmployeeQuestionForm = props => {
 	};
 
 	const addNewEmployeeHandler = () => {
-		const api = addNewEmployee(props.token, {}, props.serviceProviderId[0])
+		const api = saveEmployees([])
 			.then(response => {
+				console.log(response);
 				props.setIsLoading(false);
 				props.setDisplayEmployeeQuestionForm('none');
 				return response;

@@ -4,17 +4,16 @@ import {
 	inputChangedHandler,
 	updateValidity,
 	responseHandler,
-	checkBoxGroupToArrayHandler,
 } from '../../helpers/universalFunctions';
 import { addNewServiceToMany } from '../../api/addNewServiceToMany';
 import { addNewService } from '../../api/addNewService';
 import initServicesForm from './initServicesForm';
 
 import Input from '../UI/Forms/Input';
-import Label from '../UI/Forms/Label';
 import Select from '../UI/Select';
+import UsersList from './UsersList';
 
-import classes from '../../Components/SetupForms/SetupForms.module.scss';
+import classes from './SetupForms.module.scss';
 
 const AddServicesForm = props => {
 	const { isMobile } = useDeviceDetect();
@@ -50,24 +49,6 @@ const AddServicesForm = props => {
 
 	const durationList = () => {
 		return duration.map((time, i) => <option key={i}>{time}</option>);
-	};
-
-	const employeesList = employees => {
-		const listItems = employees.map(employee => {
-			return (
-				<div key={employee.id} className={classes.addForSelectedWrapper}>
-					<Input
-						type="checkbox"
-						id={employee.id}
-						className={classes.addForSelected}
-						onChange={e => checkBoxGroupToArrayHandler(e, checkedEmployees, setCheckedEmployees)}
-					/>
-					<Label htmlFor={employee.id} />
-					<p className={classes.addForSelceted_p}>{employee.name}</p>
-				</div>
-			);
-		});
-		return listItems;
 	};
 
 	const addServiceHandler = () => {
@@ -108,8 +89,6 @@ const AddServicesForm = props => {
 			});
 		api;
 	};
-
-	console.log(props.employees.length);
 
 	useEffect(() => {
 		if (isPageLoad.current) {
@@ -163,12 +142,14 @@ const AddServicesForm = props => {
 	return (
 		<div style={{ display: props.displayAddServicesForm }}>
 			<h3>Unesite usluge</h3>
-			<div
-				className={isMobile ? classes.ReviewMob : classes.Review}
-				style={{ display: props.employees.length < 2 ? 'none' : 'block' }}>
-				<h4>Izaberite radnike kojima dodeljujete usluge</h4>
-				<div>{employeesList(props.employees)}</div>
-			</div>
+			<UsersList
+				title="Izaberite radnike kojima dodeljujete usluge"
+				listOfUsers={props.listOfEmployees}
+				checkedUsers={checkedEmployees}
+				setCheckedUsers={setCheckedEmployees}
+				addForSelectedClassName={classes.addForSelected}
+				component="services"
+			/>
 			<Input
 				type="text"
 				name="serviceName"
@@ -185,7 +166,6 @@ const AddServicesForm = props => {
 				className={inputClassName}
 				value={formInput.description.value}
 				onChange={e => inputChangedHandler(e, 'description', formInput, setFormInput)}
-				invalid={!formInput.description.valid}
 			/>
 			<Select
 				displaySelect={'block'}
@@ -199,13 +179,13 @@ const AddServicesForm = props => {
 				{durationList()}
 			</Select>
 			<Input
-				type="text"
+				type="number"
 				name="price"
 				placeholder="Cena usluge"
+				maxLength="10"
 				className={inputClassName}
 				value={formInput.price.value}
 				onChange={e => inputChangedHandler(e, 'price', formInput, setFormInput)}
-				invalid={!formInput.price.valid}
 			/>
 			<Input
 				type="button"
@@ -224,9 +204,7 @@ const AddServicesForm = props => {
 				value="nastavi >>>"
 				className={isMobile ? classes.ForwardMob : classes.Forward}
 				onClick={() => {
-					props.setDisplayAddServicesForm('none'),
-						props.setDisplayWorkingTimeForm('block'),
-						props.nextStep();
+					props.setDisplayAddServicesForm('none'), props.setDisplayWorkingTimeForm('block');
 				}}
 			/>
 		</div>

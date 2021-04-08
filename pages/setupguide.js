@@ -26,12 +26,11 @@ const setupguide = props => {
 	const { isMobile } = useDeviceDetect();
 	const modalAnimationOut = isMobile ? classes.modalOutMob : classes.modalOutPC;
 
-	const serviceProvidersSSR = props.serviceProviders.map(item => {
-		return item.id;
-	});
-	const [serviceProviderId, setServiceProviderId] = useState(serviceProvidersSSR);
-	const isServiceProvider = serviceProvidersSSR.length !== 0 ? true : false;
+	const [serviceProviderData, setServiceProviderData] = useState(props.serviceProviders);
+
+	const isServiceProvider = props.serviceProviders.length !== 0 ? true : false;
 	const [singleEmployee, setSingleEmployee] = useState(false);
+	const [listOfEmployees, setListOfEmployees] = useState(props.employees);
 
 	const [isLoading, setIsLoading] = useState(false);
 	const [showBackdrop, setShowBackdrop] = useState('');
@@ -98,7 +97,6 @@ const setupguide = props => {
 						setDisplayServiceProviderQuestionForm={setDisplayServiceProviderQuestionForm}
 						setDisplayEmployeeQuestionForm={setDisplayEmployeeQuestionForm}
 						token={props.token}
-						setServiceProviderId={setServiceProviderId}
 						isServiceProvider={isServiceProvider}
 					/>
 					<ServiceProviderQuestionForm
@@ -108,7 +106,8 @@ const setupguide = props => {
 						setDisplayAddServiceProvidersForm={setDisplayAddServiceProvidersForm}
 						token={props.token}
 						isServiceProvider={isServiceProvider}
-						setServiceProviderId={setServiceProviderId}
+						serviceProviderData={serviceProviderData}
+						setServiceProviderData={setServiceProviderData}
 						setIsLoading={setIsLoading}
 					/>
 					<EmployeeQuestionForm
@@ -120,7 +119,7 @@ const setupguide = props => {
 						setSingleEmployee={setSingleEmployee}
 						token={props.token}
 						isServiceProvider={isServiceProvider}
-						serviceProviderId={serviceProviderId}
+						serviceProviderData={serviceProviderData}
 						setIsLoading={setIsLoading}
 					/>
 					<AddServiceProvidersForm
@@ -131,18 +130,21 @@ const setupguide = props => {
 						setShowResponseModal={setShowResponseModal}
 						setShowBackdrop={setShowBackdrop}
 						token={props.token}
-						serviceProviders={props.serviceProviders}
+						/* serviceProviders={props.serviceProviders} */
+						serviceProviderData={serviceProviderData}
+						setServiceProviderData={setServiceProviderData}
 						setIsLoading={setIsLoading}
 					/>
 					<AddEmployeeForm
 						displayAddEmployeeForm={displayAddEmployeeForm}
 						setDisplayAddEmployeeForm={setDisplayAddEmployeeForm}
 						setDisplayAddServicesForm={setDisplayAddServicesForm}
+						setListOfEmployees={setListOfEmployees}
 						modalAnimation={showResponseModal.animation}
 						setShowResponseModal={setShowResponseModal}
 						setShowBackdrop={setShowBackdrop}
 						token={props.token}
-						serviceProviders={props.serviceProviders}
+						serviceProviderData={serviceProviderData}
 						setIsLoading={setIsLoading}
 					/>
 					<AddServicesForm
@@ -152,6 +154,7 @@ const setupguide = props => {
 						serviceProviders={props.serviceProviders}
 						singleEmployee={singleEmployee}
 						setSingleEmployee={setSingleEmployee}
+						listOfEmployees={listOfEmployees}
 						setShowResponseModal={setShowResponseModal}
 						setShowBackdrop={setShowBackdrop}
 						token={props.token}
@@ -161,8 +164,11 @@ const setupguide = props => {
 					<WorkingTimeForm
 						displayWorkingTimeForm={displayWorkingTimeForm}
 						setDisplayWorkingTimeForm={setDisplayWorkingTimeForm}
+						listOfEmployees={listOfEmployees}
 						setShowResponseModal={setShowResponseModal}
 						setShowBackdrop={setShowBackdrop}
+						employees={props.employees}
+						token={props.token}
 						setIsLoading={setIsLoading}
 					/>
 				</div>

@@ -6,6 +6,7 @@ import {
 	responseHandler,
 } from '../../helpers/universalFunctions';
 import { addNewServiceProvider } from '../../api/addNewServiceProvider';
+import { getAllServiceProviders } from '../../api/getAllServiceProviders';
 import initSaloonForm from './initSaloonForm';
 
 import Input from '../UI/Forms/Input';
@@ -17,10 +18,11 @@ const AddServiceProvidersForm = props => {
 	const { isMobile } = useDeviceDetect();
 	const isPageLoad = useRef(true);
 	const modalAnimation = isMobile ? classes.modalInMob : classes.modalInPC;
-	const [serviceProviderData, setServiceProviderData] = useState([]);
+	const [serviceProviderInfo, setServiceProviderInfo] = useState([]);
 	const [serviceProvidersList, setServiceProvidersList] = useState([]);
 
 	const [formInput, setFormInput] = useState({
+		serivceProviderId: null,
 		saloonName: {
 			value: '',
 			touched: false,
@@ -49,16 +51,37 @@ const AddServiceProvidersForm = props => {
 	});
 
 	const serviceProvidersPreview = serviceProviders => {
-		const listItems = serviceProviders.map(data => {
-			return <p key={data}>{data.name}</p>;
+		const listItems = serviceProviders.map((data, i) => {
+			return <p key={i}>{data.name}</p>;
 		});
 		return listItems;
 	};
 
-	const addServiceProviderHandler = () => {
-		const api = addNewServiceProvider(serviceProviderData)
+	const getAllServiceProvidersHandler = async () => {
+		const api = await getAllServiceProviders(props.token)
 			.then(response => {
-				console.log(response), props.setIsLoading(false);
+				const getServiceProviderName = response.data.map(serviceProvider => {
+					return serviceProvider;
+				});
+				props.setServiceProviderData(getServiceProviderName);
+				console.log(getServiceProviderName);
+			})
+			.catch(error => {
+				if (error.response) {
+					console.log(error.response);
+				} else if (error.request) {
+					console.log(error.request);
+				} else {
+					console.log('nesto drugo');
+				}
+			});
+		return api;
+	};
+
+	const addServiceProviderHandler = () => {
+		const api = saveServiceProviders(serviceProviderInfo)
+			.then(response => {
+				console.log(response), props.setIsLoading(false), getAllServiceProvidersHandler();
 			})
 			.catch(error => {
 				props.setIsLoading(false);
@@ -85,15 +108,18 @@ const AddServiceProvidersForm = props => {
 		}
 		addServiceProviderHandler();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [serviceProviderData]);
+	}, [serviceProviderInfo]);
 
 	const onSubmit = e => {
 		e.preventDefault();
 		const formData = {
-			name: formInput.saloonName.value.trim(),
-			city: formInput.city.value.trim(),
-			address: formInput.address.value.trim(),
-			phone: formInput.mobOperator.value + formInput.phone.value.trim(),
+			Id: formInput.serivceProviderId,
+			Name: formInput.saloonName.value.trim(),
+			City: formInput.city.value.trim(),
+			Address: formInput.address.value.trim(),
+			Informations: {
+				Phone: formInput.mobOperator.value + formInput.phone.value.trim(),
+			},
 		};
 
 		const numericPattern = /^\d+$/;
@@ -133,7 +159,7 @@ const AddServiceProvidersForm = props => {
 			);
 			props.setShowBackdrop(classes.backdropIn);
 		} else {
-			setServiceProviderData(formData);
+			setServiceProviderInfo(formData);
 			setServiceProvidersList([...serviceProvidersList, formData.name]);
 			setFormInput(initSaloonForm);
 			props.setIsLoading(true);
@@ -206,19 +232,14 @@ const AddServiceProvidersForm = props => {
 			/>
 			<div className={isMobile ? classes.ReviewMob : classes.Review}>
 				<h4>Vaši saloni</h4>
-				<div>
-					{serviceProvidersPreview(props.serviceProviders)}
-					{serviceProvidersPreview(serviceProvidersList)}
-				</div>
+				<div>{serviceProvidersPreview(props.serviceProviderData)}</div>
 			</div>
 			<Input
 				type="button"
 				value="nastavi >>>"
 				className={isMobile ? classes.ForwardMob : classes.Forward}
 				onClick={() => {
-					props.setDisplayAddServiceProvidersForm('none'),
-						props.setDisplayAddEmployeeForm('block'),
-						props.nextStep();
+					props.setDisplayAddServiceProvidersForm('none'), props.setDisplayAddEmployeeForm('block');
 				}}
 			/>
 		</div>

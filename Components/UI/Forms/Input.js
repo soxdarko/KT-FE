@@ -47,9 +47,8 @@ const Input = props => {
 				float: props.float,
 				fontSize: props.fontSize,
 				color: props.color,
-			}}>
-			{props.children}
-		</input>
+			}}
+		/>
 	);
 };
 

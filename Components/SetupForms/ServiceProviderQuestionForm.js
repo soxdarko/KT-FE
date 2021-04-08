@@ -8,14 +8,14 @@ const ServiceProviderQuestionForm = props => {
 	const isPageLoad = useRef(true);
 	const [singleServiceProvider, setSingleServiceProvider] = useState(false);
 
-	const getAllServiceProvidersHandler = () => {
-		const api = getAllServiceProviders(props.token)
+	const getAllServiceProvidersHandler = async () => {
+		const api = await getAllServiceProviders(props.token)
 			.then(response => {
-				const getId = response.data.map(serviceProvider => {
-					return serviceProvider.id;
+				const getServiceProviderName = response.data.map(serviceProvider => {
+					return serviceProvider;
 				});
-				console.log(getId);
-				props.setServiceProviderId(getId);
+				props.setServiceProviderData(getServiceProviderName);
+				console.log(getServiceProviderName);
 			})
 			.catch(error => {
 				if (error.response) {
@@ -33,10 +33,10 @@ const ServiceProviderQuestionForm = props => {
 		const api = addNewServiceProvider({}, props.token)
 			.then(response => {
 				console.log(response);
-				getAllServiceProvidersHandler();
 				props.setIsLoading(false);
 				props.setDisplayServiceProviderQuestionForm('none');
 				props.setDisplayEmployeeQuestionForm('block');
+				getAllServiceProvidersHandler();
 			})
 			.catch(error => {
 				props.setIsLoading(false);
@@ -49,7 +49,7 @@ const ServiceProviderQuestionForm = props => {
 					console.log('nesto drugo');
 				}
 			});
-		return api;
+		api;
 	};
 
 	useEffect(() => {
@@ -66,7 +66,6 @@ const ServiceProviderQuestionForm = props => {
 		e.preventDefault();
 		setSingleServiceProvider(true);
 		props.setIsLoading(true);
-		getAllServiceProvidersHandler();
 	};
 
 	return (

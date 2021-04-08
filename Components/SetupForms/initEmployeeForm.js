@@ -1,9 +1,5 @@
 const initEmployeeForm = {
-	serviceProvider: {
-		value: '',
-		touched: false,
-		valid: true,
-	},
+	employeeId: null,
 	name: {
 		value: '',
 		touched: false,
@@ -39,6 +35,7 @@ const initEmployeeForm = {
 		touched: false,
 		valid: true,
 	},
+	serviceProviderId: '',
 };
 
 export default initEmployeeForm;

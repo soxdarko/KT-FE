@@ -5,13 +5,12 @@ import {
 	updateValidity,
 	responseHandler,
 } from '../../helpers/universalFunctions';
-import { addNewEmployee } from '../../api/addNewEmployee';
+import { saveEmployees } from '../../api/saveEmployees';
+import { getAllEmployees } from '../../api/getAllEmployees';
 import initEmployeeForm from './initEmployeeForm';
 
 import Input from '../UI/Forms/Input';
-import Label from '../UI/Forms/Label';
 import Select from '../UI/Select';
-import Radio from '../UI/Select';
 
 import classes from '../../Components/SetupForms/SetupForms.module.scss';
 
@@ -19,16 +18,11 @@ const addEmployeeForm = props => {
 	const { isMobile } = useDeviceDetect();
 	const isPageLoad = useRef(true);
 	const modalAnimation = isMobile ? classes.modalInMob : classes.modalInPC;
-	const [employeeData, setEmployeeData] = useState({});
-	const [employeesList, setEmployeesList] = useState([]);
+	const [userData, setUserData] = useState({});
 	const [serviceProviderId, setServiceProviderId] = useState('');
 
 	const [formInput, setFormInput] = useState({
-		serviceProvider: {
-			value: '',
-			touched: false,
-			valid: true,
-		},
+		employeeId: null,
 		name: {
 			value: '',
 			touched: false,
@@ -64,6 +58,7 @@ const addEmployeeForm = props => {
 			touched: false,
 			valid: true,
 		},
+		serviceProviderId: '',
 	});
 
 	const serviceProvidersPreview = serviceProviders => {
@@ -77,12 +72,13 @@ const addEmployeeForm = props => {
 		return listItems;
 	};
 
-	console.log(serviceProviderId);
-
-	const addServiceProviderHandler = () => {
-		const api = addNewEmployee(props.token, employeeData, serviceProviderId)
+	const getAllEmployeesHandler = async () => {
+		const api = await getAllEmployees(serviceProviderId)
 			.then(response => {
-				console.log(response), props.setIsLoading(false);
+				const getEmployeesName = response.data.map(employee => {
+					return employee;
+				});
+				props.setListOfEmployees(getEmployeesName);
 			})
 			.catch(error => {
 				props.setIsLoading(false);
@@ -94,21 +90,25 @@ const addEmployeeForm = props => {
 					console.log('nesto drugo');
 				}
 			});
-		/* .catch(error => {
+		return api;
+	};
+
+	const addEmployeesHandler = () => {
+		const api = saveEmployees(userData)
+			.then(response => {
+				console.log(response), props.setIsLoading(false);
+				getAllEmployeesHandler();
+			})
+			.catch(error => {
 				props.setIsLoading(false);
 				if (error.response) {
-					error.response.data.map(err => {
-						const Input = err.type[0].toLowerCase() + err.type.slice(1);
-						responseHandler(props.setShowResponseModal, modalAnimation, err.errorMessage, 'red');
-						updateValidity(setFormInput, Input, formInput, '', false);
-						props.setShowBackdrop(classes.backdropIn);
-					});
+					console.log(error.response);
 				} else if (error.request) {
 					console.log(error.request);
 				} else {
 					console.log('nesto drugo');
 				}
-			}); */
+			});
 		api;
 	};
 
@@ -117,20 +117,24 @@ const addEmployeeForm = props => {
 			isPageLoad.current = false;
 			return;
 		}
-		addServiceProviderHandler();
+		addEmployeesHandler();
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [employeeData]);
+	}, [userData]);
 
 	const onSubmit = e => {
 		e.preventDefault();
-		const formData = {
-			Name: formInput.name.value.trim(),
-			Email: formInput.email.value.trim(),
-			Phone: formInput.mobOperator.value + formInput.phone.value.trim(),
-			UserName: formInput.userName.value.trim(),
-			Password: formInput.password.value.trim(),
-		};
+		const formData = [
+			{
+				Id: formInput.employeeId,
+				Name: formInput.name.value.trim(),
+				Phone: formInput.mobOperator.value + formInput.phone.value.trim(),
+				Email: formInput.email.value.trim(),
+				UserName: formInput.userName.value.trim(),
+				Password: formInput.password.value.trim(),
+				serviceProviderId: formInput.serviceProviderId.value,
+			},
+		];
 
 		const emailPattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
 		const numericPattern = /^\d+$/;
@@ -205,10 +209,9 @@ const addEmployeeForm = props => {
 			);
 			props.setShowBackdrop(classes.backdropIn);
 		} else {
-			setEmployeeData(formData);
-			setEmployeesList([...employeesList, formData.name]);
+			setUserData(formData);
 			setFormInput(initEmployeeForm);
-			/* props.setIsLoading(true); */
+			props.setIsLoading(true);
 		}
 	};
 
@@ -217,18 +220,18 @@ const addEmployeeForm = props => {
 	return (
 		<div style={{ display: props.displayAddEmployeeForm }}>
 			<Select
-				name="serviceProvider"
+				name="serviceProviderId"
 				className={selectClassName}
-				value={formInput.serviceProvider.value}
+				value={formInput.serviceProviderId}
 				onChange={e => {
 					setServiceProviderId(e.target.value),
-						inputChangedHandler(e, 'serviceProvider', formInput, setFormInput);
+						inputChangedHandler(e, 'serviceProviderId', formInput, setFormInput);
 				}}
 				invalid={!formInput.mobOperator.valid}>
 				<option value="" disabled>
 					Izaberite salon
 				</option>
-				{serviceProvidersPreview(props.serviceProviders)}
+				{serviceProvidersPreview(props.serviceProviderData)}
 			</Select>
 			<Input
 				type="text"
@@ -316,9 +319,7 @@ const addEmployeeForm = props => {
 				value="nastavi >>>"
 				className={isMobile ? classes.ForwardMob : classes.Forward}
 				onClick={() => {
-					props.setDisplayAddEmployeeForm('none'),
-						props.setDisplayAddServicesForm('block'),
-						props.nextStep();
+					props.setDisplayAddEmployeeForm('none'), props.setDisplayAddServicesForm('block');
 				}}
 			/>
 		</div>
