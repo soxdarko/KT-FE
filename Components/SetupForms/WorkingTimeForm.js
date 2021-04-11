@@ -13,7 +13,7 @@ import initServicesForm from './initServicesForm';
 import Input from '../UI/Forms/Input';
 import Select from '../UI/Select';
 import AbsenceRadio from './AbsenceRadio';
-import UsersList from './UsersList';
+import EmployeesPicker from './EmployeesPicker';
 
 import classes from './SetupForms.module.scss';
 
@@ -202,10 +202,13 @@ const WorkingTimeForm = props => {
 	const onSubmit = e => {
 		e.preventDefault();
 		const formData = {
-			serviceName: formInput.serviceName.value.trim(),
-			description: formInput.description.value.trim(),
-			duration: formInput.duration.value.trim(),
-			price: formInput.price.value.trim(),
+			NewWorkingHours: {
+				serviceName: formInput.serviceName.value.trim(),
+				description: formInput.description.value.trim(),
+				duration: formInput.duration.value.trim(),
+				price: formInput.price.value.trim(),
+			},
+			Employees: checkedEmployees,
 		};
 
 		if (!formInput.serviceName.value.trim()) {
@@ -262,9 +265,9 @@ const WorkingTimeForm = props => {
 						<FaPaste className={classes.Icon} />
 					</i>
 				</div>
-				<UsersList
+				<EmployeesPicker
 					title="Izaberite radnike"
-					listOfUsers={props.listOfEmployees}
+					listOfEmployees={props.listOfEmployees}
 					checkedUsers={checkedEmployees}
 					setCheckedUsers={setCheckedEmployees}
 					addForSelectedClassName={classes.addForSelected}
@@ -381,13 +384,11 @@ const WorkingTimeForm = props => {
 					</Select>
 					<Input type="button" value="Nalepi" />
 				</div>
-				<UsersList
-					title="Izaberite radnike"
-					listOfUsers={props.listOfEmployees}
+				<EmployeesPicker
+					listOfEmployees={props.listOfEmployees}
 					checkedUsers={checkedEmployees}
 					setCheckedUsers={setCheckedEmployees}
 					addForSelectedClassName={classes.addForSelected}
-					component="workingTime"
 				/>
 				<div className={classes.WorkingTimeContainer}>
 					<div className={classes.WorkingTimeHead}>

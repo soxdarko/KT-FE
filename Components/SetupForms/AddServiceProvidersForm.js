@@ -5,12 +5,13 @@ import {
 	updateValidity,
 	responseHandler,
 } from '../../helpers/universalFunctions';
-import { addNewServiceProvider } from '../../api/addNewServiceProvider';
+import { saveServiceProviders } from '../../api/saveServiceProviders';
 import { getAllServiceProviders } from '../../api/getAllServiceProviders';
 import initSaloonForm from './initSaloonForm';
 
 import Input from '../UI/Forms/Input';
 import Select from '../UI/Select';
+import ServiceProvidersList from './ServiceProvidersList';
 
 import classes from '../../Components/SetupForms/SetupForms.module.scss';
 
@@ -20,9 +21,9 @@ const AddServiceProvidersForm = props => {
 	const modalAnimation = isMobile ? classes.modalInMob : classes.modalInPC;
 	const [serviceProviderInfo, setServiceProviderInfo] = useState([]);
 	const [serviceProvidersList, setServiceProvidersList] = useState([]);
+	const [serviceProviderId, setServiceProviderId] = useState(null);
 
 	const [formInput, setFormInput] = useState({
-		serivceProviderId: null,
 		saloonName: {
 			value: '',
 			touched: false,
@@ -50,21 +51,13 @@ const AddServiceProvidersForm = props => {
 		},
 	});
 
-	const serviceProvidersPreview = serviceProviders => {
-		const listItems = serviceProviders.map((data, i) => {
-			return <p key={i}>{data.name}</p>;
-		});
-		return listItems;
-	};
-
 	const getAllServiceProvidersHandler = async () => {
-		const api = await getAllServiceProviders(props.token)
+		const api = await getAllServiceProviders()
 			.then(response => {
-				const getServiceProviderName = response.data.map(serviceProvider => {
+				const getServiceProviderData = response.data.map(serviceProvider => {
 					return serviceProvider;
 				});
-				props.setServiceProviderData(getServiceProviderName);
-				console.log(getServiceProviderName);
+				props.setServiceProviderData(getServiceProviderData);
 			})
 			.catch(error => {
 				if (error.response) {
@@ -81,17 +74,22 @@ const AddServiceProvidersForm = props => {
 	const addServiceProviderHandler = () => {
 		const api = saveServiceProviders(serviceProviderInfo)
 			.then(response => {
-				console.log(response), props.setIsLoading(false), getAllServiceProvidersHandler();
+				console.log(response),
+					props.setIsLoading(false),
+					getAllServiceProvidersHandler(),
+					setServiceProviderId(null),
+					setFormInput(initSaloonForm);
 			})
 			.catch(error => {
 				props.setIsLoading(false);
 				if (error.response) {
-					error.response.data.map(err => {
+					console.log(error.response);
+					/* error.response.data.map(err => {
 						const Input = err.type[0].toLowerCase() + err.type.slice(1);
 						responseHandler(props.setShowResponseModal, modalAnimation, err.errorMessage, 'red');
 						updateValidity(setFormInput, Input, formInput, '', false);
 						props.setShowBackdrop(classes.backdropIn);
-					});
+					}); */
 				} else if (error.request) {
 					console.log(error.request);
 				} else {
@@ -112,15 +110,15 @@ const AddServiceProvidersForm = props => {
 
 	const onSubmit = e => {
 		e.preventDefault();
-		const formData = {
-			Id: formInput.serivceProviderId,
-			Name: formInput.saloonName.value.trim(),
-			City: formInput.city.value.trim(),
-			Address: formInput.address.value.trim(),
-			Informations: {
-				Phone: formInput.mobOperator.value + formInput.phone.value.trim(),
+		const formData = [
+			{
+				Id: serviceProviderId,
+				Name: formInput.saloonName.value.trim(),
+				City: formInput.city.value.trim(),
+				Address: formInput.address.value.trim(),
+				Informations: `Telefon: ${formInput.mobOperator.value}${formInput.phone.value.trim()}`,
 			},
-		};
+		];
 
 		const numericPattern = /^\d+$/;
 		if (!formInput.saloonName.value.trim()) {
@@ -161,10 +159,49 @@ const AddServiceProvidersForm = props => {
 		} else {
 			setServiceProviderInfo(formData);
 			setServiceProvidersList([...serviceProvidersList, formData.name]);
-			setFormInput(initSaloonForm);
 			props.setIsLoading(true);
 		}
 	};
+
+	/* Load data for edit in formInput state */
+	useEffect(() => {
+		props.serviceProviderData.filter(item => {
+			if (item.id === serviceProviderId) {
+				const informations = item.informations;
+				const phoneNumber = informations.substring(informations.indexOf(':') + 1).trim();
+				const mobOperator = phoneNumber.substring(0, 3);
+				const phone = phoneNumber.substring(3, phoneNumber.length);
+				return setFormInput({
+					...formInput,
+					saloonName: {
+						value: item.name,
+						touched: false,
+						valid: true,
+					},
+					city: {
+						value: item.city,
+						touched: false,
+						valid: true,
+					},
+					address: {
+						value: item.address,
+						touched: false,
+						valid: true,
+					},
+					mobOperator: {
+						value: mobOperator,
+						touched: false,
+						valid: true,
+					},
+					phone: {
+						value: phone,
+						touched: false,
+						valid: true,
+					},
+				});
+			}
+		});
+	}, [serviceProviderId]);
 
 	const inputClassName = isMobile ? classes.InputTextMob : classes.InputText;
 	return (
@@ -204,6 +241,9 @@ const AddServiceProvidersForm = props => {
 				value={formInput.mobOperator.value}
 				onChange={e => inputChangedHandler(e, 'mobOperator', formInput, setFormInput)}
 				invalid={!formInput.mobOperator.valid}>
+				<option value="--" disabled defaultValue>
+					--
+				</option>
 				<option value="060">060</option>
 				<option value="061">061</option>
 				<option value="062">062</option>
@@ -230,10 +270,12 @@ const AddServiceProvidersForm = props => {
 				display="block"
 				onClick={onSubmit}
 			/>
-			<div className={isMobile ? classes.ReviewMob : classes.Review}>
-				<h4>Vaši saloni</h4>
-				<div>{serviceProvidersPreview(props.serviceProviderData)}</div>
-			</div>
+			<ServiceProvidersList
+				serviceProviderData={props.serviceProviderData}
+				addForSelectedClassName={classes.addForSelected}
+				id={serviceProviderId}
+				setId={setServiceProviderId}
+			/>
 			<Input
 				type="button"
 				value="nastavi >>>"

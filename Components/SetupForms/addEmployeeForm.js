@@ -11,6 +11,7 @@ import initEmployeeForm from './initEmployeeForm';
 
 import Input from '../UI/Forms/Input';
 import Select from '../UI/Select';
+import EmployeesList from './EmployeesList';
 
 import classes from '../../Components/SetupForms/SetupForms.module.scss';
 
@@ -19,10 +20,9 @@ const addEmployeeForm = props => {
 	const isPageLoad = useRef(true);
 	const modalAnimation = isMobile ? classes.modalInMob : classes.modalInPC;
 	const [userData, setUserData] = useState({});
-	const [serviceProviderId, setServiceProviderId] = useState('');
+	const [employeeId, setEmployeeId] = useState(null);
 
 	const [formInput, setFormInput] = useState({
-		employeeId: null,
 		name: {
 			value: '',
 			touched: false,
@@ -47,6 +47,7 @@ const addEmployeeForm = props => {
 			value: '',
 			touched: false,
 			valid: true,
+			edit: false,
 		},
 		password: {
 			value: '',
@@ -73,12 +74,12 @@ const addEmployeeForm = props => {
 	};
 
 	const getAllEmployeesHandler = async () => {
-		const api = await getAllEmployees(serviceProviderId)
+		const api = await getAllEmployees()
 			.then(response => {
-				const getEmployeesName = response.data.map(employee => {
+				const getEmployeesData = response.data.map(employee => {
 					return employee;
 				});
-				props.setListOfEmployees(getEmployeesName);
+				props.setEmployeeData(getEmployeesData);
 			})
 			.catch(error => {
 				props.setIsLoading(false);
@@ -86,8 +87,6 @@ const addEmployeeForm = props => {
 					console.log(error.response);
 				} else if (error.request) {
 					console.log(error.request);
-				} else {
-					console.log('nesto drugo');
 				}
 			});
 		return api;
@@ -97,7 +96,7 @@ const addEmployeeForm = props => {
 		const api = saveEmployees(userData)
 			.then(response => {
 				console.log(response), props.setIsLoading(false);
-				getAllEmployeesHandler();
+				getAllEmployeesHandler(), setEmployeeId(null), setFormInput(initEmployeeForm);
 			})
 			.catch(error => {
 				props.setIsLoading(false);
@@ -126,7 +125,7 @@ const addEmployeeForm = props => {
 		e.preventDefault();
 		const formData = [
 			{
-				Id: formInput.employeeId,
+				Id: employeeId,
 				Name: formInput.name.value.trim(),
 				Phone: formInput.mobOperator.value + formInput.phone.value.trim(),
 				Email: formInput.email.value.trim(),
@@ -135,7 +134,7 @@ const addEmployeeForm = props => {
 				serviceProviderId: formInput.serviceProviderId.value,
 			},
 		];
-
+		console.log(formData);
 		const emailPattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
 		const numericPattern = /^\d+$/;
 		if (!formInput.name.value.trim()) {
@@ -200,7 +199,7 @@ const addEmployeeForm = props => {
 				'red'
 			);
 			props.setShowBackdrop(classes.backdropIn);
-		} else if (serviceProviderId == '') {
+		} else if (formInput.serviceProviderId.value === '') {
 			responseHandler(
 				props.setShowResponseModal,
 				modalAnimation,
@@ -210,23 +209,60 @@ const addEmployeeForm = props => {
 			props.setShowBackdrop(classes.backdropIn);
 		} else {
 			setUserData(formData);
-			setFormInput(initEmployeeForm);
 			props.setIsLoading(true);
 		}
 	};
+
+	/* Load data for edit in formInput state */
+	useEffect(() => {
+		props.employeeData.filter(item => {
+			if (item.id === employeeId) {
+				const mobOperator = item.phone.substring(0, 3);
+				const phone = item.phone.substring(3, item.phone.length);
+				return setFormInput({
+					...formInput,
+					name: {
+						value: item.name,
+						touched: false,
+						valid: true,
+					},
+					email: {
+						value: item.email,
+						touched: false,
+						valid: true,
+					},
+					mobOperator: {
+						value: mobOperator,
+						touched: false,
+						valid: true,
+					},
+					phone: {
+						value: phone,
+						touched: false,
+						valid: true,
+					},
+					userName: {
+						value: 'a' /* Ovde ce ici item.userName */,
+						touched: false,
+						valid: true,
+						edit: true,
+					},
+					serviceProviderId: item.serviceProviderId,
+				});
+			}
+		});
+	}, [employeeId]);
 
 	const inputClassName = isMobile ? classes.InputTextMob : classes.InputText;
 	const selectClassName = isMobile ? classes.InputTextMob : classes.SelectInputText;
 	return (
 		<div style={{ display: props.displayAddEmployeeForm }}>
+			<h3>Unesite radnike</h3>
 			<Select
 				name="serviceProviderId"
 				className={selectClassName}
 				value={formInput.serviceProviderId}
-				onChange={e => {
-					setServiceProviderId(e.target.value),
-						inputChangedHandler(e, 'serviceProviderId', formInput, setFormInput);
-				}}
+				onChange={e => inputChangedHandler(e, 'serviceProviderId', formInput, setFormInput)}
 				invalid={!formInput.mobOperator.valid}>
 				<option value="" disabled>
 					Izaberite salon
@@ -251,6 +287,7 @@ const addEmployeeForm = props => {
 				maxLength="50"
 				onChange={e => inputChangedHandler(e, 'userName', formInput, setFormInput)}
 				invalid={!formInput.userName.valid}
+				disabled={formInput.userName.edit ? true : false}
 			/>
 			<Input
 				type="text"
@@ -313,6 +350,12 @@ const addEmployeeForm = props => {
 				className={[classes.ChoiceButton, classes.Add].join(' ')}
 				display="block"
 				onClick={onSubmit}
+			/>
+			<EmployeesList
+				listOfEmployees={props.employeeData}
+				addForSelectedClassName={classes.addForSelected}
+				id={employeeId}
+				setId={setEmployeeId}
 			/>
 			<Input
 				type="button"

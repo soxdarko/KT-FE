@@ -11,7 +11,7 @@ import initServicesForm from './initServicesForm';
 
 import Input from '../UI/Forms/Input';
 import Select from '../UI/Select';
-import UsersList from './UsersList';
+import EmployeesList from './EmployeesList';
 
 import classes from './SetupForms.module.scss';
 
@@ -142,13 +142,15 @@ const AddServicesForm = props => {
 	return (
 		<div style={{ display: props.displayAddServicesForm }}>
 			<h3>Unesite usluge</h3>
-			<UsersList
+			<EmployeesList
 				title="Izaberite radnike kojima dodeljujete usluge"
-				listOfUsers={props.listOfEmployees}
+				listOfEmployees={props.listOfEmployees}
 				checkedUsers={checkedEmployees}
 				setCheckedUsers={setCheckedEmployees}
 				addForSelectedClassName={classes.addForSelected}
 				component="services"
+				displayEdit="none"
+				displayDelete="none"
 			/>
 			<Input
 				type="text"

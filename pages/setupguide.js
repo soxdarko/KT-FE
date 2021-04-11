@@ -27,6 +27,7 @@ const setupguide = props => {
 	const modalAnimationOut = isMobile ? classes.modalOutMob : classes.modalOutPC;
 
 	const [serviceProviderData, setServiceProviderData] = useState(props.serviceProviders);
+	const [employeeData, setEmployeeData] = useState(props.employees);
 
 	const isServiceProvider = props.serviceProviders.length !== 0 ? true : false;
 	const [singleEmployee, setSingleEmployee] = useState(false);
@@ -39,12 +40,12 @@ const setupguide = props => {
 		message: null,
 		border: '',
 	});
-	const [displayGreeting, setDisplayGreeting] = useState('block');
+	const [displayGreeting, setDisplayGreeting] = useState('none');
 	const [displayServiceProviderQuestionForm, setDisplayServiceProviderQuestionForm] = useState(
 		'none'
 	);
 	const [displayEmployeeQuestionForm, setDisplayEmployeeQuestionForm] = useState('none');
-	const [displayAddServiceProvidersForm, setDisplayAddServiceProvidersForm] = useState('none');
+	const [displayAddServiceProvidersForm, setDisplayAddServiceProvidersForm] = useState('block');
 	const [displayAddEmployeeForm, setDisplayAddEmployeeForm] = useState('none');
 	const [displayAddServicesForm, setDisplayAddServicesForm] = useState('none');
 	const [displayWorkingTimeForm, setDisplayWorkingTimeForm] = useState('none');
@@ -145,6 +146,8 @@ const setupguide = props => {
 						setShowBackdrop={setShowBackdrop}
 						token={props.token}
 						serviceProviderData={serviceProviderData}
+						employeeData={employeeData}
+						setEmployeeData={setEmployeeData}
 						setIsLoading={setIsLoading}
 					/>
 					<AddServicesForm

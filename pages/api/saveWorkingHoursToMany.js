@@ -1,14 +1,12 @@
 import { fetchJson } from '../../api/fetchJson';
 
 export default async (req, res) => {
-	const obj = req.body.userData;
+	const obj = req.body.workingHoursData;
 	const cookie = req.headers.cookie;
 	const token = cookie.substring(cookie.indexOf('=') + 1);
-	const url = `users/saveServiceProviders`;
+	const url = `settings/saveWorkingHoursToMany`;
 
-	console.log(obj);
-
-	const saveServiceProviders = await fetchJson(url, 'post', token, obj)
+	const saveWorkingHoursToMany = await fetchJson(url, 'post', token, obj)
 		.then(response => {
 			return response;
 		})
@@ -16,7 +14,7 @@ export default async (req, res) => {
 			console.log(err);
 		});
 
-	saveServiceProviders;
+	saveWorkingHoursToMany;
 
 	res.statusCode = 200;
 	res.json({ success: true });

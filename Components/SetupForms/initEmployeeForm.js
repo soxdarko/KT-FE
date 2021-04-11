@@ -1,5 +1,4 @@
 const initEmployeeForm = {
-	employeeId: null,
 	name: {
 		value: '',
 		touched: false,
@@ -24,6 +23,7 @@ const initEmployeeForm = {
 		value: '',
 		touched: false,
 		valid: true,
+		edit: false,
 	},
 	password: {
 		value: '',

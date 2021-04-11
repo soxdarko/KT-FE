@@ -3,7 +3,8 @@ import { fetchJson } from '../../api/fetchJson';
 export default async (req, res) => {
 	const cookie = req.headers.cookie;
 	const token = cookie.substring(cookie.indexOf('=') + 1);
-	const url = 'users/getAllEmployees';
+	const serviceProviderId = req.body.serviceProviderId;
+	const url = `users/getAllEmployees?serviceProviderId=${serviceProviderId}`;
 
 	async function getAllEmployees() {
 		const api = await fetchJson(url, 'get', token)

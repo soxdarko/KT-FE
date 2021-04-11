@@ -35,6 +35,7 @@ const Input = props => {
 			rows={props.rows}
 			cols={props.cols}
 			defaultChecked={props.defaultChecked}
+			disabled={props.disabled}
 			style={{
 				display: props.display,
 				width: props.width,

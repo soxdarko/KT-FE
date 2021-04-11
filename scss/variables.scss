@@ -28,6 +28,7 @@ $form-row-bg2: linear-gradient(to top, #101010, #202020, #101010);
 $list-title-color: rgba(34, 34, 34, 0.794);
 $list-name-color: rgba(255, 255, 255, 0.801);
 $list-prop-color: $base-orange-color;
+$base-list-bg-color: rgb(212, 197, 147);
 
 .Spacer {
 	display: flex;
@@ -184,6 +185,12 @@ hr {
 	align-items: center;
 }
 
+@mixin flexBoxSelf {
+	display: flex;
+	justify-self: center;
+	align-self: center;
+}
+
 @mixin buttonMob {
 	box-sizing: border-box;
 	cursor: pointer;
@@ -329,6 +336,7 @@ form,
 	display: inline-block;
 	position: relative;
 	padding: 1px 5px 0 10px;
+	cursor: pointer;
 	color: lighten($base-orange-color, 25%);
 }
 

@@ -25,7 +25,7 @@ input[type='time']::-webkit-calendar-picker-indicator {
 	position: relative;
 	width: auto;
 	align-self: flex-end;
-	margin: 0 5px 10px 350px;
+	margin: 10px 5px 10px 350px;
 	padding: 4px 8px;
 }
 
@@ -44,15 +44,21 @@ input[type='time']::-webkit-calendar-picker-indicator {
 }
 
 .Review {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-content: center;
 	width: 100%;
 	max-width: 800px;
 	margin: 0 auto;
 	padding: 5px 0;
-	background-color: rgb(185, 185, 185);
+	background-color: rgba($base-orange-color, 0.07);
 	cursor: default;
 	h4 {
-		margin: 0 0 20px 0;
+		margin: 3px 0;
 		text-decoration: underline;
+		font-size: 1.3em;
+		color: $base-cal-font-color;
 	}
 	p {
 		margin: 5px 0;
@@ -68,8 +74,135 @@ input[type='time']::-webkit-calendar-picker-indicator {
 	margin: 45px auto;
 }
 
+.EmptyListMessage {
+	margin: 7px 0;
+	color: $base-orange-color;
+}
+
+.SetupGuideListContainer {
+	display: block;
+	width: 100% !important;
+	margin: auto;
+	border: 1px solid black;
+	border-collapse: collapse;
+	tbody {
+		display: flex;
+		flex-direction: column;
+		align-content: center;
+		justify-content: center;
+		width: 100% !important;
+		tr {
+			display: flex;
+			flex-direction: row;
+			width: 100% !important;
+			color: $base-orange-color;
+			th {
+				width: 100% !important;
+				font-size: 0.9em;
+				border: 1.9px ridge black;
+				background-color: $form-even-row-color;
+			}
+		}
+		tr {
+			td {
+				width: 100% !important;
+				padding: 5px 1px;
+				font-size: 0.85em;
+				overflow: hidden;
+				word-wrap: break-word;
+				border: 1px solid rgba(0, 0, 0, 0.527);
+				color: $header-background-color;
+				background-color: $base-list-bg-color;
+			}
+			.tdLeftAlign {
+				text-align: left;
+				padding-left: 5px;
+			}
+		}
+	}
+}
+
+.IconTd {
+	max-width: 70px !important;
+	cursor: pointer;
+}
+
+.IconTdHead {
+	width: 70px !important;
+	min-width: 70px !important;
+	max-width: 70px !important;
+	padding: 0 1.5px;
+}
+
+.SetupGuidIcon {
+	width: 70px !important;
+	min-width: 70px !important;
+	max-width: 70px !important;
+}
+
+.CheckBoxTdHead {
+	display: flex;
+	justify-content: center;
+	align-content: center;
+	flex-direction: row;
+	width: 30px !important;
+	min-width: 30px !important;
+	max-width: 30px !important;
+	input + label {
+		justify-self: center;
+		align-self: center;
+		margin: -7px 0 0 0 !important;
+	}
+}
+
+/* .SetupGuideListHeadContainer,
+.SetupGuideListBodyContainer {
+	@include flexBoxSelf;
+	width: 90%;
+} */
+
+.SetupGuideListHeadContainer {
+	display: block;
+	background-color: red;
+}
+
+.SetupGuideListBodyContainer {
+	display: block;
+	background-color: rgba(0, 0, 255, 0.39);
+}
+
+.SetupGuideList {
+	width: 40vw;
+	max-width: 300px;
+	padding: 5px 0;
+	border: 1px solid black;
+}
+
+.SetupGuideListHead {
+	@extend .SetupGuideList;
+	font-weight: bold;
+}
+
+.SetupGuideListIcon {
+	@extend .Icon;
+	width: 10vw !important;
+	height: 25px;
+	padding: 2px 3px;
+	border: 1px solid black;
+	color: rgba(0, 0, 0, 0.787);
+}
+
+.SetupGuideListIconHead {
+	display: block;
+	width: 10vw;
+	padding: 5px 3px;
+	font-weight: bold;
+	border: 1px solid black;
+}
+
 .Add {
 	box-sizing: content-box !important;
+	margin-bottom: 10px;
 	padding: 5px 10px;
 	font-size: 1.5rem !important;
 }
