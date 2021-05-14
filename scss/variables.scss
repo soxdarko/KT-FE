@@ -29,6 +29,7 @@ $list-title-color: rgba(34, 34, 34, 0.794);
 $list-name-color: rgba(255, 255, 255, 0.801);
 $list-prop-color: $base-orange-color;
 $base-list-bg-color: rgb(212, 197, 147);
+$disabled-input-bg: rgb(117, 117, 117);
 
 .Spacer {
 	display: flex;
@@ -136,6 +137,11 @@ i {
 	-moz-appearance: none;
 	-ms-appearance: none;
 	appearance: none;
+}
+
+@mixin readOnly {
+	pointer-events: none;
+	background-color: $disabled-input-bg;
 }
 
 @mixin absoluteCenter {
@@ -340,7 +346,8 @@ form,
 	color: lighten($base-orange-color, 25%);
 }
 
-input {
+input,
+.input {
 	box-sizing: border-box;
 	text-align: center;
 	outline: none;

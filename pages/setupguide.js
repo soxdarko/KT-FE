@@ -33,6 +33,8 @@ const setupguide = props => {
 	const [singleEmployee, setSingleEmployee] = useState(false);
 	const [listOfEmployees, setListOfEmployees] = useState(props.employees);
 
+	const [servicesData, setServicesData] = useState(props.services);
+
 	const [isLoading, setIsLoading] = useState(false);
 	const [showBackdrop, setShowBackdrop] = useState('');
 	const [showResponseModal, setShowResponseModal] = useState({
@@ -40,15 +42,22 @@ const setupguide = props => {
 		message: null,
 		border: '',
 	});
-	const [displayGreeting, setDisplayGreeting] = useState('none');
+	const [displayGreeting, setDisplayGreeting] = useState('block');
 	const [displayServiceProviderQuestionForm, setDisplayServiceProviderQuestionForm] = useState(
 		'none'
 	);
 	const [displayEmployeeQuestionForm, setDisplayEmployeeQuestionForm] = useState('none');
-	const [displayAddServiceProvidersForm, setDisplayAddServiceProvidersForm] = useState('block');
+	const [displayAddServiceProvidersForm, setDisplayAddServiceProvidersForm] = useState('none');
 	const [displayAddEmployeeForm, setDisplayAddEmployeeForm] = useState('none');
 	const [displayAddServicesForm, setDisplayAddServicesForm] = useState('none');
 	const [displayWorkingTimeForm, setDisplayWorkingTimeForm] = useState('none');
+	const serviceProviderDatails = serviceProviderData.map(data => {
+		return {
+			id: data.id,
+			name: data.name,
+		};
+	});
+	const userGuideStatus = props.userStatus;
 
 	return (
 		<>
@@ -99,6 +108,7 @@ const setupguide = props => {
 						setDisplayEmployeeQuestionForm={setDisplayEmployeeQuestionForm}
 						token={props.token}
 						isServiceProvider={isServiceProvider}
+						userGuideStatus={userGuideStatus.guideStatus}
 					/>
 					<ServiceProviderQuestionForm
 						displayServiceProviderQuestionForm={displayServiceProviderQuestionForm}
@@ -110,6 +120,8 @@ const setupguide = props => {
 						serviceProviderData={serviceProviderData}
 						setServiceProviderData={setServiceProviderData}
 						setIsLoading={setIsLoading}
+						userGuideStatus={userGuideStatus.guideStatus}
+						setDisplayGreeting={setDisplayGreeting}
 					/>
 					<EmployeeQuestionForm
 						setDisplayEmployeeQuestionForm={setDisplayEmployeeQuestionForm}
@@ -122,6 +134,8 @@ const setupguide = props => {
 						isServiceProvider={isServiceProvider}
 						serviceProviderData={serviceProviderData}
 						setIsLoading={setIsLoading}
+						userGuideStatus={userGuideStatus.guideStatus}
+						setDisplayGreeting={setDisplayGreeting}
 					/>
 					<AddServiceProvidersForm
 						displayAddServiceProvidersForm={displayAddServiceProvidersForm}
@@ -144,25 +158,29 @@ const setupguide = props => {
 						modalAnimation={showResponseModal.animation}
 						setShowResponseModal={setShowResponseModal}
 						setShowBackdrop={setShowBackdrop}
-						token={props.token}
 						serviceProviderData={serviceProviderData}
 						employeeData={employeeData}
 						setEmployeeData={setEmployeeData}
+						serviceProviderDatails={serviceProviderDatails}
 						setIsLoading={setIsLoading}
 					/>
 					<AddServicesForm
 						displayAddServicesForm={displayAddServicesForm}
+						setServicesData={setServicesData}
+						servicesData={servicesData}
 						setDisplayAddServicesForm={setDisplayAddServicesForm}
 						setDisplayWorkingTimeForm={setDisplayWorkingTimeForm}
 						serviceProviders={props.serviceProviders}
-						singleEmployee={singleEmployee}
-						setSingleEmployee={setSingleEmployee}
+						employeeData={employeeData}
 						listOfEmployees={listOfEmployees}
 						setShowResponseModal={setShowResponseModal}
 						setShowBackdrop={setShowBackdrop}
-						token={props.token}
 						employees={props.employees}
+						serviceProviderData={serviceProviderData}
 						setIsLoading={setIsLoading}
+						serviceData={servicesData}
+						userGuideStatus={userGuideStatus.guideStatus}
+						setDisplayGreeting={setDisplayGreeting}
 					/>
 					<WorkingTimeForm
 						displayWorkingTimeForm={displayWorkingTimeForm}
@@ -170,9 +188,13 @@ const setupguide = props => {
 						listOfEmployees={listOfEmployees}
 						setShowResponseModal={setShowResponseModal}
 						setShowBackdrop={setShowBackdrop}
+						serviceProviderData={serviceProviderData}
 						employees={props.employees}
+						employeeData={employeeData}
 						token={props.token}
 						setIsLoading={setIsLoading}
+						userGuideStatus={userGuideStatus.guideStatus}
+						setDisplayGreeting={setDisplayGreeting}
 					/>
 				</div>
 			</Layout>
@@ -186,6 +208,10 @@ export async function getServerSideProps(ctx) {
 	const resServiceProviders = await fetchJson(serviceProvidersUrl, 'get', token);
 	const employeesUrl = `users/getAllEmployees`;
 	const resEmployees = await fetchJson(employeesUrl, 'get', token);
+	const servicesUrl = `appointments/getAllServices`;
+	const resServices = await fetchJson(servicesUrl, 'get', token);
+	const guideStatusUrl = `users/getCompanyGuideStatus`;
+	const resGuideStatusUrl = await fetchJson(guideStatusUrl, 'get', token);
 
 	const serviceProviders = resServiceProviders.data.map(name => {
 		return name;
@@ -195,11 +221,19 @@ export async function getServerSideProps(ctx) {
 		return name;
 	});
 
+	const services = resServices.data.map(name => {
+		return name;
+	});
+
+	const userStatus = resGuideStatusUrl.data;
+
 	return {
 		props: {
 			token,
 			serviceProviders,
 			employees,
+			services,
+			userStatus,
 		},
 	};
 }

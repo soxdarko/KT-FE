@@ -5,6 +5,7 @@ import {
 	inputChangedHandler,
 	responseHandler,
 } from '../../../helpers/universalFunctions';
+import { getCompanyGuideStatus } from '../../../api/getCompanyGuideStatus';
 import initState from './initState';
 
 import Input from '../../UI/Forms/Input';
@@ -28,6 +29,23 @@ const Login = props => {
 		},
 	});
 
+	const getGuideStatus = async () => {
+		const api = await getCompanyGuideStatus()
+			.then(response => {
+				const getGuideStatusData = response.data;
+				props.setUserStatus(getGuideStatusData);
+			})
+			.catch(error => {
+				props.setIsLoading(false);
+				if (error.response) {
+					console.log(error.response);
+				} else if (error.request) {
+					console.log(error.request);
+				}
+			});
+		return api;
+	};
+
 	const userData = {
 		userName: loginUser.userName,
 		password: loginUser.password,
@@ -37,14 +55,27 @@ const Login = props => {
 		const api = userLogin(userData)
 			.then(response => {
 				console.log(response);
+				responseHandler(
+					props.setShowResponseModal,
+					modalAnimation,
+					'Uspešno ste se prijavili',
+					'green'
+				);
+				props.setShowBackdrop(classes.backdropIn);
+				getGuideStatus();
 			})
 			.catch(error => {
 				if (error.response) {
 					console.log(error.response);
+					responseHandler(
+						props.setShowResponseModal,
+						modalAnimation,
+						'Uneli ste pogrešno korisničko ime ili lozinku!',
+						'red'
+					);
+					props.setShowBackdrop(classes.backdropIn);
 				} else if (error.request) {
 					console.log(error.request);
-				} else {
-					console.log('nesto drugo');
 				}
 			});
 		api;

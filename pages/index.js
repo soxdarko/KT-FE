@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
+import { useRouter } from 'next/router';
 import authenticate from '../redux/actions/authActions';
 import nextCookie from 'next-cookies';
 import Link from 'next/link';
 import Head from 'next/head';
 import { useDeviceDetect } from '../helpers/universalFunctions';
+import { fetchJson } from '../api/fetchJson';
 
 import Layout from '../Components/hoc/Layout/Layout';
 import Backdrop from '../Components/UI/Backdrop';
@@ -25,10 +27,13 @@ import Loader from '../Components/UI/Loader';
 import classes from '../Components/Navigation/Navigation.module.scss';
 
 const Index = props => {
-	const { userInfo, setInfo } = props;
 	const { isMobile } = useDeviceDetect();
+	const router = useRouter();
+	const isPageLoad = useRef(true);
+	const token = props.token;
 	const modalAnimationOut = isMobile ? classes.modalOutMob : classes.modalOutPC;
 	const [isLoading, setIsLoading] = useState(false);
+	const [userStatus, setUserStatus] = useState('');
 	const [showBackdrop, setShowBackdrop] = useState('');
 	const [displayLogin, setDisplayLogin] = useState('none');
 	const [displayRegServProv, setDisplayRegServProv] = useState('none');
@@ -39,14 +44,6 @@ const Index = props => {
 		message: null,
 		border: '',
 	});
-
-	/* const isVerified = token => {
-		if (token) {
-			redirectUser('/kalendar');
-		}
-	}; */
-
-	/* isVerified(token); */
 
 	const Navigation = (
 		<NavItems display={isMobile ? 'none' : 'inherit'}>
@@ -112,6 +109,8 @@ const Index = props => {
 				setDisplayRegServProv={setDisplayRegServProv}
 				setShowBackdrop={setShowBackdrop}
 				setShowResponseModal={setShowResponseModal}
+				setIsLoading={setIsLoading}
+				setUserStatus={setUserStatus}
 				/* setCookie={setCookie} */
 			/>
 			<RegServProv
@@ -133,6 +132,32 @@ const Index = props => {
 			/>
 		</>
 	);
+
+	useEffect(() => {
+		if (isPageLoad.current) {
+			isPageLoad.current = false;
+			return;
+		}
+		if (
+			(userStatus.guideStatus !== 'WorkingHours' && userStatus.userRole === 'Company') ||
+			userStatus.userRole === 'ServiceProvider' ||
+			userStatus.userRole === 'Employee'
+		) {
+			router.push('/setupguide');
+		} else if (
+			(userStatus.guideStatus === 'WorkingHours' && userStatus.userRole === 'Company') ||
+			userStatus.userRole === 'ServiceProvider' ||
+			userStatus.userRole === 'Employee'
+		) {
+			router.push('/kalendar');
+		} else if (userStatus.userRole === 'Client') {
+			alert('presmeriti klijenta na klijent kalendar stranicu');
+		} else {
+			router.push('/');
+		}
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [userStatus]);
 
 	return (
 		<>
@@ -180,7 +205,7 @@ export async function getServerSideProps(ctx) {
 	if (token) {
 		return console.log(token), { props: { token: true } };
 	} else {
-		return console.log('niste autorizovani'), { props: { token: false } };
+		return { props: { token: false } };
 	}
 }
 

@@ -44,6 +44,14 @@ export function inputChangedHandler(e, inputIdentifier, state, setState) {
 	);
 }
 
+export function inputChangedHandlerArray(e, inputIdentifier, setState, id) {
+	setState(f => f.map(d => (d.id === id ? { ...d, [inputIdentifier]: e.target.value } : d)));
+}
+
+export function inputChangedHandlerCheckBox(itemId, inputIdentifier, setState, id) {
+	setState(f => f.map(d => (d.id === id ? { ...d, [inputIdentifier]: itemId } : d)));
+}
+
 export function checkValidity(value, rules) {
 	let isValid = true;
 	if (!rules) {
@@ -123,8 +131,8 @@ export const currDayFormat = day => {
 
 export const checkBoxGroupToArrayHandler = (e, state, setState) => {
 	if (e.target.checked) {
-		setState([...state, e.target.id]);
+		setState([...state, e.target.value]);
 	} else {
-		setState(state.filter(item => item !== e.target.id));
+		setState(state.filter(item => item !== e.target.value));
 	}
 };

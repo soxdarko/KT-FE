@@ -1,6 +1,41 @@
 @import '../../scss/variables.scss';
 @include scrollbarFormMob('.ListBodyMob');
 
+.ButtonWrapperMob {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	box-sizing: border-box;
+	position: fixed;
+	bottom: 0;
+	width: 100vw;
+	height: 14vmin;
+	padding: 4px;
+	box-shadow: $base-orange-color 0 -3px 3px;
+	z-index: 99999999;
+	background-color: rgb(22, 22, 22);
+	.Btn_forward {
+		@include buttonMob;
+		display: block;
+		align-self: center;
+		width: 25vmin;
+		height: 9vmin;
+		font-size: 7vmin;
+		border-radius: 10px;
+		color: $base-orange-color;
+		&:active {
+			box-shadow: none;
+			-moz-box-shadow: none;
+			-webkit-box-shadow: none;
+			background-image: linear-gradient(to top, #404040, #505050, #404040);
+		}
+	}
+	.Btn_Add {
+		@extend .Btn_forward;
+	}
+}
+
 .Backdrop {
 	display: block;
 	opacity: 0;
@@ -31,10 +66,46 @@
 	font-size: 1rem !important;
 }
 
+.InformationsInput {
+	@extend .InputText;
+	@extend .input;
+	max-width: 400px !important;
+	height: 170px !important;
+	text-align: left;
+	border-radius: 7px;
+}
+
+.InformationsInputMob {
+	@extend .InformationsInput;
+	height: 35vmin !important;
+}
+
+.ReadOnly {
+	@extend .InputText;
+	@include readOnly;
+}
+
+.ReadOnlyMob {
+	@extend .InputTextMob;
+	@include readOnly;
+}
+
 .SelectInputText {
 	@extend .InputText;
 	max-width: 400px !important;
 	text-align-last: center;
+}
+
+.SelectInputTextMob {
+	@extend .SelectInputText;
+	max-width: 400px !important;
+	text-align-last: center;
+}
+
+.SelectServiceForEditMob {
+	@extend .SelectInputTextMob;
+	margin-bottom: 100px !important;
+	margin-top: -35px !important;
 }
 
 .InvalidInput {
@@ -189,6 +260,7 @@
 	.PhoneNumberMob {
 		display: inline-block;
 		width: calc(97% - 80px);
+		max-width: 320px;
 		font-size: 1rem !important;
 	}
 	h3 {
@@ -200,6 +272,20 @@
 		margin-bottom: 0;
 		color: rgba(black, 0.5);
 	}
+}
+
+.FormOverlay {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.582);
+}
+
+.FormOverlayMob {
+	@extend .FormOverlay;
+	position: fixed;
+	margin: -5px;
+	z-index: 99999998;
 }
 
 .FormTitle {
@@ -1019,4 +1105,48 @@
 		z-index: 100;
 		background-color: #40e0d0;
 	}
+}
+
+.ToolBoxMob {
+	@include flexBoxCenter;
+	flex-direction: column;
+	justify-content: space-evenly;
+	position: fixed;
+	width: 100vw;
+	height: 100vh;
+	z-index: 9999999;
+	top: 0;
+	background-color: rgba(0, 0, 0, 0.97);
+	.Name {
+		display: block;
+		top: 0;
+		font-size: 1.5rem;
+		color: rgba($base-orange-color, 0.8);
+	}
+	.HorButtonWrapper {
+		@include flexBoxCenter;
+		flex-direction: row;
+		justify-content: space-between;
+		width: 80vw;
+		height: 40vw;
+		.onEdit,
+		.onDelete {
+			width: 35vw !important;
+			height: 20vw !important;
+			font-size: 3rem;
+			background-color: rgb(87, 87, 87);
+		}
+		.onEdit {
+			box-shadow: rgb(219, 223, 4) 0 0 6px;
+			color: rgb(219, 223, 4);
+		}
+		.onDelete {
+			box-shadow: red 0 0 6px;
+			color: red;
+		}
+	}
+}
+
+@media only screen and (orientation: landscape) {
+	/*  */
 }

@@ -11,7 +11,6 @@ export async function auth(ctx) {
 	}
 
 	if (!token) {
-		console.log(token);
 		Router.push('/');
 	}
 

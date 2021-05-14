@@ -19,58 +19,7 @@ const RegServProv = props => {
 	const modalAnimation = isMobile ? classes.modalInMob : classes.modalInPC;
 	const [companyData, setCompanyData] = useState({});
 
-	const [formInput, setFormInput] = useState({
-		name: {
-			value: '',
-			touched: false,
-			valid: true,
-		},
-		companyName: {
-			value: '',
-			touched: false,
-			valid: true,
-		},
-		address: {
-			value: '',
-			touched: false,
-			valid: true,
-		},
-		city: {
-			value: '',
-			touched: false,
-			valid: true,
-		},
-		mobOperator: {
-			value: '',
-			touched: false,
-			valid: true,
-		},
-		phone: {
-			value: '',
-			touched: false,
-			valid: true,
-		},
-		email: {
-			value: '',
-			touched: false,
-			valid: true,
-		},
-		userName: {
-			value: '',
-			touched: false,
-			valid: true,
-		},
-		password: {
-			value: '',
-			touched: false,
-			valid: true,
-		},
-		passConfirm: {
-			value: '',
-			touched: false,
-			valid: true,
-		},
-	});
+	const [formInput, setFormInput] = useState(initState);
 
 	const regHandler = () => {
 		const api = newCompany(companyData)
@@ -124,6 +73,7 @@ const RegServProv = props => {
 			userName: formInput.userName.value.trim(),
 			password: formInput.password.value.trim(),
 			city: formInput.city.value.trim(),
+			address: formInput.address.value.trim(),
 		};
 
 		const emailPattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
@@ -291,6 +241,9 @@ const RegServProv = props => {
 				value={formInput.mobOperator.value}
 				onChange={e => inputChangedHandler(e, 'mobOperator', formInput, setFormInput)}
 				invalid={!formInput.mobOperator.valid}>
+				<option value="" disabled selected>
+					06x
+				</option>
 				<option value="060">060</option>
 				<option value="061">061</option>
 				<option value="062">062</option>

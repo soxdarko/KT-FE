@@ -16,6 +16,7 @@ const Select = props => {
 			className={inputClasses.join(' ')}
 			style={{
 				display: props.displaySelect,
+				marginTop: props.marginTop,
 			}}
 			onChange={props.onChange}>
 			{props.children}

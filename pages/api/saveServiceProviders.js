@@ -6,8 +6,6 @@ export default async (req, res) => {
 	const token = cookie.substring(cookie.indexOf('=') + 1);
 	const url = `users/saveServiceProviders`;
 
-	console.log(obj);
-
 	const saveServiceProviders = await fetchJson(url, 'post', token, obj)
 		.then(response => {
 			return response;

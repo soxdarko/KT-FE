@@ -23,7 +23,6 @@ const initEmployeeForm = {
 		value: '',
 		touched: false,
 		valid: true,
-		edit: false,
 	},
 	password: {
 		value: '',
@@ -35,7 +34,11 @@ const initEmployeeForm = {
 		touched: false,
 		valid: true,
 	},
-	serviceProviderId: '',
+	serviceProviderId: {
+		value: '',
+		touched: false,
+		valid: true,
+	},
 };
 
 export default initEmployeeForm;

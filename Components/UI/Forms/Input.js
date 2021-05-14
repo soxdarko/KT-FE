@@ -1,11 +1,10 @@
 import classes from '../UI.module.scss';
 
 const Input = props => {
-	const inputClasses = [props.className];
-
-	if (props.invalid) {
-		inputClasses.push(classes.InvalidInput);
-	}
+	const inputClasses = {
+		valid: props.className,
+		invalid: [props.className, classes.InvalidInput].join(' '),
+	};
 
 	const maxLengthCheck = element => {
 		// Function for limit maxLength for input type='number'
@@ -24,7 +23,7 @@ const Input = props => {
 			name={props.name}
 			value={props.value}
 			id={props.id}
-			className={inputClasses.join(' ')}
+			className={!props.invalid ? inputClasses.valid : inputClasses.invalid}
 			placeholder={props.placeholder}
 			onInput={element => maxLengthCheck(element)}
 			onChange={props.onChange}
@@ -35,7 +34,8 @@ const Input = props => {
 			rows={props.rows}
 			cols={props.cols}
 			defaultChecked={props.defaultChecked}
-			disabled={props.disabled}
+			readOnly={props.readOnly}
+			checked={props.checked}
 			style={{
 				display: props.display,
 				width: props.width,

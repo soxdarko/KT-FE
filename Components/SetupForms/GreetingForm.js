@@ -1,8 +1,8 @@
 import { useDeviceDetect } from '../../helpers/universalFunctions';
-import { getAllServiceProviders } from '../../api/getAllServiceProviders';
 
 import DescriptionLabel from '../UI/DescriptionLabel';
 import Input from '../UI/Forms/Input';
+import WrappedButtonsMob from '../UI/WrappedButtonsMob';
 
 import classes from '../SetupForms/SetupForms.module.scss';
 
@@ -11,11 +11,7 @@ const GreetingForm = props => {
 
 	const forward = async () => {
 		props.setDisplayGreeting('none');
-		if (props.isServiceProvider) {
-			props.setDisplayEmployeeQuestionForm('block');
-		} else {
-			props.setDisplayServiceProviderQuestionForm('block');
-		}
+		props.setDisplayServiceProviderQuestionForm('block');
 	};
 
 	return (
@@ -34,10 +30,19 @@ const GreetingForm = props => {
 				/>
 			</form>
 			<Input
+				display={isMobile ? 'none' : 'block'}
 				type="button"
 				value="nastavi >>>"
 				className={isMobile ? classes.ForwardMob : classes.Forward}
 				onClick={() => forward()}
+			/>
+			<WrappedButtonsMob
+				forward={forward}
+				isMobile={isMobile}
+				displayForward="block"
+				displaySave="none"
+				displayAdd="none"
+				displayStopEdit="none"
 			/>
 		</div>
 	);

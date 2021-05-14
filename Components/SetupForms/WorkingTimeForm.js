@@ -1,13 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
 import moment from 'moment';
+import TimeField from 'react-simple-timefield';
 import { FaCopy, FaPaste } from 'react-icons/fa';
 import {
 	useDeviceDetect,
 	inputChangedHandler,
+	inputChangedHandlerArray,
+	inputChangedHandlerCheckBox,
 	updateValidity,
 	responseHandler,
 	currDayFormat,
 } from '../../helpers/universalFunctions';
+import { saveWorkingHoursToMany } from '../../api/saveWorkingHoursToMany';
 import initServicesForm from './initServicesForm';
 
 import Input from '../UI/Forms/Input';
@@ -16,62 +20,32 @@ import AbsenceRadio from './AbsenceRadio';
 import EmployeesPicker from './EmployeesPicker';
 
 import classes from './SetupForms.module.scss';
+import WrappedButtonsMob from '../UI/WrappedButtonsMob';
 
 const WorkingTimeForm = props => {
 	const { isMobile } = useDeviceDetect();
 	const isPageLoad = useRef(true);
 	const modalAnimation = isMobile ? classes.modalInMob : classes.modalInPC;
-	const [workingTimeData, setWorkingTimeData] = useState({});
+	const [workingHoursData, setWorkingHoursData] = useState({});
+	const [editMode, setEditMode] = useState(false);
 	const [checkedEmployees, setCheckedEmployees] = useState([]);
+	const [serviceProviderId, setServiceProviderId] = useState(null);
+	const [employeeId, setEmployeeId] = useState(null);
+	const [indexOfDay, setIndexOfDay] = useState(0);
+	const [weekIndex, setWeekIndex] = useState(0);
 
-	const [formInput, setFormInput] = useState({
-		IdAbsenceType: {
-			value: 0,
-			touched: false,
-			valid: true,
-		},
-		Date: {
-			value: '',
-			touched: false,
-			valid: true,
-		},
-		FirstStartHour: {
-			value: '',
-			touched: false,
-			valid: true,
-		},
-		FirstEndtHour: {
-			value: '',
-			touched: false,
-			valid: true,
-		},
-		SecondStartHour: {
-			value: '',
-			touched: false,
-			valid: true,
-		},
-		SecondEndHour: {
-			value: '',
-			touched: false,
-			valid: true,
-		},
-		Duration: {
-			value: 15,
-			touched: false,
-			valid: true,
-		},
-	});
+	const [formInput, setFormInput] = useState([]);
 
 	const d_Start = new Date(),
 		d_End = new Date(),
 		year = d_Start.getFullYear(),
 		mondays = [],
-		mondaysInMiliseconds = [];
+		mondaysISO = [];
 
 	d_Start.setDate(1);
 	d_End.setDate(7);
 
-	const today = d_Start.getDate();
+	const today = new Date();
 
 	function currMonday(d) {
 		const day = d_Start.getDay(),
@@ -83,15 +57,20 @@ const WorkingTimeForm = props => {
 		d_Start.setDate(d_Start.getDate() + 1);
 	}
 
+	const startMonday = d_Start.setDate(1) + 2 * 86400000;
+
 	const currMondayMs = currMonday(new Date()).getTime();
+	const [datePicker, setDatePicker] = useState(moment(currMonday()).format('YYYY-MM-DD'));
 	const currSundayMs = parseInt(currMondayMs) + 1000 * 60 * 60 * 24 * 6;
-	const currMondayISO = new Date(currMondayMs);
+	const currMondayISO = new Date(currMondayMs + 7 * 86400000);
+	const [selectedMonday, setSelectedMonday] = useState(currMondayMs);
+	console.log(moment(selectedMonday).format('YYYY-MM-DD'));
 
 	// Get all the other Mondays in the month
 
 	while (d_Start.getFullYear() < parseInt(year) + 2) {
-		let pushMondays = new Date(d_Start.getTime());
-		let pushSundays = new Date(d_End.getTime());
+		let pushMondays = new Date(d_Start);
+		let pushSundays = new Date(d_End);
 		mondays.push(
 			(pushMondays.getDate() < 10 ? '0' : '') +
 				pushMondays.getDate() +
@@ -113,7 +92,7 @@ const WorkingTimeForm = props => {
 		);
 		d_Start.setDate(d_Start.getDate() + 7);
 		d_End.setDate(d_End.getDate() + 7);
-		mondaysInMiliseconds.push(d_Start.getTime());
+		mondaysISO.push(pushMondays);
 	}
 
 	const weekDays = [
@@ -147,28 +126,37 @@ const WorkingTimeForm = props => {
 		},
 	];
 
-	const employeeList = ['Emlpoyee1', 'Emlpoyee2', 'Emlpoyee3', 'Emlpoyee4', 'Emlpoyee5'];
-	const duration = ['15', '30', '45', '60'];
+	const getWorkingHours = async () => {
+		const api = await getWorkingHours()
+			.then(response => {
+				const getWorkingHoursData = response.data.map(workingHours => {
+					return workingHours;
+				});
+				setFormInput(getWorkingHoursData);
+			})
+			.catch(error => {
+				props.setIsLoading(false);
+				if (error.response) {
+					console.log(error.response);
+				} else if (error.request) {
+					console.log(error.request);
+				}
+			});
+		return api;
+	};
 
-	/* const saloonsPreview = () => {
-		const listItems = saloonsList.map(data => {
-			return <p>{data}</p>;
-		});
-		return listItems;
-	}; */
-
-	const addServicesHandler = () => {
-		/* const api = newCompany(companyData)
+	const addWorkingHoursHandler = () => {
+		const api = saveWorkingHoursToMany(workingHoursData)
 			.then(response => {
 				console.log(response),
 					responseHandler(
 						props.setShowResponseModal,
 						modalAnimation,
-						'Poslali smo Vam verifikacioni e-mail i sms. Klikom na link u e-mail-u i sms-u registracija će biti završena.',
+						'Radno vreme uspešno sačuvano',
 						'green'
 					);
 				props.setIsLoading(false);
-				props.setDisplayRegServProv('none');
+				props.displayWorkingTimeForm('none');
 			})
 			.catch(error => {
 				props.setIsLoading(false);
@@ -185,7 +173,7 @@ const WorkingTimeForm = props => {
 					console.log('nesto drugo');
 				}
 			});
-		api; */
+		api;
 		console.log('service added');
 	};
 
@@ -194,53 +182,120 @@ const WorkingTimeForm = props => {
 			isPageLoad.current = false;
 			return;
 		}
-		addServicesHandler();
+		addWorkingHoursHandler();
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [workingTimeData]);
+	}, [workingHoursData]);
+
+	/* console.log(selectedMonday.getTime); */
+
+	useEffect(() => {
+		const defaultForm = [];
+		for (let i = 1; i < 8; i++) {
+			setIndexOfDay(i);
+			const index = i - 1;
+			const addDay = i > 0 ? index * 86400000 : '';
+			defaultForm.push({
+				guid: null,
+				id: i,
+				idAbsenceType: 0,
+				date: {
+					value: moment(selectedMonday + addDay).format('YYYY-MM-DD'),
+					touched: false,
+					valid: true,
+				},
+				firstStartHour: '--:--',
+				firstEndHour: '--:--',
+				secondStartHour: '--:--',
+				secondEndHour: '--:--',
+				cellDuration: 15,
+			});
+		}
+		setFormInput(defaultForm);
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [selectedMonday]);
 
 	const onSubmit = e => {
 		e.preventDefault();
 		const formData = {
-			NewWorkingHours: {
-				serviceName: formInput.serviceName.value.trim(),
-				description: formInput.description.value.trim(),
-				duration: formInput.duration.value.trim(),
-				price: formInput.price.value.trim(),
-			},
+			NewWorkingHours: formInput
+				.filter(
+					hour => !hour.firstStartHour.includes('--:--') && !hour.firstEndHour.includes('--:--')
+				)
+				.map(obj => {
+					return {
+						Id: obj.id,
+						IdAbsenceType: obj.idAbsenceType,
+						Date: datePicker,
+						FirstStartHour:
+							obj.firstStartHour === '--:--'
+								? obj.firstStartHour
+								: moment.duration(obj.firstStartHour).asMinutes(),
+						FirstEndHour:
+							obj.firstEndHour === '--:--'
+								? obj.firstEndHour
+								: moment.duration(obj.firstEndHour).asMinutes(),
+						SecondStartHour:
+							obj.secondStartHour === '--:--'
+								? null
+								: moment.duration(obj.secondStartHour).asMinutes(),
+						SecondEndHour:
+							obj.secondEndHour === '--:--' ? null : moment.duration(obj.secondEndHour).asMinutes(),
+						CellDuration: obj.cellDuration,
+					};
+				}),
 			Employees: checkedEmployees,
 		};
+		setWorkingHoursData(formData);
+		props.setIsLoading(true);
+	};
 
-		if (!formInput.serviceName.value.trim()) {
-			updateValidity(setFormInput, 'serviceName', formInput, '', false);
-			responseHandler(
-				props.setShowResponseModal,
-				modalAnimation,
-				'Morate uneti naziv usluge!',
-				'red'
+	const serviceProvidersPreview = serviceProviders => {
+		const listItems = serviceProviders.map(serviceProvider => {
+			return (
+				<option key={serviceProvider.id} value={serviceProvider.id}>
+					{serviceProvider.name}
+				</option>
 			);
-			props.setShowBackdrop(classes.backdropIn);
-		} else if (!formInput.duration.value.trim()) {
-			updateValidity(setFormInput, 'duration', formInput, '', false);
-			responseHandler(
-				props.setShowResponseModal,
-				modalAnimation,
-				'Morate izabrati dužinu trajanja usluge!',
-				'red'
-			);
-			props.setShowBackdrop(classes.backdropIn);
+		});
+		return listItems;
+	};
+
+	const employeesPreview = () => {
+		const listItems = props.listOfEmployees
+			.filter(user => user.serviceProviderId.includes(serviceProviderId))
+			.map(filteredEmployee => {
+				return (
+					<option key={filteredEmployee.id} value={filteredEmployee.id}>
+						{filteredEmployee.name}
+					</option>
+				);
+			});
+		return listItems;
+	};
+
+	const displayForm = () => {
+		if (props.userGuideStatus === 'Services') {
+			props.setDisplayGreeting('none');
+			props.setDisplayWorkingTimeForm('block');
 		} else {
-			setWorkingTimeData(formData);
-			setFormInput(initServicesForm);
-			/* props.setIsLoading(true); */
+			props.setDisplayWorkingTimeForm('none');
 		}
 	};
 
-	const durationList = () => {
-		return duration.map((time, i) => <option key={i}>{time}</option>);
-	};
+	useEffect(() => {
+		if (isPageLoad.current) {
+			isPageLoad.current = false;
+			return;
+		}
+		displayForm();
 
-	const pickDurationClassName = isMobile ? classes.pickDuratuionMob : classes.pickDuratuion;
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	const displayOverlay = !employeeId ? 'block' : 'none';
+
 	if (isMobile) {
 		/* **************** MOB ****************/
 		return (
@@ -252,10 +307,14 @@ const WorkingTimeForm = props => {
 					</i>
 					<Select
 						name="monday"
-						onChange={e => inputChangedHandler(e, 'monday', formInput, setFormInput)}>
+						onChange={e => {
+							setDatePicker(moment(e.target.value).format('YYYY-MM-DD')),
+								setSelectedMonday(new Date(e.target.value).getTime());
+						}}>
 						{mondays.map((monday, i) => {
+							() => setWeekIndex(i);
 							return (
-								<option key={monday} name="monday" value={mondaysInMiliseconds[i]}>
+								<option key={monday} name="monday" value={mondaysISO[i]}>
 									{monday}
 								</option>
 							);
@@ -265,16 +324,31 @@ const WorkingTimeForm = props => {
 						<FaPaste className={classes.Icon} />
 					</i>
 				</div>
-				<EmployeesPicker
-					title="Izaberite radnike"
-					listOfEmployees={props.listOfEmployees}
-					checkedUsers={checkedEmployees}
-					setCheckedUsers={setCheckedEmployees}
-					addForSelectedClassName={classes.addForSelected}
-					component="workingTime"
-				/>
+				<Select
+					name="serviceProviderId"
+					className={classes.SelectInputText}
+					value={serviceProviderId}
+					marginTop={5}
+					onChange={e => setServiceProviderId(e.target.value)}>
+					<option value="" disabled selected hidden>
+						Izaberite salon
+					</option>
+					{serviceProvidersPreview(props.serviceProviderData)}
+				</Select>
+				<Select
+					name="serviceProviderId"
+					className={classes.SelectInputText}
+					displaySelect={serviceProviderId ? 'block' : 'none'}
+					value={employeeId}
+					onChange={e => setEmployeeId(e.target.value)}>
+					<option value={null} disabled selected>
+						Izaberite radnika
+					</option>
+					{employeesPreview(props.serviceProviderData)}
+				</Select>
 				<div>
 					<div className={classes.WorkingTimeContainerMob}>
+						<div className={classes.FormOverlayMob} style={{ display: displayOverlay }}></div>
 						<div className={classes.WorkingTimeHead}>
 							<div className={classes.DayTitleMob} style={{ width: '10vw' }}>
 								<p>Dan</p>
@@ -283,7 +357,7 @@ const WorkingTimeForm = props => {
 							<div style={{ width: '43.5vw' }}>Do</div>
 						</div>
 						<div className={classes.WorkingTimeBodyMob}>
-							{weekDays.map(day => {
+							{weekDays.map((day, i) => {
 								return (
 									<div key={day} className={classes.WorkingTimeBodyBlockMob}>
 										<div className={classes.WorkingTimeDaysMob}>
@@ -291,12 +365,48 @@ const WorkingTimeForm = props => {
 										</div>
 										<div className={classes.WorkingTimeBlockMob}>
 											<div className={classes.WorkingTimePairsContainerMob}>
-												<Input type="time" className={classes.WorkingTimePairsMob} />
-												<Input type="time" className={classes.WorkingTimePairsMob} />
+												<TimeField
+													value={formInput[i]?.firstStartHour} // {String}   required, format '00:00' or '00:00:00'
+													className={classes.WorkingTimePairsMob}
+													onChange={e =>
+														inputChangedHandlerArray(e, 'firstStartHour', setFormInput, i + 1)
+													}
+													colon=":"
+													showSeconds={false}
+													style={{ marginRight: '4%' }}
+												/>
+												<TimeField
+													value={formInput[i]?.firstEndHour}
+													className={classes.WorkingTimePairsMob}
+													showSeconds={false}
+													colon=":"
+													onChange={e =>
+														inputChangedHandlerArray(e, 'firstEndHour', setFormInput, i + 1)
+													}
+													style={{ marginLeft: '4%' }}
+												/>
 											</div>
 											<div className={classes.WorkingTimePairsContainerMob}>
-												<Input type="time" className={classes.WorkingTimePairsMob} />
-												<Input type="time" className={classes.WorkingTimePairsMob} />
+												<TimeField
+													value={formInput[i]?.secondStartHour} // {String}   required, format '00:00' or '00:00:00'
+													className={classes.WorkingTimePairsMob}
+													onChange={e =>
+														inputChangedHandlerArray(e, 'secondStartHour', setFormInput, i + 1)
+													}
+													colon=":"
+													showSeconds={false}
+													style={{ marginRight: '4%' }}
+												/>
+												<TimeField
+													value={formInput[i]?.secondEndHour}
+													className={classes.WorkingTimePairsMob}
+													showSeconds={false}
+													colon=":"
+													onChange={e =>
+														inputChangedHandlerArray(e, 'secondEndHour', setFormInput, i + 1)
+													}
+													style={{ marginLeft: '4%' }}
+												/>
 											</div>
 
 											<div className={classes.AbsencePairsContainer}>
@@ -347,20 +457,14 @@ const WorkingTimeForm = props => {
 						</div>
 					</div>
 				</div>
-				<Input
-					type="button"
-					value="Sačuvaj"
-					className={[classes.ChoiceButton, classes.Save].join(' ')}
-					display="block"
-					float="left"
-					marginLeft="8px"
-					/* onClick={onSubmit} */
-				/>
-				<Input
-					type="button"
-					value="nastavi >>>"
-					className={classes.ForwardMob}
-					onClick={() => props.setDisplayWorkingTimeForm('none')}
+				<WrappedButtonsMob
+					forward={() => props.setDisplayWorkingTimeForm('none')}
+					save={onSubmit}
+					isMobile={isMobile}
+					displayForward="block"
+					displaySave="block"
+					displayAdd="none"
+					displayStopEdit="none"
 				/>
 			</div>
 		);
@@ -373,10 +477,10 @@ const WorkingTimeForm = props => {
 					<Input type="button" value="Kopiraj" />
 					<Select
 						name="monday"
-						onChange={e => inputChangedHandler(e, 'monday', formInput, setFormInput)}>
+						onChange={e => setDatePicker(moment(e.target.value).format('YYYY-MM-DD'))}>
 						{mondays.map((monday, i) => {
 							return (
-								<option key={monday} name="monday" value={mondaysInMiliseconds[i]}>
+								<option key={monday} name="monday" value={mondaysISO[i]}>
 									{monday}
 								</option>
 							);
@@ -384,13 +488,30 @@ const WorkingTimeForm = props => {
 					</Select>
 					<Input type="button" value="Nalepi" />
 				</div>
-				<EmployeesPicker
-					listOfEmployees={props.listOfEmployees}
-					checkedUsers={checkedEmployees}
-					setCheckedUsers={setCheckedEmployees}
-					addForSelectedClassName={classes.addForSelected}
-				/>
+				<Select
+					name="serviceProviderId"
+					className={classes.SelectInputText}
+					value={serviceProviderId}
+					marginTop={5}
+					onChange={e => setServiceProviderId(e.target.value)}>
+					<option value="" disabled selected hidden>
+						Izaberite salon
+					</option>
+					{serviceProvidersPreview(props.serviceProviderData)}
+				</Select>
+				<Select
+					name="serviceProviderId"
+					className={classes.SelectInputText}
+					displaySelect={serviceProviderId ? 'block' : 'none'}
+					value={employeeId}
+					onChange={e => setEmployeeId(e.target.value)}>
+					<option value={null} disabled selected>
+						Izaberite radnika
+					</option>
+					{employeesPreview(props.serviceProviderData)}
+				</Select>
 				<div className={classes.WorkingTimeContainer}>
+					<div className={classes.FormOverlay} style={{ display: displayOverlay }}></div>
 					<div className={classes.WorkingTimeHead}>
 						<div className={classes.WorkingTimeHead} style={{ width: '7vw' }}>
 							Dan
@@ -415,14 +536,25 @@ const WorkingTimeForm = props => {
 							{weekDays.map((day, i) => {
 								return (
 									<div className={classes.WorkingTimePairsContainer} key={i}>
-										<Input
-											type="time"
-											name={`${day.name}`}
+										<TimeField
+											value={formInput[i]?.firstStartHour} // {String}   required, format '00:00' or '00:00:00'
 											className={classes.WorkingTimePairs}
-											onChange={e => inputChangedHandler(e, 'duration', formInput, setFormInput)}
+											onChange={e =>
+												inputChangedHandlerArray(e, 'firstStartHour', setFormInput, i + 1)
+											}
+											colon=":"
+											showSeconds={false}
 										/>
 										<p className={classes.WorkingTimePairsLine}>-</p>
-										<Input type="time" className={classes.WorkingTimePairs} />
+										<TimeField
+											value={formInput[i]?.firstEndHour}
+											className={classes.WorkingTimePairs}
+											showSeconds={false}
+											colon=":"
+											onChange={e =>
+												inputChangedHandlerArray(e, 'firstEndHour', setFormInput, i + 1)
+											}
+										/>
 									</div>
 								);
 							})}
@@ -431,9 +563,25 @@ const WorkingTimeForm = props => {
 							{weekDays.map((day, i) => {
 								return (
 									<div className={classes.WorkingTimePairsContainer} key={i}>
-										<Input type="time" className={classes.WorkingTimePairs} />
+										<TimeField
+											value={formInput[i]?.secondStartHour}
+											className={classes.WorkingTimePairs}
+											showSeconds={false}
+											colon=":"
+											onChange={e =>
+												inputChangedHandlerArray(e, 'secondStartHour', setFormInput, i + 1)
+											}
+										/>
 										<p className={classes.WorkingTimePairsLine}>-</p>
-										<Input type="time" className={classes.WorkingTimePairs} />
+										<TimeField
+											value={formInput[i]?.secondEndHour}
+											className={classes.WorkingTimePairs}
+											showSeconds={false}
+											colon=":"
+											onChange={e =>
+												inputChangedHandlerArray(e, 'secondEndHour', setFormInput, i + 1)
+											}
+										/>
 									</div>
 								);
 							})}
@@ -445,18 +593,24 @@ const WorkingTimeForm = props => {
 										<div className={classes.AbsenceRadioContainer}>
 											<div className={classes.Radio_p_Container}>
 												<AbsenceRadio
-													htmlFor={`${day.date}prvi`}
+													htmlFor={`${day.date}${0}`}
 													name={day.name}
-													id={`${day.date}prvi`}
+													id={`${day.date}${0}`}
 													defaultChecked
+													onClick={() =>
+														inputChangedHandlerCheckBox(0, 'idAbsenceType', setFormInput, i + 1)
+													}
 												/>
 												<p>Nema odsustva</p>
 											</div>
 											<div className={classes.Radio_p_Container}>
 												<AbsenceRadio
-													htmlFor={`${day.date}drugi`}
+													htmlFor={`${day.date}${1}`}
 													name={day.name}
-													id={`${day.date}drugi`}
+													id={`${day.date}${1}`}
+													onClick={() =>
+														inputChangedHandlerCheckBox(1, 'idAbsenceType', setFormInput, i + 1)
+													}
 												/>
 												<p>Godišnji odmor</p>
 											</div>
@@ -465,17 +619,23 @@ const WorkingTimeForm = props => {
 										<div className={classes.AbsenceRadioContainer}>
 											<div className={classes.Radio_p_Container}>
 												<AbsenceRadio
-													htmlFor={`${day.date}treci`}
+													htmlFor={`${day.date}${2}`}
 													name={day.name}
-													id={`${day.date}treci`}
+													id={`${day.date}${2}`}
+													onClick={() =>
+														inputChangedHandlerCheckBox(2, 'idAbsenceType', setFormInput, i + 1)
+													}
 												/>
 												<p>Praznik</p>
 											</div>
 											<div className={classes.Radio_p_Container}>
 												<AbsenceRadio
-													htmlFor={`${day.date}cetvrti`}
+													htmlFor={`${day.date}${3}`}
 													name={day.name}
-													id={`${day.date}cetvrti`}
+													id={`${day.date}${3}`}
+													onClick={() =>
+														inputChangedHandlerCheckBox(3, 'idAbsenceType', setFormInput, i + 1)
+													}
 												/>
 												<p>Bolovanje</p>
 											</div>
@@ -487,12 +647,18 @@ const WorkingTimeForm = props => {
 						</div>
 					</div>
 				</div>
+				{/* <EmployeesPicker
+					listOfEmployees={props.listOfEmployees}
+					checkedUsers={checkedEmployees}
+					setCheckedUsers={setCheckedEmployees}
+					addForSelectedClassName={classes.addForSelected}
+				/> */}
 				<Input
 					type="button"
 					value="Sačuvaj"
 					className={[classes.ChoiceButton, classes.Save].join(' ')}
 					display="block"
-					/* onClick={onSubmit} */
+					onClick={onSubmit}
 				/>
 				<Input
 					type="button"

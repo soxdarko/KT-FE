@@ -7,13 +7,15 @@ import {
 } from '../../helpers/universalFunctions';
 import { saveServiceProviders } from '../../api/saveServiceProviders';
 import { getAllServiceProviders } from '../../api/getAllServiceProviders';
-import initSaloonForm from './initSaloonForm';
+import initServiceProviderForm from './initServiceProviderForm';
 
 import Input from '../UI/Forms/Input';
 import Select from '../UI/Select';
 import ServiceProvidersList from './ServiceProvidersList';
 
 import classes from '../../Components/SetupForms/SetupForms.module.scss';
+import WrappedButtonsMob from '../UI/WrappedButtonsMob';
+import TextArea from 'antd/lib/input/TextArea';
 
 const AddServiceProvidersForm = props => {
 	const { isMobile } = useDeviceDetect();
@@ -22,34 +24,14 @@ const AddServiceProvidersForm = props => {
 	const [serviceProviderInfo, setServiceProviderInfo] = useState([]);
 	const [serviceProvidersList, setServiceProvidersList] = useState([]);
 	const [serviceProviderId, setServiceProviderId] = useState(null);
+	const [editMode, setEditMode] = useState(false);
+	const [displayToolBox, setDisplayToolBox] = useState('none');
 
-	const [formInput, setFormInput] = useState({
-		saloonName: {
-			value: '',
-			touched: false,
-			valid: true,
-		},
-		city: {
-			value: '',
-			touched: false,
-			valid: true,
-		},
-		address: {
-			value: '',
-			touched: false,
-			valid: true,
-		},
-		mobOperator: {
-			value: '',
-			touched: false,
-			valid: true,
-		},
-		phone: {
-			value: '',
-			touched: false,
-			valid: true,
-		},
-	});
+	const [formInput, setFormInput] = useState(initServiceProviderForm);
+
+	const resetForm = () => {
+		setServiceProviderId(null), setFormInput(initSaloonForm), setEditMode(false);
+	};
 
 	const getAllServiceProvidersHandler = async () => {
 		const api = await getAllServiceProviders()
@@ -78,7 +60,7 @@ const AddServiceProvidersForm = props => {
 					props.setIsLoading(false),
 					getAllServiceProvidersHandler(),
 					setServiceProviderId(null),
-					setFormInput(initSaloonForm);
+					setFormInput(initServiceProviderForm);
 			})
 			.catch(error => {
 				props.setIsLoading(false);
@@ -113,16 +95,16 @@ const AddServiceProvidersForm = props => {
 		const formData = [
 			{
 				Id: serviceProviderId,
-				Name: formInput.saloonName.value.trim(),
+				Name: formInput.serviceProviderName.value.trim(),
 				City: formInput.city.value.trim(),
-				Address: formInput.address.value.trim(),
-				Informations: `Telefon: ${formInput.mobOperator.value}${formInput.phone.value.trim()}`,
+				/* Informations: `Telefon: ${formInput.mobOperator.value}${formInput.phone.value.trim()}`, */
+				Informations: formInput.informations.value,
 			},
 		];
 
-		const numericPattern = /^\d+$/;
-		if (!formInput.saloonName.value.trim()) {
-			updateValidity(setFormInput, 'saloonName', formInput, '', false);
+		/* const numericPattern = /^\d+$/; */
+		if (!formInput.serviceProviderName.value.trim()) {
+			updateValidity(setFormInput, 'serviceProviderName', formInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
 				modalAnimation,
@@ -133,28 +115,6 @@ const AddServiceProvidersForm = props => {
 		} else if (!formInput.city.value.trim()) {
 			updateValidity(setFormInput, 'city', formInput, '', false);
 			responseHandler(props.setShowResponseModal, modalAnimation, 'Morate uneti grad!', 'red');
-			props.setShowBackdrop(classes.backdropIn);
-		} else if (!formInput.mobOperator.value) {
-			updateValidity(setFormInput, 'mobOperator', formInput, '', false);
-			responseHandler(
-				props.setShowResponseModal,
-				modalAnimation,
-				'Morate izabrati pozivni broj!',
-				'red'
-			);
-			props.setShowBackdrop(classes.backdropIn);
-		} else if (
-			!formInput.phone.value.trim() ||
-			!numericPattern.test(formInput.phone.value) ||
-			formInput.phone.value.length < 6
-		) {
-			updateValidity(setFormInput, 'phone', formInput, '', false);
-			responseHandler(
-				props.setShowResponseModal,
-				modalAnimation,
-				'Morate uneti validan broj telefona!',
-				'red'
-			);
 			props.setShowBackdrop(classes.backdropIn);
 		} else {
 			setServiceProviderInfo(formData);
@@ -167,13 +127,13 @@ const AddServiceProvidersForm = props => {
 	useEffect(() => {
 		props.serviceProviderData.filter(item => {
 			if (item.id === serviceProviderId) {
-				const informations = item.informations;
-				const phoneNumber = informations.substring(informations.indexOf(':') + 1).trim();
-				const mobOperator = phoneNumber.substring(0, 3);
-				const phone = phoneNumber.substring(3, phoneNumber.length);
+				/* const phoneNumber = item.informations.replace(/\D/g, ''); */
+				/* console.log(item.informations.replace(/\D/g, '')); */
+				/* const mobOperator = phoneNumber.substring(0, 3);
+				const phone = phoneNumber.substring(3, phoneNumber.length); */
 				return setFormInput({
 					...formInput,
-					saloonName: {
+					serviceProviderName: {
 						value: item.name,
 						touched: false,
 						valid: true,
@@ -183,20 +143,8 @@ const AddServiceProvidersForm = props => {
 						touched: false,
 						valid: true,
 					},
-					address: {
-						value: item.address,
-						touched: false,
-						valid: true,
-					},
-					mobOperator: {
-						value: mobOperator,
-						touched: false,
-						valid: true,
-					},
-					phone: {
-						value: phone,
-						touched: false,
-						valid: true,
+					informations: {
+						value: item.informations,
 					},
 				});
 			}
@@ -204,17 +152,18 @@ const AddServiceProvidersForm = props => {
 	}, [serviceProviderId]);
 
 	const inputClassName = isMobile ? classes.InputTextMob : classes.InputText;
+	const textAreaClassName = isMobile ? classes.InformationsInputMob : classes.InformationsInput;
 	return (
 		<div style={{ display: props.displayAddServiceProvidersForm }}>
 			<h3>Unesite podatke salona</h3>
 			<Input
 				type="text"
-				name="saloonName"
+				name="serviceProviderName"
 				placeholder="Naziv salona"
 				className={inputClassName}
-				value={formInput.saloonName.value}
-				onChange={e => inputChangedHandler(e, 'saloonName', formInput, setFormInput)}
-				invalid={!formInput.saloonName.valid}
+				value={formInput.serviceProviderName.value}
+				onChange={e => inputChangedHandler(e, 'serviceProviderName', formInput, setFormInput)}
+				invalid={!formInput.serviceProviderName.valid}
 			/>
 			<Input
 				type="text"
@@ -225,64 +174,51 @@ const AddServiceProvidersForm = props => {
 				onChange={e => inputChangedHandler(e, 'city', formInput, setFormInput)}
 				invalid={!formInput.city.valid}
 			/>
-			<Input
-				type="text"
-				name="address"
-				placeholder="Adresa"
-				className={inputClassName}
-				value={formInput.address.value}
-				onChange={e => inputChangedHandler(e, 'address', formInput, setFormInput)}
-				invalid={!formInput.address.valid}
-			/>
-			<Select
-				name="mobOperator"
-				className={isMobile ? classes.MobileOperatorMob : classes.MobileOperator}
-				display="inline-block"
-				value={formInput.mobOperator.value}
-				onChange={e => inputChangedHandler(e, 'mobOperator', formInput, setFormInput)}
-				invalid={!formInput.mobOperator.valid}>
-				<option value="--" disabled defaultValue>
-					--
-				</option>
-				<option value="060">060</option>
-				<option value="061">061</option>
-				<option value="062">062</option>
-				<option value="063">063</option>
-				<option value="064">064</option>
-				<option value="065">065</option>
-				<option value="066">066</option>
-				<option value="069">069</option>
-			</Select>
-			<Input
-				type="number"
-				name="phone"
-				className={isMobile ? classes.PhoneNumberMob : classes.PhoneNumber}
-				placeholder="Uneti telefon"
-				maxLength="7"
-				value={formInput.phone.value}
-				onChange={e => inputChangedHandler(e, 'phone', formInput, setFormInput)}
-				invalid={!formInput.phone.valid}
+			<TextArea
+				name="informations"
+				placeholder="Unesite informacije (adresa, telefon, e-mail, dodatne informacije...)"
+				className={textAreaClassName}
+				value={formInput.informations.value}
+				/* minRows={4} */
+				maxLength="500"
+				onChange={e => inputChangedHandler(e, 'informations', formInput, setFormInput)}
 			/>
 			<Input
 				type="button"
 				value="dodaj"
+				display={isMobile ? 'none' : 'block'}
 				className={[classes.ChoiceButton, classes.Add].join(' ')}
-				display="block"
 				onClick={onSubmit}
 			/>
 			<ServiceProvidersList
 				serviceProviderData={props.serviceProviderData}
 				addForSelectedClassName={classes.addForSelected}
+				displayToolBox={displayToolBox}
+				setDisplayToolBox={setDisplayToolBox}
 				id={serviceProviderId}
 				setId={setServiceProviderId}
+				setEditMode={setEditMode}
 			/>
 			<Input
 				type="button"
 				value="nastavi >>>"
+				display={isMobile ? 'none' : 'block'}
 				className={isMobile ? classes.ForwardMob : classes.Forward}
 				onClick={() => {
 					props.setDisplayAddServiceProvidersForm('none'), props.setDisplayAddEmployeeForm('block');
 				}}
+			/>
+			<WrappedButtonsMob
+				forward={() => {
+					props.setDisplayAddServiceProvidersForm('none'), props.setDisplayAddEmployeeForm('block');
+				}}
+				save={onSubmit}
+				isMobile={isMobile}
+				displayForward="block"
+				displaySave="block"
+				displayAdd="none"
+				displayStopEdit={editMode ? 'block' : 'none'}
+				stopEdit={() => resetForm()}
 			/>
 		</div>
 	);

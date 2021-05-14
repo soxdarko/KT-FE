@@ -45,6 +45,25 @@ const EmployeeQuestionForm = props => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [props.singleEmployee]);
 
+	const displayForm = () => {
+		if (props.userGuideStatus === 'ServiceProviders') {
+			props.setDisplayGreeting('none');
+			props.setDisplayEmployeeQuestionForm('block');
+		} else {
+			props.setDisplayEmployeeQuestionForm('none');
+		}
+	};
+
+	useEffect(() => {
+		if (isPageLoad.current) {
+			isPageLoad.current = false;
+			return;
+		}
+		displayForm();
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
 	return (
 		<QuestionForm
 			title="Da li ste Vi jedini zaposleni?"
