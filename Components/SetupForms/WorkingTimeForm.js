@@ -12,6 +12,7 @@ import {
 	currDayFormat,
 } from '../../helpers/universalFunctions';
 import { saveWorkingHoursToMany } from '../../api/saveWorkingHoursToMany';
+import { getWorkingHours } from '../../api/getWorkingHours';
 import initServicesForm from './initServicesForm';
 
 import Input from '../UI/Forms/Input';
@@ -27,8 +28,6 @@ const WorkingTimeForm = props => {
 	const isPageLoad = useRef(true);
 	const modalAnimation = isMobile ? classes.modalInMob : classes.modalInPC;
 	const [workingHoursData, setWorkingHoursData] = useState({});
-	const [editMode, setEditMode] = useState(false);
-	const [checkedEmployees, setCheckedEmployees] = useState([]);
 	const [serviceProviderId, setServiceProviderId] = useState(null);
 	const [employeeId, setEmployeeId] = useState(null);
 	const [indexOfDay, setIndexOfDay] = useState(0);
@@ -64,7 +63,11 @@ const WorkingTimeForm = props => {
 	const currSundayMs = parseInt(currMondayMs) + 1000 * 60 * 60 * 24 * 6;
 	const currMondayISO = new Date(currMondayMs + 7 * 86400000);
 	const [selectedMonday, setSelectedMonday] = useState(currMondayMs);
-	console.log(moment(selectedMonday).format('YYYY-MM-DD'));
+	const selectedMondayFormated = moment(selectedMonday).format('YYYY-MM-DD');
+
+	const [workingHoursOnChangeEmployee, setWorkingHoursOnChangeEmployee] = useState([]);
+	const [hoursFromGet, setHoursFromGet] = useState([]);
+	const [minutesFromGet, setMinutesFromGet] = useState([]);
 
 	// Get all the other Mondays in the month
 
@@ -95,44 +98,53 @@ const WorkingTimeForm = props => {
 		mondaysISO.push(pushMondays);
 	}
 
-	const weekDays = [
-		{
-			name: 'Pon',
-			date: today,
-		},
-		{
-			name: 'Uto',
-			date: today + 1,
-		},
-		{
-			name: 'Sre',
-			date: today + 2,
-		},
-		{
-			name: 'Čet',
-			date: today + 3,
-		},
-		{
-			name: 'Pet',
-			date: today + 4,
-		},
-		{
-			name: 'Sub',
-			date: today + 5,
-		},
-		{
-			name: 'Ned',
-			date: today + 6,
-		},
-	];
+	const fullTime = formInput[0]?.firstStartHour;
+	const numHour = Math.floor(fullTime / 60);
+	const numMinutes = fullTime % 60;
 
-	const getWorkingHours = async () => {
-		const api = await getWorkingHours()
+	const getTimeHandler = (setState, time) => {
+		if (time < 10) {
+			return setState('0' + time.toString());
+		} else {
+			return setState(time.toString());
+		}
+	};
+
+	const initialTimeFormHandler = () => {
+		const defaultForm = [];
+		for (let i = 1; i < 8; i++) {
+			setIndexOfDay(i);
+			const index = i - 1;
+			const addDay = i > 0 ? index * 86400000 : '';
+			defaultForm.push({
+				id: i,
+				idAbsenceType: 0,
+				date: {
+					value: moment(selectedMonday + addDay).format('YYYY-MM-DD'),
+					touched: false,
+					valid: true,
+				},
+				firstStartHour: '--:--',
+				firstEndHour: '--:--',
+				secondStartHour: '--:--',
+				secondEndHour: '--:--',
+				cellsDuration: 15,
+			});
+		}
+		setFormInput(defaultForm);
+	};
+
+	const getWorkingHoursHandler = async () => {
+		const api = await getWorkingHours(employeeId, selectedMondayFormated)
 			.then(response => {
 				const getWorkingHoursData = response.data.map(workingHours => {
 					return workingHours;
 				});
-				setFormInput(getWorkingHoursData);
+				if (getWorkingHoursData.length > 0) {
+					return setWorkingHoursOnChangeEmployee(getWorkingHoursData);
+				} else {
+					return initialTimeFormHandler();
+				}
 			})
 			.catch(error => {
 				props.setIsLoading(false);
@@ -187,69 +199,132 @@ const WorkingTimeForm = props => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [workingHoursData]);
 
-	/* console.log(selectedMonday.getTime); */
-
-	useEffect(() => {
-		const defaultForm = [];
-		for (let i = 1; i < 8; i++) {
-			setIndexOfDay(i);
-			const index = i - 1;
-			const addDay = i > 0 ? index * 86400000 : '';
-			defaultForm.push({
-				guid: null,
-				id: i,
-				idAbsenceType: 0,
-				date: {
-					value: moment(selectedMonday + addDay).format('YYYY-MM-DD'),
-					touched: false,
-					valid: true,
-				},
-				firstStartHour: '--:--',
-				firstEndHour: '--:--',
-				secondStartHour: '--:--',
-				secondEndHour: '--:--',
-				cellDuration: 15,
-			});
+	const timeFormatHandler = (obj, time) => {
+		if (obj[time] === '--:--' || obj[time] === '00:00') {
+			return null;
+		} else {
+			return moment.duration(obj[time]).asMinutes();
 		}
-		setFormInput(defaultForm);
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [selectedMonday]);
+	};
 
 	const onSubmit = e => {
 		e.preventDefault();
 		const formData = {
 			NewWorkingHours: formInput
 				.filter(
-					hour => !hour.firstStartHour.includes('--:--') && !hour.firstEndHour.includes('--:--')
+					hour =>
+						(!hour.firstStartHour.includes('--') && !hour.firstEndHour.includes('--')) ||
+						hour.idAbsenceType !== 0
 				)
-				.map(obj => {
+				.map(hour => {
+					const houdId = hour.id;
 					return {
-						Id: obj.id,
-						IdAbsenceType: obj.idAbsenceType,
-						Date: datePicker,
+						Id: typeof houdId === 'number' ? null : hour.id,
+						IdAbsenceType: hour.idAbsenceType,
+						Date: hour.date.value,
 						FirstStartHour:
-							obj.firstStartHour === '--:--'
-								? obj.firstStartHour
-								: moment.duration(obj.firstStartHour).asMinutes(),
-						FirstEndHour:
-							obj.firstEndHour === '--:--'
-								? obj.firstEndHour
-								: moment.duration(obj.firstEndHour).asMinutes(),
-						SecondStartHour:
-							obj.secondStartHour === '--:--'
-								? null
-								: moment.duration(obj.secondStartHour).asMinutes(),
-						SecondEndHour:
-							obj.secondEndHour === '--:--' ? null : moment.duration(obj.secondEndHour).asMinutes(),
-						CellDuration: obj.cellDuration,
+							hour.idAbsenceType !== 0 ? 0 : timeFormatHandler(hour, 'firstStartHour'),
+						FirstEndHour: hour.idAbsenceType !== 0 ? 0 : timeFormatHandler(hour, 'firstEndHour'),
+						SecondStartHour: timeFormatHandler(hour, 'secondStartHour'),
+						SecondEndHour: timeFormatHandler(hour, 'secondEndHour'),
+						CellsDuration: 0,
 					};
 				}),
-			Employees: checkedEmployees,
+			Employees: [employeeId],
 		};
 		setWorkingHoursData(formData);
 		props.setIsLoading(true);
 	};
+
+	const weekDays = [
+		{
+			name: 'Pon',
+			date: moment(selectedMonday).format('YYYY-MM-DD'),
+		},
+		{
+			name: 'Uto',
+			date: moment(selectedMonday + 86400000).format('YYYY-MM-DD'),
+		},
+		{
+			name: 'Sre',
+			date: moment(selectedMonday + 2 * 86400000).format('YYYY-MM-DD'),
+		},
+		{
+			name: 'Čet',
+			date: moment(selectedMonday + 3 * 86400000).format('YYYY-MM-DD'),
+		},
+		{
+			name: 'Pet',
+			date: moment(selectedMonday + 4 * 86400000).format('YYYY-MM-DD'),
+		},
+		{
+			name: 'Sub',
+			date: moment(selectedMonday + 5 * 86400000).format('YYYY-MM-DD'),
+		},
+		{
+			name: 'Ned',
+			date: moment(selectedMonday + 6 * 86400000).format('YYYY-MM-DD'),
+		},
+	];
+
+	//Format getWorkingHours
+	useEffect(() => {
+		if (isPageLoad.current) {
+			isPageLoad.current = false;
+			return;
+		}
+
+		const defaultForm = [];
+		if (workingHoursOnChangeEmployee.length > 0) {
+			for (let i = 0; i < 7; i++) {
+				const myDate = weekDays[i].date;
+				const dateFromServer = workingHoursOnChangeEmployee.find(
+					q => q.date.split('T')[0] === myDate
+				);
+
+				if (dateFromServer === undefined) {
+					defaultForm.push({
+						id: i,
+						idAbsenceType: 0,
+						date: {
+							value: weekDays[i].date,
+							touched: false,
+							valid: true,
+						},
+						firstStartHour: '--:--',
+						firstEndHour: '--:--',
+						secondStartHour: '--:--',
+						secondEndHour: '--:--',
+						cellsDuration: 15,
+					});
+				} else {
+					defaultForm.push({
+						id: dateFromServer.id,
+						idAbsenceType: dateFromServer?.idAbsenceType ? dateFromServer.idAbsenceType : 0,
+						date: {
+							value: dateFromServer.date.split('T')[0],
+							touched: false,
+							valid: true,
+						},
+						firstStartHour: updateWorkingTimefromServer(dateFromServer.firstStartHour),
+						firstEndHour: updateWorkingTimefromServer(dateFromServer.firstEndHour),
+						secondStartHour: dateFromServer?.secondStartHour
+							? updateWorkingTimefromServer(dateFromServer?.secondStartHour)
+							: '--:--',
+						secondEndHour: dateFromServer?.secondEndHour
+							? updateWorkingTimefromServer(dateFromServer?.secondEndHour)
+							: '--:--',
+						cellsDuration: dateFromServer.cellsDuration,
+					});
+				}
+			}
+			setFormInput(defaultForm);
+		} else {
+			initialTimeFormHandler();
+		}
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [workingHoursOnChangeEmployee]);
 
 	const serviceProvidersPreview = serviceProviders => {
 		const listItems = serviceProviders.map(serviceProvider => {
@@ -260,6 +335,85 @@ const WorkingTimeForm = props => {
 			);
 		});
 		return listItems;
+	};
+
+	const updateWorkingTimefromServer = time => {
+		if (time === 0 || !time) {
+			return '--';
+		} else return `${formatHoursFromServer(time)}:${formatMinutesFromServer(time)}`;
+	};
+
+	useEffect(() => {
+		if (isPageLoad.current) {
+			isPageLoad.current = false;
+			return;
+		}
+		getTimeHandler(setHoursFromGet, numHour);
+		getTimeHandler(setMinutesFromGet, numMinutes);
+	}, [formInput]);
+
+	useEffect(() => {
+		if (isPageLoad.current) {
+			isPageLoad.current = false;
+			return;
+		}
+		if (employeeId) {
+			getWorkingHoursHandler();
+		}
+
+		const defaultForm = [];
+		if (employeeId) {
+			for (let i = 0; i < workingHoursOnChangeEmployee.length; i++) {
+				defaultForm.push({
+					id: workingHoursOnChangeEmployee[i].id,
+					idAbsenceType: workingHoursOnChangeEmployee[i].idAbsenceType,
+					date: {
+						value: workingHoursOnChangeEmployee[i].date,
+						touched: false,
+						valid: true,
+					},
+					firstStartHour: workingHoursOnChangeEmployee[i].firstStartHour,
+					firstEndHour: workingHoursOnChangeEmployee[i].firstEndHour,
+					secondStartHour: workingHoursOnChangeEmployee[i].secondStartHour,
+					secondEndHour: workingHoursOnChangeEmployee[i].secondEndHour,
+					cellsDuration: workingHoursOnChangeEmployee[i].cellsDuration,
+				});
+			}
+			setFormInput(defaultForm);
+		}
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [employeeId]);
+
+	useEffect(() => {
+		if (isPageLoad.current) {
+			isPageLoad.current = false;
+			return;
+		}
+
+		setEmployeeId(null);
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [serviceProviderId]);
+
+	const formatHoursFromServer = time => {
+		const numHour = Math.floor(time / 60);
+
+		if (numHour < 10) {
+			return '0' + numHour.toString();
+		} else {
+			return numHour.toString();
+		}
+	};
+
+	const formatMinutesFromServer = time => {
+		const numMinutes = time % 60;
+
+		if (numMinutes < 10) {
+			return '0' + numMinutes.toString();
+		} else {
+			return numMinutes.toString();
+		}
 	};
 
 	const employeesPreview = () => {
@@ -276,7 +430,7 @@ const WorkingTimeForm = props => {
 	};
 
 	const displayForm = () => {
-		if (props.userGuideStatus === 'Services') {
+		if (props.userGuideStatus !== 'Services') {
 			props.setDisplayGreeting('none');
 			props.setDisplayWorkingTimeForm('block');
 		} else {
@@ -293,6 +447,7 @@ const WorkingTimeForm = props => {
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+	console.log(formInput);
 
 	const displayOverlay = !employeeId ? 'block' : 'none';
 
@@ -336,7 +491,7 @@ const WorkingTimeForm = props => {
 					{serviceProvidersPreview(props.serviceProviderData)}
 				</Select>
 				<Select
-					name="serviceProviderId"
+					name="employeeId"
 					className={classes.SelectInputText}
 					displaySelect={serviceProviderId ? 'block' : 'none'}
 					value={employeeId}
@@ -413,18 +568,25 @@ const WorkingTimeForm = props => {
 												<div className={classes.AbsenceRadioContainerMob}>
 													<div className={classes.Radio_p_ContainerMob}>
 														<AbsenceRadio
-															htmlFor={`${day.date}prvi`}
+															htmlFor={`${day.date}${0}`}
 															name={day.name}
-															id={`${day.date}prvi`}
-															defaultChecked
+															id={`${day.date}${0}`}
+															defaultChecked={formInput[i]?.IdAbsenceType === 0}
+															onClick={() =>
+																inputChangedHandlerCheckBox(0, 'idAbsenceType', setFormInput, i + 1)
+															}
 														/>
 														<p>Nema odsustva</p>
 													</div>
 													<div className={classes.Radio_p_ContainerMob}>
 														<AbsenceRadio
-															htmlFor={`${day.date}drugi`}
+															htmlFor={`${day.date}${1}`}
 															name={day.name}
-															id={`${day.date}drugi`}
+															id={`${day.date}${1}`}
+															defaultChecked={formInput[i]?.IdAbsenceType === 1}
+															onClick={() =>
+																inputChangedHandlerCheckBox(1, 'idAbsenceType', setFormInput, i + 1)
+															}
 														/>
 														<p>Godišnji odmor</p>
 													</div>
@@ -433,17 +595,25 @@ const WorkingTimeForm = props => {
 												<div className={classes.AbsenceRadioContainerMob}>
 													<div className={classes.Radio_p_ContainerMob}>
 														<AbsenceRadio
-															htmlFor={`${day.date}treci`}
+															htmlFor={`${day.date}${2}`}
 															name={day.name}
-															id={`${day.date}treci`}
+															id={`${day.date}${2}`}
+															defaultChecked={formInput[i]?.IdAbsenceType === 2}
+															onClick={() =>
+																inputChangedHandlerCheckBox(2, 'idAbsenceType', setFormInput, i + 1)
+															}
 														/>
 														<p>Praznik</p>
 													</div>
 													<div className={classes.Radio_p_ContainerMob}>
 														<AbsenceRadio
-															htmlFor={`${day.date}cetvrti`}
+															htmlFor={`${day.date}${3}`}
 															name={day.name}
-															id={`${day.date}cetvrti`}
+															id={`${day.date}${3}`}
+															defaultChecked={formInput[i]?.IdAbsenceType === 3}
+															onClick={() =>
+																inputChangedHandlerCheckBox(3, 'idAbsenceType', setFormInput, i + 1)
+															}
 														/>
 														<p>Bolovanje</p>
 													</div>
@@ -477,7 +647,13 @@ const WorkingTimeForm = props => {
 					<Input type="button" value="Kopiraj" />
 					<Select
 						name="monday"
-						onChange={e => setDatePicker(moment(e.target.value).format('YYYY-MM-DD'))}>
+						onChange={e => {
+							setDatePicker(moment(e.target.value).format('YYYY-MM-DD')),
+								setSelectedMonday(new Date(e.target.value).getTime()),
+								setEmployeeId(''),
+								setServiceProviderId(''),
+								initialTimeFormHandler();
+						}}>
 						{mondays.map((monday, i) => {
 							return (
 								<option key={monday} name="monday" value={mondaysISO[i]}>
@@ -494,18 +670,18 @@ const WorkingTimeForm = props => {
 					value={serviceProviderId}
 					marginTop={5}
 					onChange={e => setServiceProviderId(e.target.value)}>
-					<option value="" disabled selected hidden>
+					<option value={null} selected>
 						Izaberite salon
 					</option>
 					{serviceProvidersPreview(props.serviceProviderData)}
 				</Select>
 				<Select
-					name="serviceProviderId"
+					name="employeeId"
 					className={classes.SelectInputText}
 					displaySelect={serviceProviderId ? 'block' : 'none'}
 					value={employeeId}
 					onChange={e => setEmployeeId(e.target.value)}>
-					<option value={null} disabled selected>
+					<option value={null} selected>
 						Izaberite radnika
 					</option>
 					{employeesPreview(props.serviceProviderData)}
@@ -540,7 +716,12 @@ const WorkingTimeForm = props => {
 											value={formInput[i]?.firstStartHour} // {String}   required, format '00:00' or '00:00:00'
 											className={classes.WorkingTimePairs}
 											onChange={e =>
-												inputChangedHandlerArray(e, 'firstStartHour', setFormInput, i + 1)
+												inputChangedHandlerArray(
+													e,
+													'firstStartHour',
+													setFormInput,
+													formInput[i]?.id
+												)
 											}
 											colon=":"
 											showSeconds={false}
@@ -552,7 +733,7 @@ const WorkingTimeForm = props => {
 											showSeconds={false}
 											colon=":"
 											onChange={e =>
-												inputChangedHandlerArray(e, 'firstEndHour', setFormInput, i + 1)
+												inputChangedHandlerArray(e, 'firstEndHour', setFormInput, formInput[i]?.id)
 											}
 										/>
 									</div>
@@ -569,7 +750,12 @@ const WorkingTimeForm = props => {
 											showSeconds={false}
 											colon=":"
 											onChange={e =>
-												inputChangedHandlerArray(e, 'secondStartHour', setFormInput, i + 1)
+												inputChangedHandlerArray(
+													e,
+													'secondStartHour',
+													setFormInput,
+													formInput[i]?.id
+												)
 											}
 										/>
 										<p className={classes.WorkingTimePairsLine}>-</p>
@@ -579,7 +765,7 @@ const WorkingTimeForm = props => {
 											showSeconds={false}
 											colon=":"
 											onChange={e =>
-												inputChangedHandlerArray(e, 'secondEndHour', setFormInput, i + 1)
+												inputChangedHandlerArray(e, 'secondEndHour', setFormInput, formInput[i]?.id)
 											}
 										/>
 									</div>
@@ -593,10 +779,10 @@ const WorkingTimeForm = props => {
 										<div className={classes.AbsenceRadioContainer}>
 											<div className={classes.Radio_p_Container}>
 												<AbsenceRadio
-													htmlFor={`${day.date}${0}`}
+													htmlFor={`${day.date}prvi`}
 													name={day.name}
-													id={`${day.date}${0}`}
-													defaultChecked
+													id={`${day.date}prvi`}
+													defaultChecked={formInput[i]?.idAbsenceType === 0}
 													onClick={() =>
 														inputChangedHandlerCheckBox(0, 'idAbsenceType', setFormInput, i + 1)
 													}
@@ -605,9 +791,10 @@ const WorkingTimeForm = props => {
 											</div>
 											<div className={classes.Radio_p_Container}>
 												<AbsenceRadio
-													htmlFor={`${day.date}${1}`}
+													htmlFor={`${day.date}drugi`}
 													name={day.name}
-													id={`${day.date}${1}`}
+													id={`${day.date}drugi`}
+													defaultChecked={formInput[i]?.idAbsenceType === 1}
 													onClick={() =>
 														inputChangedHandlerCheckBox(1, 'idAbsenceType', setFormInput, i + 1)
 													}
@@ -619,9 +806,10 @@ const WorkingTimeForm = props => {
 										<div className={classes.AbsenceRadioContainer}>
 											<div className={classes.Radio_p_Container}>
 												<AbsenceRadio
-													htmlFor={`${day.date}${2}`}
+													htmlFor={`${day.date}treci`}
 													name={day.name}
-													id={`${day.date}${2}`}
+													id={`${day.date}treci`}
+													defaultChecked={formInput[i]?.idAbsenceType === 2}
 													onClick={() =>
 														inputChangedHandlerCheckBox(2, 'idAbsenceType', setFormInput, i + 1)
 													}
@@ -630,9 +818,10 @@ const WorkingTimeForm = props => {
 											</div>
 											<div className={classes.Radio_p_Container}>
 												<AbsenceRadio
-													htmlFor={`${day.date}${3}`}
+													htmlFor={`${day.date}cetvrti`}
 													name={day.name}
-													id={`${day.date}${3}`}
+													id={`${day.date}cetvrti`}
+													defaultChecked={formInput[i]?.idAbsenceType === 3}
 													onClick={() =>
 														inputChangedHandlerCheckBox(3, 'idAbsenceType', setFormInput, i + 1)
 													}

@@ -1033,6 +1033,25 @@
 	margin-top: 30px;
 }
 
+.CompanySetupMenu {
+	position: absolute;
+	width: 100vw;
+	height: 100vh;
+	padding-top: 20vh;
+	z-index: 999;
+	background-color: rgba(0, 0, 0, 0.952);
+}
+
+.SetupOptionsButton {
+	@include button;
+	display: block;
+	width: auto;
+	min-width: 200px;
+	margin: 20px auto;
+	padding: 5px;
+	font-size: 1.5rem !important;
+}
+
 .addForSelectedWrapper {
 	display: flex;
 	flex-direction: row;

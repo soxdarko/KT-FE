@@ -149,7 +149,7 @@ const Index = props => {
 			userStatus.userRole === 'ServiceProvider' ||
 			userStatus.userRole === 'Employee'
 		) {
-			router.push('/kalendar');
+			/* router.push('/kalendar'); */ router.push('/setupguide');
 		} else if (userStatus.userRole === 'Client') {
 			alert('presmeriti klijenta na klijent kalendar stranicu');
 		} else {

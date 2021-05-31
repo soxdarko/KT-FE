@@ -11,6 +11,10 @@ import classes from '../Components/Navigation/Navigation.module.scss';
 
 const kalendar = () => {
 	const [clientFormBackdrop, setClientFormBackdrop] = useState('none');
+	const [displayAddServiceProvidersForm, setDisplayAddServiceProvidersForm] = useState('none');
+	const [displayAddEmployeeForm, setDisplayAddEmployeeForm] = useState('none');
+	const [displayAddServicesForm, setDisplayAddServicesForm] = useState('none');
+	const [displayWorkingTimeForm, setDisplayWorkingTimeForm] = useState('none');
 
 	const clientFormBackdropShow = () => {
 		setClientFormBackdrop('block');

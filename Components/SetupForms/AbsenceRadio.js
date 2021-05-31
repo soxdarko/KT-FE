@@ -12,6 +12,8 @@ const AbsenceRadio = props => {
 					name={props.name}
 					id={props.id}
 					onClick={props.onClick}
+					value={props.value}
+					checked={props.checked}
 					defaultChecked={props.defaultChecked}
 				/>
 				<span className={classes.AbsenceCheckmark} />

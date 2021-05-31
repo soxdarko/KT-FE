@@ -42,7 +42,7 @@ const setupguide = props => {
 		message: null,
 		border: '',
 	});
-	const [displayGreeting, setDisplayGreeting] = useState('block');
+	const [displayGreeting, setDisplayGreeting] = useState('none');
 	const [displayServiceProviderQuestionForm, setDisplayServiceProviderQuestionForm] = useState(
 		'none'
 	);
@@ -101,6 +101,7 @@ const setupguide = props => {
 					<h2 className={isMobile ? classes.FormTitleMob : classes.FormTitle}>
 						VODIČ ZA PODEŠAVANJE
 					</h2>
+
 					<GreetingForm
 						displayGreeting={displayGreeting}
 						setDisplayGreeting={setDisplayGreeting}
