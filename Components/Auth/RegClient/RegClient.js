@@ -46,7 +46,7 @@ const RegClient = props => {
 				} else if (error.request) {
 					console.log(error.request);
 				} else {
-					console.log('nesto drugo');
+					console.log('nesto drugoo');
 				}
 			});
 		api;
