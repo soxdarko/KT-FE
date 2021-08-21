@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import ServiceProvidersEmployees from '../Components/DataFromBE/ServiceProvidersEmployees';
-import axios from 'axios';
+import { fetchJson } from '../api/fetchJson';
 import { auth } from '../helpers/auth';
 
 import Head from 'next/head';
@@ -9,7 +8,8 @@ import Calendar from '../Components/Calendar/Calendar';
 
 import classes from '../Components/Navigation/Navigation.module.scss';
 
-const kalendar = () => {
+const kalendar = props => {
+	const [selectedEmployee, setSelectedEmployee] = useState(props.employees[0].id);
 	const [clientFormBackdrop, setClientFormBackdrop] = useState('none');
 	const [displayAddServiceProvidersForm, setDisplayAddServiceProvidersForm] = useState('none');
 	const [displayAddEmployeeForm, setDisplayAddEmployeeForm] = useState('none');
@@ -23,6 +23,7 @@ const kalendar = () => {
 	const clientFormBackdropHide = () => {
 		setClientFormBackdrop('none');
 	};
+
 	return (
 		<>
 			<Head>
@@ -41,32 +42,57 @@ const kalendar = () => {
 				classNameServices={classes.sideDrawerButton}
 				classNameProfile={classes.sideDrawerButton}
 				classNameEmployeeSelect={classes.EmployeeSelect}
-				selectData={ServiceProvidersEmployees}
+				selectData={props.employees}
 				sms="10"
-				license="5">
+				license="5"
+				setSelectedEmployee={setSelectedEmployee}>
 				<Calendar
 					displayBackdrop={clientFormBackdrop}
 					showBackdrop={clientFormBackdropShow}
 					hideBackdrop={clientFormBackdropHide}
+					employees={props.employees}
+					services={props.services}
+					selectedEmployee={selectedEmployee}
 				/>
 			</Layout>
 		</>
 	);
 };
 
-/* export async function getServerSideProps(ctx) {
-	const url = 'http://localhost:3000/api/auth';
-	const token = ctx.req.headers.cookie;
-	const res = await axios
-		.post(url, {
-			headers: { Authorization: 'Bearer ' + token },
-		})
-		.then(response => {
-			return response;
-		});
-	const data = res.json();
+export async function getServerSideProps(ctx) {
+	const token = await auth(ctx);
+	const serviceProvidersUrl = `users/getAllServiceProviders`;
+	const resServiceProviders = await fetchJson(serviceProvidersUrl, 'get', token);
+	const employeesUrl = `users/getAllEmployees`;
+	const resEmployees = await fetchJson(employeesUrl, 'get', token);
+	const servicesUrl = `appointments/getAllServices`;
+	const resServices = await fetchJson(servicesUrl, 'get', token);
+	const guideStatusUrl = `users/getCompanyGuideStatus`;
+	const resGuideStatusUrl = await fetchJson(guideStatusUrl, 'get', token);
 
-	return { props: { data } };
-} */
+	const serviceProviders = resServiceProviders.data.map(name => {
+		return name;
+	});
+
+	const employees = resEmployees.data.map(name => {
+		return name;
+	});
+
+	const services = resServices.data.map(name => {
+		return name;
+	});
+
+	const userStatus = resGuideStatusUrl.data;
+
+	return {
+		props: {
+			token,
+			serviceProviders,
+			employees,
+			services,
+			userStatus,
+		},
+	};
+}
 
 export default kalendar;

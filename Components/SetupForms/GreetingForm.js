@@ -30,7 +30,7 @@ const GreetingForm = props => {
 				/>
 			</form>
 			<Input
-				display={isMobile ? 'none' : 'block'}
+				display={isMobile ? 'none' : 'inline-block'}
 				type="button"
 				value="nastavi >>>"
 				className={isMobile ? classes.ForwardMob : classes.Forward}

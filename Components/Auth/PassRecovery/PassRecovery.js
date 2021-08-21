@@ -159,13 +159,15 @@ const PassRecovery = props => {
 			/>
 			<Input
 				type="button"
-				value="ODUSTANI"
-				display="block"
+				value="NAZAD"
+				display={props.displayPassRecovery === 'block' ? 'block' : 'none'} //don't need button in client authentication page
 				margin="20px auto 5px auto"
 				color="orangered"
 				className={isMobile ? classes.FormButtonCloseMob : classes.FormButton}
 				onClick={() => {
-					props.setDisplayPassRecovery('none'), setFormInput(initState);
+					props.setDisplayPassRecovery('none'),
+						props.setDisplayLogin('block'),
+						setFormInput(initState);
 				}}
 			/>
 		</form>

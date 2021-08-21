@@ -202,7 +202,7 @@ const AddServiceProvidersForm = props => {
 			<Input
 				type="button"
 				value="nastavi >>>"
-				display={isMobile ? 'none' : 'block'}
+				display={isMobile ? 'none' : 'inline-block'}
 				className={isMobile ? classes.ForwardMob : classes.Forward}
 				onClick={() => {
 					props.setDisplayAddServiceProvidersForm('none'), props.setDisplayAddEmployeeForm('block');
@@ -214,7 +214,7 @@ const AddServiceProvidersForm = props => {
 				}}
 				save={onSubmit}
 				isMobile={isMobile}
-				displayForward="block"
+				displayForward="inline-block"
 				displaySave="block"
 				displayAdd="none"
 				displayStopEdit={editMode ? 'block' : 'none'}

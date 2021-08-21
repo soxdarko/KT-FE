@@ -44,6 +44,7 @@ const Layout = props => {
 				sms={props.sms}
 				license={props.license}
 				classNameEmployeeSelect={props.classNameEmployeeSelect}
+				setSelectedEmployee={props.setSelectedEmployee}
 			/>
 			<SideDrawer
 				displayMob={props.displaySideDrawerMob}

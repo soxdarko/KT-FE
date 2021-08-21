@@ -63,7 +63,7 @@ const AddServicesForm = props => {
 	};
 
 	const addServiceHandler = () => {
-		const api = addNewService(newServiceData)
+		const api = addNewService(newServiceData, checkedEmployees)
 			.then(response => {
 				console.log(response), props.setIsLoading(false);
 				setFormInput(initServicesForm);
@@ -338,7 +338,7 @@ const AddServicesForm = props => {
 			<Input
 				type="button"
 				value="nastavi >>>"
-				display={isMobile ? 'none' : 'block'}
+				display={isMobile ? 'none' : 'inline-block'}
 				className={isMobile ? classes.ForwardMob : classes.Forward}
 				onClick={() => {
 					props.setDisplayAddServicesForm('none'), props.setDisplayWorkingTimeForm('block');

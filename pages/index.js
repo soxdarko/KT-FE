@@ -30,11 +30,13 @@ const Index = props => {
 	const { isMobile } = useDeviceDetect();
 	const router = useRouter();
 	const isPageLoad = useRef(true);
-	const token = props.token;
+	const [regColor, setRegColor] = useState('orange');
+	const [loginColor, setLoginColor] = useState('white');
 	const modalAnimationOut = isMobile ? classes.modalOutMob : classes.modalOutPC;
 	const [isLoading, setIsLoading] = useState(false);
 	const [userStatus, setUserStatus] = useState('');
 	const [showBackdrop, setShowBackdrop] = useState('');
+	const [displayTabContainer, setDisplayTabContainer] = useState('none');
 	const [displayLogin, setDisplayLogin] = useState('none');
 	const [displayRegServProv, setDisplayRegServProv] = useState('none');
 	const [displayClientVerify, setDisplayClientVerify] = useState('none');
@@ -43,7 +45,22 @@ const Index = props => {
 		animation: '',
 		message: null,
 		border: '',
+		showButton: 'block',
 	});
+
+	const regTabHandler = () => {
+		setRegColor('orange'),
+			setLoginColor('white'),
+			setDisplayRegServProv('block'),
+			setDisplayLogin('none');
+	};
+
+	const loginTabHandler = () => {
+		setRegColor('white'),
+			setLoginColor('orange'),
+			setDisplayRegServProv('none'),
+			setDisplayLogin('block');
+	};
 
 	const Navigation = (
 		<NavItems display={isMobile ? 'none' : 'inherit'}>
@@ -55,7 +72,12 @@ const Index = props => {
 				className={classes.IndexToolbarNavBtn}
 				displayLoginBtn="block"
 				marginLeft="10px"
-				onClick={() => setDisplayLogin('block')}>
+				onClick={() => {
+					setDisplayTabContainer('block'),
+						setDisplayLogin('block'),
+						setDisplayRegServProv('none'),
+						setShowBackdrop(classes.backdropIn);
+				}}>
 				<a>Prijava</a>
 			</NavItem>
 			<NavItem
@@ -63,7 +85,12 @@ const Index = props => {
 				className={classes.IndexToolbarNavBtn}
 				displayRegBtn="block"
 				marginLeft="85px"
-				onClick={() => setDisplayRegServProv('block')}>
+				onClick={() => {
+					setDisplayTabContainer('block'),
+						setDisplayRegServProv('block'),
+						setDisplayLogin('none'),
+						setShowBackdrop(classes.backdropIn);
+				}}>
 				<a>Registracija</a>
 			</NavItem>
 			<NavItem link="/" className={classes.IndexToolbarNavBtn} marginLeft="205px">
@@ -89,6 +116,7 @@ const Index = props => {
 				displayLinkButton="none"
 				displayFormButton="block"
 				borderColor={showResponseModal.border}
+				showButton={showResponseModal.showButton}
 				link="/"
 				onClick={() => {
 					setShowResponseModal(
@@ -101,34 +129,55 @@ const Index = props => {
 					);
 				}}
 			/>
-			<Login
-				displayLogin={displayLogin}
-				modalAnimation={showResponseModal.animation}
-				setDisplayLogin={setDisplayLogin}
-				setDisplayPassRecovery={setDisplayPassRecovery}
-				setDisplayRegServProv={setDisplayRegServProv}
-				setShowBackdrop={setShowBackdrop}
-				setShowResponseModal={setShowResponseModal}
-				setIsLoading={setIsLoading}
-				setUserStatus={setUserStatus}
-				/* setCookie={setCookie} */
-			/>
-			<RegServProv
-				displayRegServProv={displayRegServProv}
-				setDisplayRegServProv={setDisplayRegServProv}
-				setIsLoading={setIsLoading}
-				setShowBackdrop={setShowBackdrop}
-				setShowResponseModal={setShowResponseModal}
-			/>
+			<div
+				className={classes.TabContainer}
+				style={{ position: 'fixed', display: displayTabContainer }}>
+				<div className={classes.TabButtonContainer}>
+					<button
+						style={{ color: regColor, display: displayTabContainer }}
+						onClick={() => {
+							regTabHandler();
+						}}>
+						Registracija
+					</button>
+					<button
+						style={{ color: loginColor, display: displayTabContainer }}
+						onClick={() => loginTabHandler()}>
+						Login
+					</button>
+				</div>
+				<Login
+					displayLogin={displayLogin}
+					modalAnimation={showResponseModal.animation}
+					setDisplayLogin={setDisplayLogin}
+					setDisplayPassRecovery={setDisplayPassRecovery}
+					setDisplayRegServProv={setDisplayRegServProv}
+					setShowBackdrop={setShowBackdrop}
+					setShowResponseModal={setShowResponseModal}
+					setIsLoading={setIsLoading}
+					setUserStatus={setUserStatus}
+					setDisplayTabContainer={setDisplayTabContainer}
+				/>
+				<RegServProv
+					displayRegServProv={displayRegServProv}
+					setDisplayRegServProv={setDisplayRegServProv}
+					setIsLoading={setIsLoading}
+					setShowBackdrop={setShowBackdrop}
+					setShowResponseModal={setShowResponseModal}
+					setDisplayTabContainer={setDisplayTabContainer}
+				/>
+				<PassRecovery
+					displayPassRecovery={displayPassRecovery}
+					setDisplayPassRecovery={setDisplayPassRecovery}
+					setShowBackdrop={setShowBackdrop}
+					setShowResponseModal={setShowResponseModal}
+					setDisplayLogin={setDisplayLogin}
+				/>
+			</div>
+
 			<ClientVerification
 				displayClientVerify={displayClientVerify}
 				setDisplayClientVerify={setDisplayClientVerify}
-			/>
-			<PassRecovery
-				displayPassRecovery={displayPassRecovery}
-				setDisplayPassRecovery={setDisplayPassRecovery}
-				setShowBackdrop={setShowBackdrop}
-				setShowResponseModal={setShowResponseModal}
 			/>
 		</>
 	);
@@ -149,7 +198,7 @@ const Index = props => {
 			userStatus.userRole === 'ServiceProvider' ||
 			userStatus.userRole === 'Employee'
 		) {
-			/* router.push('/kalendar'); */ router.push('/setupguide');
+			router.push('/kalendar');
 		} else if (userStatus.userRole === 'Client') {
 			alert('presmeriti klijenta na klijent kalendar stranicu');
 		} else {
@@ -192,7 +241,7 @@ const Index = props => {
 						displayLogin === 'block' ? 'block' : displayRegServProv === 'block' ? 'block' : 'none'
 					}
 				/>
-				<button onClick={() => console.log(authenticate)}></button> {/* test za redux */}
+				{/* <button onClick={() => console.log(authenticate)}></button> */} {/* test za redux */}
 				<Footer />
 			</Layout>
 		</>

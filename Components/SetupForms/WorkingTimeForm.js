@@ -7,6 +7,7 @@ import {
 	inputChangedHandler,
 	inputChangedHandlerArray,
 	inputChangedHandlerCheckBox,
+	absenceHoursResetHandler,
 	updateValidity,
 	responseHandler,
 	currDayFormat,
@@ -306,14 +307,22 @@ const WorkingTimeForm = props => {
 							touched: false,
 							valid: true,
 						},
-						firstStartHour: updateWorkingTimefromServer(dateFromServer.firstStartHour),
-						firstEndHour: updateWorkingTimefromServer(dateFromServer.firstEndHour),
-						secondStartHour: dateFromServer?.secondStartHour
-							? updateWorkingTimefromServer(dateFromServer?.secondStartHour)
-							: '--:--',
-						secondEndHour: dateFromServer?.secondEndHour
-							? updateWorkingTimefromServer(dateFromServer?.secondEndHour)
-							: '--:--',
+						firstStartHour:
+							dateFromServer?.idAbsenceType > 0
+								? '--:--'
+								: updateWorkingTimefromServer(dateFromServer.firstStartHour),
+						firstEndHour:
+							dateFromServer?.idAbsenceType > 0
+								? '--:--'
+								: updateWorkingTimefromServer(dateFromServer.firstEndHour),
+						secondStartHour:
+							dateFromServer?.idAbsenceType > 0
+								? '--:--'
+								: updateWorkingTimefromServer(dateFromServer?.secondStartHour),
+						secondEndHour:
+							dateFromServer?.idAbsenceType > 0
+								? '--:--'
+								: updateWorkingTimefromServer(dateFromServer?.secondEndHour),
 						cellsDuration: dateFromServer.cellsDuration,
 					});
 				}
@@ -339,7 +348,7 @@ const WorkingTimeForm = props => {
 
 	const updateWorkingTimefromServer = time => {
 		if (time === 0 || !time) {
-			return '--';
+			return '--:--';
 		} else return `${formatHoursFromServer(time)}:${formatMinutesFromServer(time)}`;
 	};
 
@@ -430,7 +439,7 @@ const WorkingTimeForm = props => {
 	};
 
 	const displayForm = () => {
-		if (props.userGuideStatus !== 'Services') {
+		if (props.userGuideStatus === 'Services') {
 			props.setDisplayGreeting('none');
 			props.setDisplayWorkingTimeForm('block');
 		} else {
@@ -513,6 +522,7 @@ const WorkingTimeForm = props => {
 						</div>
 						<div className={classes.WorkingTimeBodyMob}>
 							{weekDays.map((day, i) => {
+								const isId = formInput[i]?.id;
 								return (
 									<div key={day} className={classes.WorkingTimeBodyBlockMob}>
 										<div className={classes.WorkingTimeDaysMob}>
@@ -524,7 +534,12 @@ const WorkingTimeForm = props => {
 													value={formInput[i]?.firstStartHour} // {String}   required, format '00:00' or '00:00:00'
 													className={classes.WorkingTimePairsMob}
 													onChange={e =>
-														inputChangedHandlerArray(e, 'firstStartHour', setFormInput, i + 1)
+														inputChangedHandlerArray(
+															e,
+															'firstStartHour',
+															setFormInput,
+															formInput[i]?.id
+														)
 													}
 													colon=":"
 													showSeconds={false}
@@ -536,7 +551,12 @@ const WorkingTimeForm = props => {
 													showSeconds={false}
 													colon=":"
 													onChange={e =>
-														inputChangedHandlerArray(e, 'firstEndHour', setFormInput, i + 1)
+														inputChangedHandlerArray(
+															e,
+															'firstEndHour',
+															setFormInput,
+															formInput[i]?.id
+														)
 													}
 													style={{ marginLeft: '4%' }}
 												/>
@@ -546,7 +566,12 @@ const WorkingTimeForm = props => {
 													value={formInput[i]?.secondStartHour} // {String}   required, format '00:00' or '00:00:00'
 													className={classes.WorkingTimePairsMob}
 													onChange={e =>
-														inputChangedHandlerArray(e, 'secondStartHour', setFormInput, i + 1)
+														inputChangedHandlerArray(
+															e,
+															'secondStartHour',
+															setFormInput,
+															formInput[i]?.id
+														)
 													}
 													colon=":"
 													showSeconds={false}
@@ -558,7 +583,12 @@ const WorkingTimeForm = props => {
 													showSeconds={false}
 													colon=":"
 													onChange={e =>
-														inputChangedHandlerArray(e, 'secondEndHour', setFormInput, i + 1)
+														inputChangedHandlerArray(
+															e,
+															'secondEndHour',
+															setFormInput,
+															formInput[i]?.id
+														)
 													}
 													style={{ marginLeft: '4%' }}
 												/>
@@ -568,12 +598,17 @@ const WorkingTimeForm = props => {
 												<div className={classes.AbsenceRadioContainerMob}>
 													<div className={classes.Radio_p_ContainerMob}>
 														<AbsenceRadio
-															htmlFor={`${day.date}${0}`}
+															htmlFor={`${day.date}prvi`}
 															name={day.name}
-															id={`${day.date}${0}`}
-															defaultChecked={formInput[i]?.IdAbsenceType === 0}
+															id={`${day.date}prvi`}
+															defaultChecked={formInput[i]?.idAbsenceType === 0}
 															onClick={() =>
-																inputChangedHandlerCheckBox(0, 'idAbsenceType', setFormInput, i + 1)
+																inputChangedHandlerCheckBox(
+																	0,
+																	'idAbsenceType',
+																	setFormInput,
+																	isId.length > 1 ? isId : parseInt(i) + 1
+																)
 															}
 														/>
 														<p>Nema odsustva</p>
@@ -583,10 +618,35 @@ const WorkingTimeForm = props => {
 															htmlFor={`${day.date}${1}`}
 															name={day.name}
 															id={`${day.date}${1}`}
-															defaultChecked={formInput[i]?.IdAbsenceType === 1}
-															onClick={() =>
-																inputChangedHandlerCheckBox(1, 'idAbsenceType', setFormInput, i + 1)
-															}
+															defaultChecked={formInput[i]?.idAbsenceType === 1}
+															onClick={() => {
+																inputChangedHandlerCheckBox(
+																	1,
+																	'idAbsenceType',
+																	setFormInput,
+																	isId.length > 1 ? isId : parseInt(i) + 1
+																),
+																	absenceHoursResetHandler(
+																		'firstStartHour',
+																		setFormInput,
+																		formInput[i]?.id
+																	),
+																	absenceHoursResetHandler(
+																		'firstEndHour',
+																		setFormInput,
+																		formInput[i]?.id
+																	),
+																	absenceHoursResetHandler(
+																		'secondStartHour',
+																		setFormInput,
+																		formInput[i]?.id
+																	),
+																	absenceHoursResetHandler(
+																		'secondEndHour',
+																		setFormInput,
+																		formInput[i]?.id
+																	);
+															}}
 														/>
 														<p>Godišnji odmor</p>
 													</div>
@@ -598,10 +658,35 @@ const WorkingTimeForm = props => {
 															htmlFor={`${day.date}${2}`}
 															name={day.name}
 															id={`${day.date}${2}`}
-															defaultChecked={formInput[i]?.IdAbsenceType === 2}
-															onClick={() =>
-																inputChangedHandlerCheckBox(2, 'idAbsenceType', setFormInput, i + 1)
-															}
+															defaultChecked={formInput[i]?.idAbsenceType === 2}
+															onClick={() => {
+																inputChangedHandlerCheckBox(
+																	2,
+																	'idAbsenceType',
+																	setFormInput,
+																	isId.length > 1 ? isId : parseInt(i) + 1
+																),
+																	absenceHoursResetHandler(
+																		'firstStartHour',
+																		setFormInput,
+																		formInput[i]?.id
+																	),
+																	absenceHoursResetHandler(
+																		'firstEndHour',
+																		setFormInput,
+																		formInput[i]?.id
+																	),
+																	absenceHoursResetHandler(
+																		'secondStartHour',
+																		setFormInput,
+																		formInput[i]?.id
+																	),
+																	absenceHoursResetHandler(
+																		'secondEndHour',
+																		setFormInput,
+																		formInput[i]?.id
+																	);
+															}}
 														/>
 														<p>Praznik</p>
 													</div>
@@ -610,10 +695,35 @@ const WorkingTimeForm = props => {
 															htmlFor={`${day.date}${3}`}
 															name={day.name}
 															id={`${day.date}${3}`}
-															defaultChecked={formInput[i]?.IdAbsenceType === 3}
-															onClick={() =>
-																inputChangedHandlerCheckBox(3, 'idAbsenceType', setFormInput, i + 1)
-															}
+															defaultChecked={formInput[i]?.idAbsenceType === 3}
+															onClick={() => {
+																inputChangedHandlerCheckBox(
+																	3,
+																	'idAbsenceType',
+																	setFormInput,
+																	isId.length > 1 ? isId : parseInt(i) + 1
+																),
+																	absenceHoursResetHandler(
+																		'firstStartHour',
+																		setFormInput,
+																		formInput[i]?.id
+																	),
+																	absenceHoursResetHandler(
+																		'firstEndHour',
+																		setFormInput,
+																		formInput[i]?.id
+																	),
+																	absenceHoursResetHandler(
+																		'secondStartHour',
+																		setFormInput,
+																		formInput[i]?.id
+																	),
+																	absenceHoursResetHandler(
+																		'secondEndHour',
+																		setFormInput,
+																		formInput[i]?.id
+																	);
+															}}
 														/>
 														<p>Bolovanje</p>
 													</div>
@@ -774,6 +884,7 @@ const WorkingTimeForm = props => {
 						</div>
 						<div className={classes.WorkingTimeAbsence}>
 							{weekDays.map((day, i) => {
+								const isId = formInput[i]?.id;
 								return (
 									<div className={classes.AbsencePairsContainer} key={i}>
 										<div className={classes.AbsenceRadioContainer}>
@@ -784,7 +895,12 @@ const WorkingTimeForm = props => {
 													id={`${day.date}prvi`}
 													defaultChecked={formInput[i]?.idAbsenceType === 0}
 													onClick={() =>
-														inputChangedHandlerCheckBox(0, 'idAbsenceType', setFormInput, i + 1)
+														inputChangedHandlerCheckBox(
+															0,
+															'idAbsenceType',
+															setFormInput,
+															isId.length > 1 ? isId : parseInt(i) + 1
+														)
 													}
 												/>
 												<p>Nema odsustva</p>
@@ -795,9 +911,34 @@ const WorkingTimeForm = props => {
 													name={day.name}
 													id={`${day.date}drugi`}
 													defaultChecked={formInput[i]?.idAbsenceType === 1}
-													onClick={() =>
-														inputChangedHandlerCheckBox(1, 'idAbsenceType', setFormInput, i + 1)
-													}
+													onClick={() => {
+														inputChangedHandlerCheckBox(
+															1,
+															'idAbsenceType',
+															setFormInput,
+															isId.length > 1 ? isId : parseInt(i) + 1
+														),
+															absenceHoursResetHandler(
+																'firstStartHour',
+																setFormInput,
+																formInput[i]?.id
+															),
+															absenceHoursResetHandler(
+																'firstEndHour',
+																setFormInput,
+																formInput[i]?.id
+															),
+															absenceHoursResetHandler(
+																'secondStartHour',
+																setFormInput,
+																formInput[i]?.id
+															),
+															absenceHoursResetHandler(
+																'secondEndHour',
+																setFormInput,
+																formInput[i]?.id
+															);
+													}}
 												/>
 												<p>Godišnji odmor</p>
 											</div>
@@ -810,9 +951,34 @@ const WorkingTimeForm = props => {
 													name={day.name}
 													id={`${day.date}treci`}
 													defaultChecked={formInput[i]?.idAbsenceType === 2}
-													onClick={() =>
-														inputChangedHandlerCheckBox(2, 'idAbsenceType', setFormInput, i + 1)
-													}
+													onClick={() => {
+														inputChangedHandlerCheckBox(
+															2,
+															'idAbsenceType',
+															setFormInput,
+															isId.length > 1 ? isId : parseInt(i) + 1
+														),
+															absenceHoursResetHandler(
+																'firstStartHour',
+																setFormInput,
+																formInput[i]?.id
+															),
+															absenceHoursResetHandler(
+																'firstEndHour',
+																setFormInput,
+																formInput[i]?.id
+															),
+															absenceHoursResetHandler(
+																'secondStartHour',
+																setFormInput,
+																formInput[i]?.id
+															),
+															absenceHoursResetHandler(
+																'secondEndHour',
+																setFormInput,
+																formInput[i]?.id
+															);
+													}}
 												/>
 												<p>Praznik</p>
 											</div>
@@ -822,9 +988,34 @@ const WorkingTimeForm = props => {
 													name={day.name}
 													id={`${day.date}cetvrti`}
 													defaultChecked={formInput[i]?.idAbsenceType === 3}
-													onClick={() =>
-														inputChangedHandlerCheckBox(3, 'idAbsenceType', setFormInput, i + 1)
-													}
+													onClick={() => {
+														inputChangedHandlerCheckBox(
+															3,
+															'idAbsenceType',
+															setFormInput,
+															isId.length > 1 ? isId : parseInt(i) + 1
+														),
+															absenceHoursResetHandler(
+																'firstStartHour',
+																setFormInput,
+																formInput[i]?.id
+															),
+															absenceHoursResetHandler(
+																'firstEndHour',
+																setFormInput,
+																formInput[i]?.id
+															),
+															absenceHoursResetHandler(
+																'secondStartHour',
+																setFormInput,
+																formInput[i]?.id
+															),
+															absenceHoursResetHandler(
+																'secondEndHour',
+																setFormInput,
+																formInput[i]?.id
+															);
+													}}
 												/>
 												<p>Bolovanje</p>
 											</div>
@@ -836,12 +1027,6 @@ const WorkingTimeForm = props => {
 						</div>
 					</div>
 				</div>
-				{/* <EmployeesPicker
-					listOfEmployees={props.listOfEmployees}
-					checkedUsers={checkedEmployees}
-					setCheckedUsers={setCheckedEmployees}
-					addForSelectedClassName={classes.addForSelected}
-				/> */}
 				<Input
 					type="button"
 					value="Sačuvaj"

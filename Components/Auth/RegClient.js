@@ -1,72 +1,56 @@
 import { useState, useRef, useEffect } from 'react';
-import axios from '../../helpers/Axios';
-import { useDeviceDetect } from '../../helpers/universalFunctions';
+import {
+	useDeviceDetect,
+	inputChangedHandler,
+	updateValidity,
+	responseHandler,
+} from '../../../helpers/universalFunctions';
+import initState from './initState';
+import clientRegistration from '../../pages/api/clientRegistration';
 
-import Select from '../UI/Select';
-import Input from '../UI/Forms/Input';
+import Select from '../../UI/Select';
+import Input from '../../UI/Forms/Input';
 
-import classes from '../UI/UI.module.scss';
+import classes from '../../UI/UI.module.scss';
 
-const RegClient = props => {
+const RegServProv = props => {
 	const { isMobile } = useDeviceDetect();
 	const isPageLoad = useRef(true);
-	const [formValidation, setFormValidation] = useState(true);
-	const [clientRegistration, setClientRegistration] = useState([]);
+	const modalAnimation = isMobile ? classes.modalInMob : classes.modalInPC;
+	const [clientData, setClientData] = useState({});
 
-	const [newClient, setNewClient] = useState({
-		name: '',
-		mobOperator: '',
-		phone: '',
-		email: '',
-		userName: '',
-		password: '',
-		passConfirm: '',
-	});
-
-	const onChange = e => {
-		setNewClient({ ...newClient, [e.target.name]: e.target.value });
-	};
-
-	const onSubmit = e => {
-		e.preventDefault();
-		const addedClient = {
-			name: newClient.name.trim(),
-			mobOperator: newClient.mobOperator.trim(),
-			phone: newClient.phone.trim(),
-			email: newClient.email.trim(),
-			userName: newClient.userName.trim(),
-			password: newClient.password.trim(),
-			passConfirm: newClient.passConfirm.trim(),
-		};
-
-		if (
-			newClient.name.trim() === '' ||
-			newClient.phone.trim() === '' ||
-			newClient.email.trim() === '' ||
-			newClient.userName.trim() === '' ||
-			newClient.password.trim() === '' ||
-			newClient.passConfirm.trim() === ''
-		) {
-			alert('Popunite sva polja');
-			setFormValidation(false);
-		} else if (newClient.password.trim() !== newClient.passConfirm.trim()) {
-			alert('Lozinka i ponovljena lozinka nisu jednake');
-			setFormValidation(false);
-		} else {
-			setClientRegistration([...clientRegistration, addedClient]);
-			props.setDisplayRegClient('none');
-			alert('Uspešno ste se registrovali');
-			setFormValidation(true);
-			props.setPagePosition('relative');
-		}
-	};
+	const [formInput, setFormInput] = useState(initState);
 
 	const regHandler = () => {
-		const api = axios
-			.post('/regClient.json', clientRegistration)
-			.then(response => console.log(response))
-			.catch(error => console.log(error));
+		const api = clientRegistration(clientData, userId)
+			.then(response => {
+				console.log(response),
+					responseHandler(
+						props.setShowResponseModal,
+						modalAnimation,
+						'Poslali smo Vam verifikacioni e-mail i sms. Klikom na link u e-mail-u i sms-u registracija će biti završena.',
+						'green'
+					);
+				props.setIsLoading(false);
+				props.setDisplayRegServProv('none');
+			})
+			.catch(error => {
+				props.setIsLoading(false);
+				if (error.response) {
+					error.response.data.map(err => {
+						const Input = err.type[0].toLowerCase() + err.type.slice(1);
+						responseHandler(props.setShowResponseModal, modalAnimation, err.errorMessage, 'red');
+						updateValidity(setFormInput, Input, formInput, '', false);
+						props.setShowBackdrop(classes.backdropIn);
+					});
+				} else if (error.request) {
+					console.log(error.request);
+				} else {
+					console.log('nesto drugo');
+				}
+			});
 		api;
+		setFormInput(initState);
 	};
 
 	useEffect(() => {
@@ -75,209 +59,236 @@ const RegClient = props => {
 			return;
 		}
 		regHandler();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [clientRegistration]);
 
-	if (isMobile) {
-		return (
-			<form
-				style={{ display: props.displayRegClient }}
-				className={classes.Form}
-				onSubmit={onSubmit}>
-				<h2 className={classes.FormTitle}>REGISTRACIJA KLIJENTA</h2>
-				<Input
-					type="text"
-					name="name"
-					className={classes.InputTextMob}
-					borderColor={formValidation}
-					placeholder="UNETI IME I PREZIME"
-					value={clientRegistration.name}
-					onChange={onChange}
-				/>
-				<Select
-					type="text"
-					name="mobOperator"
-					className={classes.MobileOperatorMob}
-					borderColor={formValidation}
-					placeholder="064"
-					value={clientRegistration.mobOperator}
-					onChange={onChange}>
-					<option>060</option>
-					<option>061</option>
-					<option>062</option>
-					<option>063</option>
-					<option>064</option>
-					<option>065</option>
-					<option>066</option>
-					<option>069</option>
-				</Select>
-				<Input
-					type="text"
-					name="phone"
-					className={classes.PhoneNumberMob}
-					borderColor={formValidation}
-					placeholder="UNESITE TELEFON"
-					value={clientRegistration.phone}
-					onChange={onChange}
-				/>
-				<Input
-					type="text"
-					name="email"
-					className={classes.InputTextMob}
-					borderColor={formValidation}
-					placeholder="UNESITE EMAIL"
-					value={clientRegistration.email}
-					onChange={onChange}
-				/>
-				<Input
-					type="text"
-					name="userName"
-					className={classes.InputTextMob}
-					borderColor={formValidation}
-					placeholder="UNESITE KORISNIČKO IME"
-					value={clientRegistration.userName}
-					onChange={onChange}
-				/>
-				<Input
-					type="password"
-					name="password"
-					className={classes.InputTextMob}
-					borderColor={formValidation}
-					placeholder="IZABERITE LOZINKU"
-					value={clientRegistration.password}
-					onChange={onChange}
-				/>
-				<Input
-					type="password"
-					name="passConfirm"
-					className={classes.InputTextMob}
-					borderColor={formValidation}
-					placeholder="PONOVO UNESITE LOZINKU"
-					value={clientRegistration.passConfirm}
-					onChange={onChange}
-				/>
-				<Input
-					type="submit"
-					value="REGISTRUJ SE"
-					width="48%"
-					float="left"
-					margin="20px auto 5px auto"
-					className={classes.SubmitButtonMob}
-					onSubmit={onSubmit}
-				/>
-				<Input
-					type="button"
-					value="NAZAD"
-					float="right"
-					width="48%"
-					margin="20px auto 5px auto"
-					className={classes.FormButtonCloseMob}
-					onClick={() => {
-						props.setDisplayRegClient('none'),
-							props.setDisplayRegAs('block'),
-							setFormValidation(true);
-					}}
-				/>
-			</form>
-		);
-	}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [clientData]);
+
+	const onSubmit = e => {
+		e.preventDefault();
+		const formData = {
+			Name: formInput.name.value.trim(),
+			Email: formInput.email.value.trim(),
+			Phone: formInput.mobOperator.value + formInput.phone.value.trim(),
+			UserName: formInput.userName.value.trim(),
+			Password: formInput.password.value.trim(),
+		};
+
+		const emailPattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+		const numericPattern = /^\d+$/;
+		if (!formInput.name.value.trim()) {
+			updateValidity(setFormInput, 'name', formInput, '', false);
+			responseHandler(
+				props.setShowResponseModal,
+				modalAnimation,
+				'Morate uneti Ime i prezime!',
+				'red'
+			);
+			props.setShowBackdrop(classes.backdropIn);
+		} else if (!formInput.userName.value.trim()) {
+			updateValidity(setFormInput, 'userName', formInput, '', false);
+			responseHandler(
+				props.setShowResponseModal,
+				modalAnimation,
+				'Morate uneti korisničko ime!',
+				'red'
+			);
+			props.setShowBackdrop(classes.backdropIn);
+		} else if (!formInput.mobOperator.value) {
+			updateValidity(setFormInput, 'mobOperator', formInput, '', false);
+			responseHandler(
+				props.setShowResponseModal,
+				modalAnimation,
+				'Morate izabrati pozivni broj!',
+				'red'
+			);
+			props.setShowBackdrop(classes.backdropIn);
+		} else if (
+			!formInput.phone.value.trim() ||
+			!numericPattern.test(formInput.phone.value) ||
+			formInput.phone.value.length < 6
+		) {
+			updateValidity(setFormInput, 'phone', formInput, '', false);
+			responseHandler(
+				props.setShowResponseModal,
+				modalAnimation,
+				'Morate uneti validan broj telefona!',
+				'red'
+			);
+			props.setShowBackdrop(classes.backdropIn);
+		} else if (!formInput.email.value.trim() || !emailPattern.test(formInput.email.value)) {
+			updateValidity(setFormInput, 'email', formInput, '', false);
+			responseHandler(
+				props.setShowResponseModal,
+				modalAnimation,
+				'Morate uneti validnu e-mail adresu!',
+				'red'
+			);
+			props.setShowBackdrop(classes.backdropIn);
+		} else if (!formInput.password.value.trim()) {
+			updateValidity(setFormInput, 'password', formInput, '', false);
+			responseHandler(props.setShowResponseModal, modalAnimation, 'Morate uneti lozinku!', 'red');
+		} else if (!formInput.passConfirm.value.trim()) {
+			updateValidity(setFormInput, 'passConfirm', formInput, '', false);
+			responseHandler(
+				props.setShowResponseModal,
+				modalAnimation,
+				'Morate uneti potvrdu izabrane lozinke!',
+				'red'
+			);
+			props.setShowBackdrop(classes.backdropIn);
+		} else if (formInput.password.value.trim() !== formInput.passConfirm.value.trim()) {
+			setFormInput({
+				...formInput,
+				password: {
+					value: '',
+					valid: false,
+				},
+				passConfirm: {
+					value: '',
+					valid: false,
+				},
+			});
+			responseHandler(
+				props.setShowResponseModal,
+				modalAnimation,
+				'Lozinka i potvrda moraju biti jednake!',
+				'red'
+			);
+			props.setShowBackdrop(classes.backdropIn);
+		} else {
+			setClientData(formData);
+			props.setIsLoading(true);
+		}
+	};
+
+	const inputClassName = isMobile ? classes.InputTextMob : classes.InputText;
 	return (
-		<form style={{ display: props.displayRegClient }} className={classes.Form} onSubmit={onSubmit}>
-			<h2 className={classes.FormTitle}>REGISTRACIJA KLIJENTA</h2>
+		<form style={{ display: props.display }} className={classes.Form} onSubmit={onSubmit}>
+			<h2 className={isMobile ? classes.FormTitleMob : classes.FormTitle}>
+				REGISTRACIJA PRUŽAOCA USLUGA
+			</h2>
 			<Input
 				type="text"
 				name="name"
-				className={classes.InputText}
-				margin="40px auto 5px auto"
-				borderColor={formValidation}
+				className={inputClassName}
 				placeholder="Uneti ime i prezime"
-				value={clientRegistration.name}
-				onChange={onChange}
-			/>
-			<Select
-				name="mobOperator"
-				className={classes.MobileOperator}
-				borderColor={formValidation}
-				placeholder="064"
-				value={clientRegistration.mobOperator}
-				onChange={onChange}>
-				<option>060</option>
-				<option>061</option>
-				<option>062</option>
-				<option>063</option>
-				<option>064</option>
-				<option>065</option>
-				<option>066</option>
-				<option>069</option>
-			</Select>
-			<Input
-				type="text"
-				name="phone"
-				className={classes.PhoneNumber}
-				borderColor={formValidation}
-				placeholder="Uneti telefon"
-				value={clientRegistration.phone}
-				onChange={onChange}
-			/>
-			<Input
-				type="text"
-				name="email"
-				className={classes.InputText}
-				borderColor={formValidation}
-				placeholder="Uneti e-mail"
-				value={clientRegistration.email}
-				onChange={onChange}
+				value={formInput.name.value}
+				maxLength="50"
+				onChange={e => inputChangedHandler(e, 'name', formInput, setFormInput)}
+				invalid={!formInput.name.valid}
 			/>
 			<Input
 				type="text"
 				name="userName"
-				className={classes.InputText}
-				borderColor={formValidation}
-				placeholder="Uneti korisnič"
-				value={clientRegistration.userName}
-				onChange={onChange}
+				className={inputClassName}
+				placeholder="Uneti korisničko ime"
+				value={formInput.userName.value}
+				maxLength="50"
+				onChange={e => inputChangedHandler(e, 'userName', formInput, setFormInput)}
+				invalid={!formInput.userName.valid}
+			/>
+			<Input
+				type="text"
+				name="address"
+				className={inputClassName}
+				placeholder="Uneti adresu firme"
+				value={formInput.address.value}
+				maxLength="50"
+				onChange={e => inputChangedHandler(e, 'address', formInput, setFormInput)}
+			/>
+			<Input
+				type="text"
+				name="city"
+				className={inputClassName}
+				placeholder="Uneti grad"
+				value={formInput.city.value}
+				maxLength="40"
+				onChange={e => inputChangedHandler(e, 'city', formInput, setFormInput)}
+				invalid={!formInput.city.valid}
+			/>
+			<Select
+				name="mobOperator"
+				className={isMobile ? classes.MobileOperatorMob : classes.MobileOperator}
+				display="inline-block"
+				value={formInput.mobOperator.value}
+				onChange={e => inputChangedHandler(e, 'mobOperator', formInput, setFormInput)}
+				invalid={!formInput.mobOperator.valid}>
+				<option value="" disabled selected>
+					06x
+				</option>
+				<option value="060">060</option>
+				<option value="061">061</option>
+				<option value="062">062</option>
+				<option value="063">063</option>
+				<option value="064">064</option>
+				<option value="065">065</option>
+				<option value="066">066</option>
+				<option value="069">069</option>
+			</Select>
+			<Input
+				type="number"
+				name="phone"
+				className={isMobile ? classes.PhoneNumberMob : classes.PhoneNumber}
+				placeholder="Uneti telefon"
+				value={formInput.phone.value}
+				maxLength="7"
+				onChange={e => inputChangedHandler(e, 'phone', formInput, setFormInput)}
+				invalid={!formInput.phone.valid}
+			/>
+			<Input
+				type="text"
+				name="email"
+				className={inputClassName}
+				placeholder="Uneti e-mail"
+				value={formInput.email.value}
+				maxLength="50"
+				onChange={e => inputChangedHandler(e, 'email', formInput, setFormInput)}
+				invalid={!formInput.email.valid}
 			/>
 			<Input
 				type="password"
 				name="password"
-				className={classes.InputText}
-				borderColor={formValidation}
+				className={inputClassName}
 				placeholder="Izabrati lozinku"
-				value={clientRegistration.password}
-				onChange={onChange}
+				value={formInput.password.value}
+				maxLength="50"
+				onChange={e => inputChangedHandler(e, 'password', formInput, setFormInput)}
+				invalid={!formInput.password.valid}
 			/>
 			<Input
 				type="password"
 				name="passConfirm"
-				className={classes.InputText}
-				borderColor={formValidation}
+				className={inputClassName}
 				placeholder="Ponovo uneti lozinku"
-				value={clientRegistration.passConfirm}
-				onChange={onChange}
+				value={formInput.passConfirm.value}
+				maxLength="50"
+				onChange={e => inputChangedHandler(e, 'passConfirm', formInput, setFormInput)}
+				invalid={!formInput.passConfirm.valid}
 			/>
 			<Input
 				type="submit"
 				value="REGISTRUJ SE"
 				display="block"
-				margin="40px auto 5px auto"
-				className={classes.SubmitButton}
-				onSubmit={onSubmit}
+				width={isMobile ? '48%' : 'inherit'}
+				float={isMobile ? 'left' : 'inherit'}
+				margin={isMobile ? '20px auto 5px auto' : '40px auto 5px auto'}
+				className={isMobile ? classes.SubmitButtonMob : classes.SubmitButton}
 			/>
 			<Input
 				type="button"
-				value="NAZAD"
+				value="ODUSTANI"
 				display="block"
+				float={isMobile ? 'right' : 'inherit'}
+				width={isMobile ? '48%' : 'inherit'}
 				margin="20px auto 5px auto"
 				color="orangered"
-				className={classes.FormButton}
+				className={isMobile ? classes.FormButtonCloseMob : classes.FormButton}
 				onClick={() => {
-					props.setDisplayRegClient('none'),
-						props.setDisplayRegAs('block'),
-						setFormValidation(true);
+					props.setDisplayRegServProv('none'), setFormInput(initState);
 				}}
 			/>
 		</form>
 	);
 };
 
-export default RegClient;
+export default RegServProv;

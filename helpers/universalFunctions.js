@@ -52,6 +52,10 @@ export function inputChangedHandlerCheckBox(itemId, inputIdentifier, setState, i
 	setState(f => f.map(d => (d.id === id ? { ...d, [inputIdentifier]: itemId } : d)));
 }
 
+export function absenceHoursResetHandler(inputIdentifier, setState, id) {
+	setState(f => f.map(d => (d.id === id ? { ...d, [inputIdentifier]: '--:--' } : d)));
+}
+
 export function checkValidity(value, rules) {
 	let isValid = true;
 	if (!rules) {
@@ -83,11 +87,12 @@ export function checkValidity(value, rules) {
 	return isValid;
 }
 
-export function responseHandler(setState, animation, message, border) {
+export function responseHandler(setState, animation, message, border, showButton = 'block') {
 	setState({
 		animation: animation,
 		message: message,
 		border: border,
+		showButton: showButton,
 	});
 }
 

@@ -1,4 +1,8 @@
-import { useDeviceDetect } from '../../helpers/universalFunctions';
+import {
+	useDeviceDetect,
+	inputChangedHandlerArray,
+	inputChangedHandler,
+} from '../../helpers/universalFunctions';
 
 import Logo from '../Logo/Logo';
 import HamburgerButton from './HamburgerButton';
@@ -13,7 +17,11 @@ const Toolbar = props => {
 
 	const adminList = () => {
 		if (props.selectData !== null) {
-			return props.selectData.map(user => <option key={user.id}>{user.name}</option>);
+			return props.selectData.map(user => (
+				<option key={user.id} value={user.id}>
+					{user.name}
+				</option>
+			));
 		}
 		return null;
 	};
@@ -35,7 +43,9 @@ const Toolbar = props => {
 				displaySelect={props.displaySelect}
 				className={props.classNameEmployeeSelect}
 				idSelect={props.idSelect}
-				idName={props.idName}>
+				name="employeeId"
+				value={props.selectedEmployee}
+				onChange={e => props.setSelectedEmployee(e.target.value)}>
 				{adminList()}
 			</Select>
 			<PrepaidStatus

@@ -59,7 +59,8 @@ const Login = props => {
 					props.setShowResponseModal,
 					modalAnimation,
 					'Uspešno ste se prijavili',
-					'green'
+					'green',
+					'none'
 				);
 				props.setShowBackdrop(classes.backdropIn);
 				getGuideStatus();
@@ -106,18 +107,6 @@ const Login = props => {
 			/>
 			<Input
 				type="button"
-				name="register"
-				value="REGISTRUJ SE"
-				placeholder="Uneti lozinku"
-				className={buttonClassName(classes.FormButtonMob, classes.FormButton)}
-				onClick={() => {
-					props.setDisplayLogin('none'),
-						props.setDisplayRegServProv('block'),
-						setFormInput(initState);
-				}}
-			/>
-			<Input
-				type="button"
 				name="passRecovery"
 				value="ZABORAVLJENA LOZINKA"
 				placeholder="Uneti lozinku"
@@ -135,8 +124,12 @@ const Login = props => {
 				placeholder="Uneti lozinku"
 				className={buttonClassName(classes.FormButtonMob, classes.FormButton)}
 				color="orangered"
+				display={props.clientAuth === 1 ? 'none !important' : 'block'}
 				onClick={() => {
-					props.setDisplayLogin('none'), setFormInput(initState);
+					props.setDisplayLogin('none'),
+						props.setDisplayTabContainer('none'),
+						setFormInput(initState),
+						props.setShowBackdrop(classes.backdropOut);
 				}}
 			/>
 		</>

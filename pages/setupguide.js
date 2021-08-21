@@ -1,12 +1,7 @@
 import { useState } from 'react';
 import { auth } from '../helpers/auth';
 import { fetchJson } from '../api/fetchJson';
-import {
-	useDeviceDetect,
-	inputChangedHandler,
-	updateValidity,
-	cookieReqParser,
-} from '../helpers/universalFunctions';
+import { useDeviceDetect } from '../helpers/universalFunctions';
 import Head from 'next/head';
 import Layout from '../Components/hoc/Layout/Layout';
 import Backdrop from '../Components/UI/Backdrop';
@@ -42,7 +37,7 @@ const setupguide = props => {
 		message: null,
 		border: '',
 	});
-	const [displayGreeting, setDisplayGreeting] = useState('none');
+	const [displayGreeting, setDisplayGreeting] = useState('block');
 	const [displayServiceProviderQuestionForm, setDisplayServiceProviderQuestionForm] = useState(
 		'none'
 	);

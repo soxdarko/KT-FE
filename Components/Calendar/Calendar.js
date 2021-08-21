@@ -192,6 +192,8 @@ const Calendar = props => {
     api;
   }; */
 
+	console.log(props.selectedEmployee);
+
 	useEffect(() => {
 		if (isPageLoad.current) {
 			isPageLoad.current = false;
@@ -213,7 +215,7 @@ const Calendar = props => {
 				setDisplayClientPicker={setDisplayClientPicker}
 				setDisplayServicesPicker={setDisplayServicesPicker}
 				hideBackdrop={props.hideBackdrop}
-				bodyDataMob={Clients.map(user => (
+				bodyDataMob={props.employees.map(user => (
 					<div
 						className={classesUI.ClientsMob}
 						key={user.id}
@@ -229,7 +231,7 @@ const Calendar = props => {
 						</tr>
 					</div>
 				))}
-				bodyData={Clients.map(user => (
+				bodyData={props.employees.map(user => (
 					<tr
 						className={classesUI.Clients}
 						key={user.id}
@@ -266,7 +268,7 @@ const Calendar = props => {
 						email: chosenClient.email,
 					})
 				}
-				bodyDataMob={ServiceProvidersServices.map(serv => (
+				bodyDataMob={props.services.map(serv => (
 					<div className={classesUI.ServicesMob} key={serv.serviceId}>
 						<tr>
 							<td>{serv.name}</td>
@@ -291,7 +293,7 @@ const Calendar = props => {
 						<th style={{ width: '100px', minWidth: '100px' }}>IZBOR</th>
 					</tr>
 				}
-				bodyData={ServiceProvidersServices.map(serv => (
+				bodyData={props.services.map(serv => (
 					<tr key={serv.serviceId} className={classesUI.Services}>
 						<td style={{ width: '100%' }}>{serv.name}</td>
 						<td style={{ width: '100px', minWidth: '150px' }}>{serv.time}</td>

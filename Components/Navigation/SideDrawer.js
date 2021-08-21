@@ -1,7 +1,13 @@
 import { useDeviceDetect } from '../../helpers/universalFunctions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendarAlt, faAddressBook, faCut, faCog } from '@fortawesome/free-solid-svg-icons';
-import { removeCookie } from '../../helpers/cookie';
+import {
+	faCalendarAlt,
+	faAddressBook,
+	faCut,
+	faCog,
+	faSignOutAlt,
+} from '@fortawesome/free-solid-svg-icons';
+import { userLogOut } from '../../api/userLogOut';
 
 import NavItems from './NavItems';
 import NavItem from './NavItem';
@@ -71,8 +77,23 @@ const SideDrawer = props => {
 										<p>Moj profil</p>
 									</div>
 								</NavItem>
+								<NavItem
+									display="block"
+									className={classes.NavItemServiceProviderMob}
+									link="/"
+									onClick={() => userLogOut()}>
+									<div>
+										<FontAwesomeIcon
+											icon={faSignOutAlt}
+											className={classes.sideDrawerIconMob}
+											/* style={{ color: props.colorSettingsIcon }} */
+										/>
+										<p>Odjava</p>
+									</div>
+								</NavItem>
 							</div>
 						</NavItems>
+
 						<ServiceProviderLogo
 							src={props.src}
 							salonName={props.salonName}
@@ -146,8 +167,8 @@ const SideDrawer = props => {
 							<NavItem
 								display="block"
 								className={classes.NavItemServiceProviderPC}
-								link="#"
-								onClick={() => removeCookie('token')}>
+								link="/"
+								onClick={() => userLogOut()}>
 								<Input
 									type="button"
 									value="Odajava"
@@ -156,7 +177,7 @@ const SideDrawer = props => {
 								/>
 							</NavItem>
 							<FontAwesomeIcon
-								icon={faCog}
+								icon={faSignOutAlt}
 								className={classes.sideDrawerIconPC}
 								style={{ color: props.colorProfileIcon }}
 							/>

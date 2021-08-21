@@ -312,7 +312,10 @@ const RegServProv = props => {
 				color="orangered"
 				className={isMobile ? classes.FormButtonCloseMob : classes.FormButton}
 				onClick={() => {
-					props.setDisplayRegServProv('none'), setFormInput(initState);
+					props.setDisplayRegServProv('none'),
+						props.setDisplayTabContainer('none'),
+						setFormInput(initState),
+						props.setShowBackdrop(classes.backdropOut);
 				}}
 			/>
 		</form>

@@ -12,7 +12,13 @@ const ResponseModal = props => {
 	return (
 		<div className={isMobile ? classNameMob : className} style={{ borderColor: props.borderColor }}>
 			<p>{props.message}</p>
-			<Input type="button" value="OK" className={classes.Confirm} onClick={props.onClick} />
+			<Input
+				type="button"
+				value="OK"
+				display={props.showButton}
+				className={classes.Confirm}
+				onClick={props.onClick}
+			/>
 		</div>
 	);
 };

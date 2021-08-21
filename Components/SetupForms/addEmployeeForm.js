@@ -352,7 +352,7 @@ const addEmployeeForm = props => {
 			<Input
 				type="button"
 				value="nastavi >>>"
-				display={isMobile ? 'none' : 'block'}
+				display={isMobile ? 'none' : 'inline-block'}
 				className={isMobile ? classes.ForwardMob : classes.Forward}
 				onClick={() => {
 					props.setDisplayAddEmployeeForm('none'), props.setDisplayAddServicesForm('block');
