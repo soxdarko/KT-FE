@@ -60,6 +60,7 @@ const ListHead = props => {
 					value={`Dodaj ${props.add}`}
 					faIcon={faPlus}
 					display={props.displayAdd}
+					onClick={props.onAdd}
 				/>
 				<ListHeadButton
 					className={classes.Save}

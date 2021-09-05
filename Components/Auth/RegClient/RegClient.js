@@ -5,7 +5,7 @@ import {
 	updateValidity,
 	responseHandler,
 } from '../../../helpers/universalFunctions';
-import clientRegistration from '../../../pages/api/clientRegistration';
+import { clientRegistration } from '../../../pages/api/clientRegistration';
 import initState from './initState';
 
 import Select from '../../UI/Select';
@@ -22,7 +22,7 @@ const RegClient = props => {
 	const [formInput, setFormInput] = useState(initState);
 
 	const regHandler = () => {
-		const api = clientRegistration(clientData, userId)
+		const api = clientRegistration(clientData, props.userId)
 			.then(response => {
 				console.log(response),
 					responseHandler(
@@ -249,7 +249,6 @@ const RegClient = props => {
 				value="REGISTRUJ SE"
 				display="block"
 				width={isMobile ? '48%' : 'inherit'}
-				float={isMobile ? 'left' : 'inherit'}
 				margin={isMobile ? '20px auto 5px auto' : '40px auto 5px auto'}
 				className={isMobile ? classes.SubmitButtonMob : classes.SubmitButton}
 			/>

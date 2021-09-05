@@ -27,7 +27,7 @@ const kalendar = props => {
 	return (
 		<>
 			<Head>
-				<title>Kalendar</title>
+				<title>KlikTermin | Kalendar</title>
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
 			</Head>
 			<Layout

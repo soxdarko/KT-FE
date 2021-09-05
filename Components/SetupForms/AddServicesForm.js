@@ -14,9 +14,10 @@ import Input from '../UI/Forms/Input';
 import Select from '../UI/Select';
 import EmployeesPicker from './EmployeesPicker';
 
-import classes from './SetupForms.module.scss';
 import WrappedButtonsMob from '../UI/WrappedButtonsMob';
 import NavItems from '../Navigation/NavItems';
+
+import classes from './SetupForms.module.scss';
 
 const AddServicesForm = props => {
 	const { isMobile } = useDeviceDetect();
@@ -221,11 +222,6 @@ const AddServicesForm = props => {
 	}, [serviceId]);
 
 	const inputClassName = isMobile ? classes.InputTextMob : classes.InputText;
-	/* 	console.log(
-		props.servicesData.map(a => {
-			return a.name;
-		})
-	); */
 
 	const displayForm = () => {
 		if (props.userGuideStatus === 'Employees') {
@@ -320,7 +316,7 @@ const AddServicesForm = props => {
 				marginBottom="20px"
 				onClick={onSubmit}
 			/>
-			<Select
+			{/* <Select
 				displaySelect="block"
 				className={isMobile ? classes.SelectServiceForEditMob : classes.SelectInputText}
 				id={'myServices'}
@@ -334,7 +330,7 @@ const AddServicesForm = props => {
 					Lista usluga
 				</option>
 				{allServicesPreview()}
-			</Select>
+			</Select> */}
 			<Input
 				type="button"
 				value="nastavi >>>"

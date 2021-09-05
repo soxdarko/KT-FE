@@ -2,7 +2,7 @@ import { useState } from 'react';
 import nextCookie from 'next-cookies';
 import { useDeviceDetect } from '../helpers/universalFunctions';
 import Head from 'next/head';
-import ServiceProvidersEmployees from '../Components/DataFromBE/ServiceProvidersEmployees';
+import ServiceProvidersEmployees from '../Components/DataFromBE/Clients';
 
 import Layout from '../Components/hoc/Layout/Layout';
 import Profile from '../Components/Profile/Profile';
@@ -34,7 +34,7 @@ const profil = () => {
 	return (
 		<>
 			<Head>
-				<title>Profil</title>
+				<title>KlikTermin | Profil</title>
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
 			</Head>
 			<Layout
