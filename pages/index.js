@@ -132,7 +132,7 @@ const Index = props => {
 				}}
 			/>
 			<div
-				className={classes.TabContainer}
+				className={isMobile ? classes.TabContainerMob : classes.TabContainer}
 				style={{ position: 'fixed', display: displayTabContainer }}>
 				<div className={classes.TabButtonContainer}>
 					<button
@@ -236,8 +236,20 @@ const Index = props => {
 				<hr style={{ marginTop: isMobile ? '10px' : '40px' }} />
 				<ContactForm />
 				<AuthButton
-					onClickLogin={() => setDisplayLogin('block')}
-					onClickReg={() => setDisplayRegServProv('block')}
+					onClickLogin={() => {
+						setDisplayTabContainer('block'),
+							setDisplayLogin('block'),
+							setDisplayRegServProv('none'),
+							setShowBackdrop(classes.backdropIn);
+						setRegColor('white'), setLoginColor('orange');
+					}}
+					onClickReg={() => {
+						setDisplayTabContainer('block'),
+							setDisplayRegServProv('block'),
+							setDisplayLogin('none'),
+							setShowBackdrop(classes.backdropIn);
+						setRegColor('orange'), setLoginColor('white');
+					}}
 					diplayBackdrop={
 						// eslint-disable-next-line no-nested-ternary
 						displayLogin === 'block' ? 'block' : displayRegServProv === 'block' ? 'block' : 'none'

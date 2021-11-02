@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
+import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { auth } from '../helpers/auth';
 import { fetchJson } from '../api/fetchJson';
 import nextCookie from 'next-cookies';
+import { useDeviceDetect } from '../helpers/universalFunctions';
 import ServiceProvidersEmployees from '../Components/DataFromBE/Clients';
 import Head from 'next/head';
 import Layout from '../Components/hoc/Layout/Layout';
@@ -10,10 +12,27 @@ import ListBody from '../Components/UI/List/ListBody/ListBody';
 import ListHead from '../Components/UI/List/ListHead/ListHead';
 import ClientsList from '../Components/Clients/ClientsList';
 import AddClientForm from '../Components/Clients/AddClientForm';
+import InviteClient from '../Components/AddToList/InviteClient';
+import AddClientButton from '../Components/UI/AddClientButton';
+import WrappedTools from '../Components/UI/WrappedTools';
 
 import classes from '../Components/Navigation/Navigation.module.scss';
 
 const Clients = props => {
+	const { isMobile } = useDeviceDetect();
+	const modalAnimationIn = isMobile ? classes.modalInMob : classes.modalInPC;
+	const modalAnimationOut = isMobile ? classes.modalOutMob : classes.modalOutPC;
+	const [displayInviteClient, setDisplayInviteClient] = useState('none');
+	const [showInviteClient, setShowInviteClient] = useState('');
+	const [displayAddClientForm, setDisplayAddClientForm] = useState('none');
+	const [displayWrappedTools, setDisplayWrappedTools] = useState('none');
+	const [showBackdrop, setShowBackdrop] = useState('');
+	const [displayConfirmModal, setDisplayConfirmModal] = useState('none');
+	const [showResponseModal, setShowResponseModal] = useState({
+		animation: '',
+		message: null,
+		border: '',
+	});
 	return (
 		<>
 			<Head>
@@ -38,26 +57,56 @@ const Clients = props => {
 				license="5"
 			/>
 			<Backdrop
-				/* backdropAnimation={showBackdrop} */
+				backdropAnimation={showBackdrop}
 				onClick={() => {
 					setShowBackdrop(classes.backdropOut),
-						setShowConfirmModal(classes.modalDown),
+						setDisplayAddClientForm('none'),
 						setShowInviteClient(classes.slideOutLeft);
 				}}
 			/>
-			<AddClientForm serviceProviders={props.serviceProviders} />
+			<WrappedTools
+				displayWrappedTools={displayWrappedTools}
+				setDisplayWrappedTools={setDisplayWrappedTools}
+				className={classes.WrappedToolsContainer}
+				displayWrappedToolsChkBox="none"
+			/>
+			<AddClientForm
+				serviceProviderData={props.serviceProviders}
+				displayAddClientForm={displayAddClientForm}
+				setDisplayAddClientForm={setDisplayAddClientForm}
+				setShowBackdrop={setShowBackdrop}
+			/>
+			<InviteClient
+				display={displayInviteClient}
+				animation={showInviteClient}
+				backdropAnimation={showBackdrop}
+				setShowBackdrop={setShowBackdrop}
+				setShowInviteClient={setShowInviteClient}
+			/>
 			<ListHead
+				title="Lista klijenata"
 				displayCopy="none"
 				displayPaste="none"
 				displaySelectWeek="none"
 				displaySave="none"
 				displayLink="none"
 				add="klijenta"
-				/* onAdd={} */
+				addNew={faUserPlus}
+				onAdd={() => {
+					setDisplayAddClientForm('block'), setShowBackdrop(classes.backdropIn);
+				}}
 			/>
 			<ListBody>
-				<ClientsList />
+				<ClientsList setDisplayWrappedTools={setDisplayWrappedTools} />
 			</ListBody>
+			<AddClientButton
+				onClick={() => {
+					setShowInviteClient(classes.slideInLeft),
+						setShowBackdrop(classes.backdropIn),
+						setDisplayConfirmModal('none'),
+						setDisplayInviteClient('block');
+				}}
+			/>
 		</>
 	);
 };

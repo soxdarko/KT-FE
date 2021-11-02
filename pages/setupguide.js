@@ -177,6 +177,8 @@ const setupguide = props => {
 						serviceData={servicesData}
 						userGuideStatus={userGuideStatus.guideStatus}
 						setDisplayGreeting={setDisplayGreeting}
+						displayForward={'block'}
+						displayStopEdit={'none'}
 					/>
 					<WorkingTimeForm
 						displayWorkingTimeForm={displayWorkingTimeForm}

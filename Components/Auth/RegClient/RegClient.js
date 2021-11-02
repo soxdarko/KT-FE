@@ -31,8 +31,6 @@ const RegClient = props => {
 						'Poslali smo Vam verifikacioni e-mail i sms. Klikom na link u e-mail-u i sms-u registracija će biti završena.',
 						'green'
 					);
-				props.setIsLoading(false);
-				props.setDisplayRegServProv('none');
 			})
 			.catch(error => {
 				props.setIsLoading(false);
@@ -46,7 +44,7 @@ const RegClient = props => {
 				} else if (error.request) {
 					console.log(error.request);
 				} else {
-					console.log('nesto drugoo');
+					router.push('/');
 				}
 			});
 		api;
@@ -212,6 +210,8 @@ const RegClient = props => {
 				<option value="064">064</option>
 				<option value="065">065</option>
 				<option value="066">066</option>
+				<option value="0677">0677</option>
+				<option value="0678">0678</option>
 				<option value="069">069</option>
 			</Select>
 			<Input

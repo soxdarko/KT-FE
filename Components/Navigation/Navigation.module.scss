@@ -450,3 +450,106 @@
 		color: black;
 	}
 }
+
+.WrappedToolsContainer {
+	position: fixed;
+	flex-direction: row;
+	justify-content: center;
+	left: 0;
+	top: 0;
+	width: 100vw;
+	height: 100vh;
+	z-index: 9999;
+	background-color: gray;
+	.ButtonsPair {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+		div {
+			@include flexBoxCenter;
+			height: 50vh;
+			width: 50vw;
+			font-size: 35vmin;
+			border: 1px solid black;
+		}
+	}
+}
+
+.WrappedToolsWithChkBox {
+	height: 40vh;
+	top: auto;
+	bottom: 0;
+	.ButtonsPair {
+		div {
+			height: 20vh;
+			width: 50vw;
+			font-size: 25vmin;
+			border: 1px solid black;
+		}
+	}
+}
+
+.addForSelectedServiceOptions + label {
+	height: 30px !important;
+	width: 30px !important;
+	top: 3px;
+	margin-right: 0.5rem;
+	border: none;
+	cursor: pointer;
+	z-index: 1000;
+	outline: none;
+	transition: all 0.15s ease-out 0s;
+	color: #fff;
+	background-color: #cbd1d8;
+	&:before {
+		content: 'x';
+		display: block;
+		position: absolute;
+		height: 30px !important;
+		width: 30px !important;
+		font: {
+			size: 30px !important;
+			weight: bold;
+		}
+		cursor: pointer;
+		text-align: center;
+		line-height: 30px !important;
+		color: red;
+		background: {
+			color: #d0cccb;
+			position: 0 -15px;
+		}
+	}
+	&:after {
+		content: ' ';
+		background: {
+			color: #fffdfd;
+		}
+	}
+}
+
+.addForSelectedServiceOptions:checked + label {
+	&:before {
+		content: '✔';
+		display: inline-block;
+		position: absolute;
+		height: 30px !important;
+		width: 30px !important;
+		margin: 0 !important;
+		font: {
+			size: 30px;
+			weight: bold;
+		}
+		text-align: center;
+		line-height: 30px !important;
+		color: green;
+		background-color: $base-orange-color;
+	}
+	&:after {
+		content: '';
+		display: block;
+		position: relative;
+		z-index: 100;
+		background-color: #40e0d0;
+	}
+}

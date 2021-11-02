@@ -31,7 +31,7 @@ const addClientForm = props => {
 	const [formInput, setFormInput] = useState(initClientForm);
 
 	const resetForm = () => {
-		setEmployeeId(null), setFormInput(initEmployeeForm), setEditMode(false);
+		setEmployeeId(null), setFormInput(initClientForm), setEditMode(false);
 	};
 
 	const serviceProvidersPreview = serviceProviders => {
@@ -43,6 +43,12 @@ const addClientForm = props => {
 			);
 		});
 		return listItems;
+	};
+
+	const displayWrappedButtonsMob = () => {
+		if (isMobile && props.displayAddClientForm === 'block') {
+			return true;
+		} else return false;
 	};
 
 	const getAllEmployeesHandler = async () => {
@@ -103,7 +109,7 @@ const addClientForm = props => {
 				Email: formInput.email.value.trim(),
 				UserName: formInput.userName.value.trim(),
 				Password: formInput.password.value.trim(),
-				serviceProviderId: formInput.serviceProviderId.value,
+				/* serviceProviderId: formInput.serviceProviderId.value, */
 			},
 		];
 
@@ -196,7 +202,7 @@ const addClientForm = props => {
 	};
 
 	/* Load data for edit in formInput state */
-	useEffect(() => {
+	/* useEffect(() => {
 		props.employeeData.filter(item => {
 			if (item.id === employeeId) {
 				const mobOperator = item.phone.substring(0, 3);
@@ -224,7 +230,7 @@ const addClientForm = props => {
 						valid: true,
 					},
 					userName: {
-						value: item.userName /* Ovde ce ici item.userName */,
+						value: item.userName,
 						touched: false,
 						valid: true,
 					},
@@ -236,14 +242,15 @@ const addClientForm = props => {
 				});
 			}
 		});
-	}, [employeeId]);
+	}, [employeeId]); */
 
 	const inputClassName = isMobile ? classes.InputTextMob : classes.InputText;
 	const readOnlyClassName = isMobile ? classes.ReadOnlyMob : classes.ReadOnly;
 	return (
-		<div style={{ display: props.displayAddEmployeeForm }}>
-			<h3>Unesite radnike</h3>
-			<Select
+		<>
+			<div style={{ display: props.displayAddClientForm }} className={classes.AddForm}>
+				<h3>Unesite klijente</h3>
+				{/* <Select
 				name="serviceProviderId"
 				className={classes.SelectInputText}
 				value={formInput.serviceProviderId.value}
@@ -253,92 +260,94 @@ const addClientForm = props => {
 					Izaberite salon
 				</option>
 				{serviceProvidersPreview(props.serviceProviderData)}
-			</Select>
-			<Input
-				type="text"
-				name="name"
-				placeholder="Unesite ime i prezime"
-				className={inputClassName}
-				value={formInput.name.value}
-				onChange={e => inputChangedHandler(e, 'name', formInput, setFormInput)}
-				invalid={!formInput.name.valid}
-			/>
-			<Input
-				type="text"
-				name="userName"
-				className={editMode ? readOnlyClassName : inputClassName}
-				placeholder="Unesite korisničko ime"
-				value={formInput.userName.value}
-				maxLength="50"
-				onChange={e => inputChangedHandler(e, 'userName', formInput, setFormInput)}
-				invalid={!formInput.userName.valid}
-			/>
-			<Input
-				type="text"
-				name="email"
-				placeholder="Unesite  e-mail adresu"
-				className={inputClassName}
-				value={formInput.email.value}
-				onChange={e => inputChangedHandler(e, 'email', formInput, setFormInput)}
-				invalid={!formInput.email.valid}
-			/>
-			<Select
-				name="mobOperator"
-				className={isMobile ? classes.MobileOperatorMob : classes.MobileOperator}
-				display="inline-block"
-				value={formInput.mobOperator.value}
-				onChange={e => inputChangedHandler(e, 'mobOperator', formInput, setFormInput)}
-				invalid={!formInput.mobOperator.valid}>
-				<option value="" disabled selected>
-					06x
-				</option>
-				<option value="060">060</option>
-				<option value="061">061</option>
-				<option value="062">062</option>
-				<option value="063">063</option>
-				<option value="064">064</option>
-				<option value="065">065</option>
-				<option value="066">066</option>
-				<option value="069">069</option>
-			</Select>
-			<Input
-				type="number"
-				name="phone"
-				className={isMobile ? classes.PhoneNumberMob : classes.PhoneNumber}
-				placeholder="Unesite broj telefona"
-				maxLength="7"
-				value={formInput.phone.value}
-				onChange={e => inputChangedHandler(e, 'phone', formInput, setFormInput)}
-				invalid={!formInput.phone.valid}
-			/>
-			<Input
-				type="password"
-				name="password"
-				className={inputClassName}
-				placeholder="Izaberite lozinku"
-				value={formInput.password.value}
-				maxLength="50"
-				onChange={e => inputChangedHandler(e, 'password', formInput, setFormInput)}
-				invalid={!formInput.password.valid}
-			/>
-			<Input
-				type="password"
-				name="passConfirm"
-				className={inputClassName}
-				placeholder="Ponovo unseite lozinku"
-				value={formInput.passConfirm.value}
-				maxLength="50"
-				onChange={e => inputChangedHandler(e, 'passConfirm', formInput, setFormInput)}
-				invalid={!formInput.passConfirm.valid}
-			/>
-			<Input
-				type="button"
-				value="dodaj"
-				display={isMobile ? 'none' : 'block'}
-				className={[classes.ChoiceButton, classes.Add].join(' ')}
-				onClick={onSubmit}
-			/>
-			<EmployeesList
+			</Select> */}
+				<Input
+					type="text"
+					name="name"
+					placeholder="Unesite ime i prezime"
+					className={inputClassName}
+					value={formInput.name.value}
+					onChange={e => inputChangedHandler(e, 'name', formInput, setFormInput)}
+					invalid={!formInput.name.valid}
+				/>
+				<Input
+					type="text"
+					name="userName"
+					className={editMode ? readOnlyClassName : inputClassName}
+					placeholder="Unesite korisničko ime"
+					value={formInput.userName.value}
+					maxLength="50"
+					onChange={e => inputChangedHandler(e, 'userName', formInput, setFormInput)}
+					invalid={!formInput.userName.valid}
+				/>
+				<Input
+					type="text"
+					name="email"
+					placeholder="Unesite  e-mail adresu"
+					className={inputClassName}
+					value={formInput.email.value}
+					onChange={e => inputChangedHandler(e, 'email', formInput, setFormInput)}
+					invalid={!formInput.email.valid}
+				/>
+				<Select
+					name="mobOperator"
+					className={isMobile ? classes.MobileOperatorMob : classes.MobileOperator}
+					display="inline-block"
+					value={formInput.mobOperator.value}
+					onChange={e => inputChangedHandler(e, 'mobOperator', formInput, setFormInput)}
+					invalid={!formInput.mobOperator.valid}>
+					<option value="" disabled selected>
+						06x
+					</option>
+					<option value="060">060</option>
+					<option value="061">061</option>
+					<option value="062">062</option>
+					<option value="063">063</option>
+					<option value="064">064</option>
+					<option value="065">065</option>
+					<option value="066">066</option>
+					<option value="0677">0677</option>
+					<option value="0678">0678</option>
+					<option value="069">069</option>
+				</Select>
+				<Input
+					type="number"
+					name="phone"
+					className={isMobile ? classes.PhoneNumberMob : classes.PhoneNumber}
+					placeholder="Unesite broj telefona"
+					maxLength="7"
+					value={formInput.phone.value}
+					onChange={e => inputChangedHandler(e, 'phone', formInput, setFormInput)}
+					invalid={!formInput.phone.valid}
+				/>
+				<Input
+					type="password"
+					name="password"
+					className={inputClassName}
+					placeholder="Izaberite lozinku"
+					value={formInput.password.value}
+					maxLength="50"
+					onChange={e => inputChangedHandler(e, 'password', formInput, setFormInput)}
+					invalid={!formInput.password.valid}
+				/>
+				<Input
+					type="password"
+					name="passConfirm"
+					className={inputClassName}
+					placeholder="Ponovo unseite lozinku"
+					value={formInput.passConfirm.value}
+					maxLength="50"
+					onChange={e => inputChangedHandler(e, 'passConfirm', formInput, setFormInput)}
+					invalid={!formInput.passConfirm.valid}
+				/>
+				<Input
+					type="button"
+					value="dodaj"
+					display={isMobile ? 'none' : 'block'}
+					className={[classes.ChoiceButton, classes.Add].join(' ')}
+					onClick={onSubmit}
+				/>
+				{/* <EmployeesList
 				listOfEmployees={props.employeeData}
 				addForSelectedClassName={classes.addForSelected}
 				id={employeeId}
@@ -348,29 +357,36 @@ const addClientForm = props => {
 				displayToolBox={displayToolBox}
 				setDisplayToolBox={setDisplayToolBox}
 				emptyListMessage={'Izaberite salon'}
-			/>
-			<Input
-				type="button"
-				value="nastavi >>>"
-				display={isMobile ? 'none' : 'inline-block'}
-				className={isMobile ? classes.ForwardMob : classes.Forward}
-				onClick={() => {
-					props.setDisplayAddEmployeeForm('none'), props.setDisplayAddServicesForm('block');
-				}}
-			/>
+			/> */}
+				<Input
+					type="button"
+					value="odustani"
+					display={isMobile ? 'none' : 'inline-block'}
+					color="red"
+					className={isMobile ? classes.ForwardMob : classes.Forward}
+					onClick={() => {
+						props.setDisplayAddClientForm('none'), props.setShowBackdrop(classes.backdropOut);
+					}}
+				/>
+			</div>
 			<WrappedButtonsMob
+				style={{ display: props.displayAddClientForm }}
 				forward={() => {
-					props.setDisplayAddEmployeeForm('none'), props.setDisplayAddServicesForm('block');
+					props.setDisplayAddClientForm('none'), props.setShowBackdrop(classes.backdropOut);
 				}}
 				save={onSubmit}
-				isMobile={isMobile}
-				displayForward="block"
+				isMobile={displayWrappedButtonsMob()}
+				displayForward="none"
 				displaySave="block"
 				displayAdd="none"
-				displayStopEdit={editMode ? 'block' : 'none'}
-				stopEdit={() => resetForm()}
+				displayStopEdit={'block'}
+				stopEdit={() => {
+					resetForm(),
+						props.setDisplayAddClientForm('none'),
+						props.setShowBackdrop(classes.backdropOut);
+				}}
 			/>
-		</div>
+		</>
 	);
 };
 

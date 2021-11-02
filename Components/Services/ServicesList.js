@@ -1,11 +1,40 @@
 import { useDeviceDetect } from '../../helpers/universalFunctions';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faWrench } from '@fortawesome/free-solid-svg-icons';
 
 import classes from '../UI/UI.module.scss';
 
 const ServicesList = props => {
 	const { isMobile } = useDeviceDetect();
 	if (isMobile) {
-		return;
+		return (
+			<div className={classes.ListTableMob}>
+				<div className={classes.Tbody}>
+					{props.services.map((service, i) => {
+						return (
+							<div className={classes.TbodyRow} key={service.id}>
+								<div className={classes.NumMob}>{i + 1}</div>
+								<div className={classes.ListDataContainer}>
+									<div>{service.name}</div>
+									<div>{service.description}</div>
+									<div>{service.duration + ' ' + 'min'}</div>
+									<div>{service.price + ' ' + 'rsd'}</div>
+								</div>
+								<div className={classes.ListOptions}>
+									<FontAwesomeIcon
+										icon={faWrench}
+										className={[classes.Icon, props.IconClassName].join(' ')}
+										onClick={() => props.setDisplayWrappedTools('flex')}
+									/>
+								</div>
+							</div>
+						);
+					})}
+
+					<div style={{ height: '50vw' }}></div>
+				</div>
+			</div>
+		);
 	} else {
 		return (
 			<table>

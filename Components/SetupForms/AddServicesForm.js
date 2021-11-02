@@ -344,12 +344,15 @@ const AddServicesForm = props => {
 				forward={() => {
 					props.setDisplayAddServicesForm('none'), props.setDisplayWorkingTimeForm('block');
 				}}
+				stopEdit={() => {
+					props.setDisplayAddServicesForm('none'), setFormInput(initServicesForm);
+				}}
 				save={onSubmit}
 				isMobile={isMobile}
-				displayForward="block"
+				displayForward={props.displayForward}
 				displaySave="block"
 				displayAdd="none"
-				displayStopEdit="none"
+				displayStopEdit={props.displayStopEdit}
 			/>
 		</div>
 	);

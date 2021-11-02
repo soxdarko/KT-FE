@@ -1,5 +1,10 @@
 import { Button, Space } from 'antd';
-import { ArrowRightOutlined, PlusOutlined, SaveOutlined, StopOutlined } from '@ant-design/icons';
+import {
+	ArrowRightOutlined,
+	PlusOutlined,
+	SaveOutlined,
+	ArrowLeftOutlined,
+} from '@ant-design/icons';
 
 import classes from './UI.module.scss';
 
@@ -29,7 +34,7 @@ const WrappedButtonsMob = props => {
 				type="primary"
 				className={classes.Btn_Add}
 				style={{ display: props.displayStopEdit }}
-				icon={<StopOutlined />}
+				icon={<ArrowLeftOutlined />}
 				onClick={() => props.stopEdit()}
 			/>
 			<div className={classes.Spacer}></div>

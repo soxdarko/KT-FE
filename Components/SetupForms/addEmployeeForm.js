@@ -299,6 +299,8 @@ const addEmployeeForm = props => {
 				<option value="064">064</option>
 				<option value="065">065</option>
 				<option value="066">066</option>
+				<option value="0677">0677</option>
+				<option value="0678">0678</option>
 				<option value="069">069</option>
 			</Select>
 			<Input

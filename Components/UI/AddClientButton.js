@@ -1,6 +1,6 @@
 import { useDeviceDetect } from '../../helpers/universalFunctions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 
 import classes from './UI.module.scss';
 
@@ -9,7 +9,7 @@ const AddClientButton = props => {
 	return (
 		<FontAwesomeIcon
 			className={isMobile ? classes.AddClientButtonMob : classes.AddClientButton}
-			icon={faUserPlus}
+			icon={faPaperPlane}
 			onClick={props.onClick}
 		/>
 	);
