@@ -107,7 +107,7 @@ const Index = props => {
 		</NavItems>
 	);
 
-	const Authentifiacion = (
+	const Authentification = (
 		<>
 			<Backdrop backdropAnimation={showBackdrop} />
 			<ResponseModal
@@ -227,7 +227,7 @@ const Index = props => {
 				selectData={null}
 				backgroundColorLayout="#303030">
 				<Loader loading={isLoading} />
-				{Authentifiacion}
+				{Authentification}
 				{Navigation}
 				<Slider />
 				<OurServices />

@@ -6,13 +6,13 @@ export default async (req, res) => {
 	const password = req.body.userData.password;
 	const url = `users/login?username=${userName}&password=${password}`;
 
-	const token = await fetchJson(url, 'get', {}).then(response => {
-		return response.data.access_token;
+	const responseData = await fetchJson(url, 'get', {}).then(response => {
+		return response.data;
 	});
 
 	const request_config = res.setHeader(
 		'Set-Cookie',
-		cookie.serialize('token', token, {
+		cookie.serialize('token', responseData.access_token, {
 			httpOnly: true,
 			secure: process.env.NODE_ENV !== 'development',
 			maxAge: 60 * 60,
@@ -23,5 +23,5 @@ export default async (req, res) => {
 	request_config;
 
 	res.statusCode = 200;
-	res.json({ success: true });
+	res.json(responseData);
 };
