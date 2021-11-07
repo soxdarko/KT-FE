@@ -77,6 +77,7 @@ const Index = props => {
 						setDisplayLogin('block'),
 						setDisplayRegServProv('none'),
 						setShowBackdrop(classes.backdropIn);
+					setRegColor('white'), setLoginColor('orange');
 				}}>
 				<a>Prijava</a>
 			</NavItem>
@@ -90,6 +91,7 @@ const Index = props => {
 						setDisplayRegServProv('block'),
 						setDisplayLogin('none'),
 						setShowBackdrop(classes.backdropIn);
+					setRegColor('orange'), setLoginColor('white');
 				}}>
 				<a>Registracija</a>
 			</NavItem>
@@ -130,7 +132,7 @@ const Index = props => {
 				}}
 			/>
 			<div
-				className={classes.TabContainer}
+				className={isMobile ? classes.TabContainerMob : classes.TabContainer}
 				style={{ position: 'fixed', display: displayTabContainer }}>
 				<div className={classes.TabButtonContainer}>
 					<button
@@ -198,7 +200,7 @@ const Index = props => {
 			userStatus.userRole === 'ServiceProvider' ||
 			userStatus.userRole === 'Employee'
 		) {
-			router.push('/kalendar');
+			router.push('/Kalendar');
 		} else if (userStatus.userRole === 'Client') {
 			alert('presmeriti klijenta na klijent kalendar stranicu');
 		} else {
@@ -211,7 +213,7 @@ const Index = props => {
 	return (
 		<>
 			<Head>
-				<title>KlikTermin</title>
+				<title>KlikTermin | Početna stranica</title>
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
 			</Head>
 			<Layout
@@ -234,8 +236,20 @@ const Index = props => {
 				<hr style={{ marginTop: isMobile ? '10px' : '40px' }} />
 				<ContactForm />
 				<AuthButton
-					onClickLogin={() => setDisplayLogin('block')}
-					onClickReg={() => setDisplayRegServProv('block')}
+					onClickLogin={() => {
+						setDisplayTabContainer('block'),
+							setDisplayLogin('block'),
+							setDisplayRegServProv('none'),
+							setShowBackdrop(classes.backdropIn);
+						setRegColor('white'), setLoginColor('orange');
+					}}
+					onClickReg={() => {
+						setDisplayTabContainer('block'),
+							setDisplayRegServProv('block'),
+							setDisplayLogin('none'),
+							setShowBackdrop(classes.backdropIn);
+						setRegColor('orange'), setLoginColor('white');
+					}}
 					diplayBackdrop={
 						// eslint-disable-next-line no-nested-ternary
 						displayLogin === 'block' ? 'block' : displayRegServProv === 'block' ? 'block' : 'none'

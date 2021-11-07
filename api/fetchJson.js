@@ -1,12 +1,10 @@
 import axios from 'axios';
 
-export const fetchJson = (url, method, token, body, userId) => {
+export const fetchJson = (url, method, token, body) => {
 	const apiUrl = 'http://localhost:5000/';
-	/* console.log(body, method, url, token); */
 	const Axios = axios.create({
 		baseURL: apiUrl,
 		headers: token ? { Authorization: 'Bearer ' + token } : {},
-		userId: userId ? userId : {},
 	});
 
 	return Axios({

@@ -57,7 +57,7 @@ const setupguide = props => {
 	return (
 		<>
 			<Head>
-				<title>Vodič kroz podešavanja|KlikTermin</title>
+				<title>KlikTermin | Podešavanja</title>
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
 			</Head>
 			<Backdrop backdropAnimation={showBackdrop} />
@@ -177,6 +177,8 @@ const setupguide = props => {
 						serviceData={servicesData}
 						userGuideStatus={userGuideStatus.guideStatus}
 						setDisplayGreeting={setDisplayGreeting}
+						displayForward={'block'}
+						displayStopEdit={'none'}
 					/>
 					<WorkingTimeForm
 						displayWorkingTimeForm={displayWorkingTimeForm}

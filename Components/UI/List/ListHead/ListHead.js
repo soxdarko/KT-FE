@@ -1,11 +1,4 @@
-import {
-	faPlus,
-	faSave,
-	faCopy,
-	faPaste,
-	faSearch,
-	faLink,
-} from '@fortawesome/free-solid-svg-icons';
+import { faSave, faCopy, faPaste, faSearch, faLink } from '@fortawesome/free-solid-svg-icons';
 import { useDeviceDetect } from '../../../../helpers/universalFunctions';
 
 import Distancer from '../../Distancer';
@@ -45,7 +38,7 @@ const ListHead = props => {
 				</Select>
 				<ListHeadButton
 					className={classes.CopyWeek}
-					value="Pretraga"
+					value={isMobile ? '' : 'Pretraga'}
 					faIcon={faSearch}
 					display={props.displaySearch}
 				/>
@@ -57,9 +50,10 @@ const ListHead = props => {
 				/>
 				<ListHeadButton
 					className={classes.CopyWeek}
-					value={`Dodaj ${props.add}`}
-					faIcon={faPlus}
+					value={isMobile ? '' : `Dodaj ${props.add}`}
+					faIcon={props.addNew}
 					display={props.displayAdd}
+					onClick={props.onAdd}
 				/>
 				<ListHeadButton
 					className={classes.Save}

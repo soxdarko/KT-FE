@@ -1,8 +1,8 @@
 import { fetchJson } from '../../api/fetchJson';
 
-export const clientRegistration = (userData, userId) => {
+export const addOrUpdateNewClient = userData => {
 	return fetchJson(
-		`users/clientRegistration?userId=${userId}`,
+		`users/addOrUpdateNewClient`,
 		'post',
 		{
 			'Content-Type': 'application/json',

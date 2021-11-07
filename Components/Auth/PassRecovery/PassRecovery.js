@@ -118,14 +118,16 @@ const PassRecovery = props => {
 				value={formInput.mobOperator.value}
 				onChange={e => inputChangedHandler(e, 'mobOperator', formInput, setFormInput)}
 				invalid={!formInput.mobOperator.valid}>
-				<option>060</option>
-				<option>061</option>
-				<option>062</option>
-				<option>063</option>
-				<option>064</option>
-				<option>065</option>
-				<option>066</option>
-				<option>069</option>
+				<option value="060">060</option>
+				<option value="061">061</option>
+				<option value="062">062</option>
+				<option value="063">063</option>
+				<option value="064">064</option>
+				<option value="065">065</option>
+				<option value="066">066</option>
+				<option value="0677">0677</option>
+				<option value="0678">0678</option>
+				<option value="069">069</option>
 			</Select>
 			<Input
 				type="number"

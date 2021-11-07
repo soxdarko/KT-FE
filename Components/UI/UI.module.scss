@@ -702,14 +702,13 @@
 	.CopyWeek {
 		@include iButton;
 		align-self: flex-end;
-		margin: auto 15px auto 0;
+		margin: 0 15px 10px 0;
 		padding: 2px 7px;
 		font: {
 			size: 1rem;
 			weight: normal;
 		}
 	}
-
 	.Save {
 		@include iButton;
 		align-self: flex-end;
@@ -755,8 +754,9 @@
 	@include RoundBottomBorders(20px);
 	display: flex;
 	position: relative;
-	width: 100vw;
-	height: 70vh;
+	width: calc(100vw - 4px);
+	height: 75vh;
+	max-height: calc(100vh - 50px);
 	overflow-y: auto;
 	overflow-x: hidden;
 	border: {
@@ -1107,7 +1107,7 @@
 		position: absolute;
 		height: 20px !important;
 		width: 20px !important;
-		margin: 0 0 0 -10px !important;
+		margin: 0 0 0 -20px !important;
 		font: {
 			size: 26.66667px;
 			weight: bold;
@@ -1162,6 +1162,188 @@
 		.onDelete {
 			box-shadow: red 0 0 6px;
 			color: red;
+		}
+	}
+}
+
+.ListTable {
+	display: block;
+	width: 100%;
+	max-height: 80vh;
+	overflow: hidden;
+	.Thead {
+		display: block;
+		height: 40px;
+		overflow: hidden;
+		background-color: rgba(black, 0.65);
+		.TheadRow {
+			display: flex;
+			flex-direction: row;
+			width: 100%;
+			background-color: red;
+			div {
+				display: block;
+				padding: 10px 8px 10px 8px;
+				font-size: 0.85vw;
+				text-align: center;
+				border: 1px solid #764402;
+				color: $base-cal-font-color;
+			}
+		}
+	}
+	.Tbody {
+		display: block;
+		max-height: 80vh;
+		overflow-y: auto;
+		.TbodyRow {
+			display: flex;
+			flex-direction: row;
+			width: 100%;
+			div {
+				display: block;
+				padding: 10px 8px 10px 8px;
+				font-size: 0.85vw;
+				text-align: center;
+				word-wrap: break-word;
+				border: 1px solid #764402;
+				color: $list-name-color;
+			}
+		}
+		.TbodyRow:nth-child(odd) {
+			background-color: $form-even-row-color;
+		}
+		.TbodyRow:nth-child(even) {
+			background-color: lighter($form-even-row-color);
+		}
+	}
+}
+
+.ListTableMob {
+	display: block;
+	width: 100%;
+	max-height: calc(100vh - 20px);
+	overflow: hidden;
+	.Tbody {
+		display: block;
+		max-height: calc(100vh - 20px);
+		overflow-y: auto;
+		.TbodyRow {
+			display: flex;
+			flex-direction: row;
+			width: 100%;
+			.NumMob {
+				@include flexBoxCenter;
+			}
+			.ListDataContainer {
+				display: inline-block;
+				width: 100%;
+				margin: 0;
+				padding: 0;
+				div {
+					border: none;
+					padding: 2px 0;
+				}
+			}
+			.ListOptions {
+				@include flexBoxCenter;
+			}
+			div {
+				display: block;
+				padding: 10px 8px 10px 8px;
+				font-size: 4vw;
+				text-align: center;
+				word-wrap: break-word;
+				border: 1px solid #764402;
+				color: $list-name-color;
+			}
+		}
+		.TbodyRow:nth-child(odd) {
+			background-color: $form-even-row-color;
+		}
+		.TbodyRow:nth-child(even) {
+			background-color: lighter($form-even-row-color);
+		}
+	}
+}
+
+.AddForm {
+	@include absoluteCenter;
+	position: fixed;
+	margin-top: 250px;
+	z-index: 999;
+	h3 {
+		margin: 10px 0 5px 0;
+		font-size: 1.4rem;
+		text-align: center;
+		color: white;
+	}
+	input[type='password'],
+	[type='text'],
+	[type='number'] {
+		width: 400px;
+		max-width: 400px;
+		height: 33px;
+		font-size: 20px;
+		border-radius: 7px;
+		&:focus {
+			font-size: 21px;
+			border: 5px double black;
+		}
+	}
+	.PhoneNumber {
+		width: 300px;
+		margin: 20px auto 5px auto;
+	}
+	.PhoneNumberMob {
+		display: inline-block;
+		width: calc(97% - 80px);
+		max-width: 320px;
+		font-size: 1rem !important;
+	}
+	.MobileOperator {
+		width: 98px;
+		height: 35px;
+		margin-left: 30px;
+		transition: none;
+		border: px double rgba(128, 128, 128, 0.541);
+		&:hover {
+			background-image: url("data:image/svg+xml;utf8,<svg fill='orange' height='100%' viewBox='5 6 12 12' width='100%' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+		}
+	}
+	.MobileOperatorMob {
+		display: inline-block;
+		width: 80px;
+		height: 31px;
+		transition: none;
+		margin: 20px auto 5px auto;
+		font-size: 1rem !important;
+		border: 2px double rgba(128, 128, 128, 0.541);
+		&:hover {
+			background-image: url("data:image/svg+xml;utf8,<svg fill='orange' height='100%' viewBox='5 6 12 12' width='100%' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+		}
+	}
+}
+
+.WrappedToolsChkBoxContainer {
+	position: fixed;
+	flex-direction: column;
+	align-items: flex-start;
+	width: 1000vw;
+	height: 50vh;
+	padding: 10px;
+	z-index: 9999999;
+	overflow-y: auto;
+	background-color: $base-background-color;
+	div {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+		height: 30px;
+		margin: 5px 0;
+		p {
+			color: $base-cal-font-color;
+			font-size: 1.2em;
 		}
 	}
 }

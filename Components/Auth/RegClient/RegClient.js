@@ -5,7 +5,7 @@ import {
 	updateValidity,
 	responseHandler,
 } from '../../../helpers/universalFunctions';
-import clientRegistration from '../../../pages/api/clientRegistration';
+import { clientRegistration } from '../../../pages/api/clientRegistration';
 import initState from './initState';
 
 import Select from '../../UI/Select';
@@ -22,7 +22,7 @@ const RegClient = props => {
 	const [formInput, setFormInput] = useState(initState);
 
 	const regHandler = () => {
-		const api = clientRegistration(clientData, userId)
+		const api = clientRegistration(clientData, props.userId)
 			.then(response => {
 				console.log(response),
 					responseHandler(
@@ -31,8 +31,6 @@ const RegClient = props => {
 						'Poslali smo Vam verifikacioni e-mail i sms. Klikom na link u e-mail-u i sms-u registracija će biti završena.',
 						'green'
 					);
-				props.setIsLoading(false);
-				props.setDisplayRegServProv('none');
 			})
 			.catch(error => {
 				props.setIsLoading(false);
@@ -46,7 +44,7 @@ const RegClient = props => {
 				} else if (error.request) {
 					console.log(error.request);
 				} else {
-					console.log('nesto drugoo');
+					router.push('/');
 				}
 			});
 		api;
@@ -212,6 +210,8 @@ const RegClient = props => {
 				<option value="064">064</option>
 				<option value="065">065</option>
 				<option value="066">066</option>
+				<option value="0677">0677</option>
+				<option value="0678">0678</option>
 				<option value="069">069</option>
 			</Select>
 			<Input
@@ -249,7 +249,6 @@ const RegClient = props => {
 				value="REGISTRUJ SE"
 				display="block"
 				width={isMobile ? '48%' : 'inherit'}
-				float={isMobile ? 'left' : 'inherit'}
 				margin={isMobile ? '20px auto 5px auto' : '40px auto 5px auto'}
 				className={isMobile ? classes.SubmitButtonMob : classes.SubmitButton}
 			/>

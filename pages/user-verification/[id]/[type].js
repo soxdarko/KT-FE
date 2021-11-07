@@ -19,8 +19,6 @@ const userVerificationPage = props => {
 		verificationType: type,
 	};
 
-	console.log(type);
-
 	const userVerificationHandler = () => {
 		const api = userVerification(userData)
 			.then(response => {

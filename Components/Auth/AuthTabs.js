@@ -44,6 +44,7 @@ const AuthTabs = props => {
 				setIsLoading={props.setIsLoading}
 				setShowResponseModal={props.setShowResponseModal}
 				setShowBackdrop={props.setShowBackdrop}
+				userId={props.userId}
 			/>
 			<Login
 				displayLogin={displayLogin}
