@@ -7,6 +7,7 @@ import {
 } from '../../helpers/universalFunctions';
 /* import { saveEmployees } from '../../api/saveEmployees';
 import { getAllEmployees } from '../../api/getAllEmployees'; */
+import { addOrUpdateNewClient } from '../../api/addOrUpdateNewClient';
 import initClientForm from './initClientForm';
 
 import Input from '../UI/Forms/Input';
@@ -21,28 +22,13 @@ const addClientForm = props => {
 	const isPageLoad = useRef(true);
 	const modalAnimation = isMobile ? classes.modalInMob : classes.modalInPC;
 	const [userData, setUserData] = useState({});
-	const [employeeId, setEmployeeId] = useState(null);
+	const [clientId, setClientId] = useState(null);
 	const [editMode, setEditMode] = useState(false);
-	const [displayToolBox, setDisplayToolBox] = useState('none');
-	const serviceProviderId = props.serviceProviderData.map(obj => {
-		return obj.id;
-	});
 
 	const [formInput, setFormInput] = useState(initClientForm);
 
 	const resetForm = () => {
-		setEmployeeId(null), setFormInput(initClientForm), setEditMode(false);
-	};
-
-	const serviceProvidersPreview = serviceProviders => {
-		const listItems = serviceProviders.map(serviceProvider => {
-			return (
-				<option key={serviceProvider.id} value={serviceProvider.id}>
-					{serviceProvider.name}
-				</option>
-			);
-		});
-		return listItems;
+		setClientId(null), setFormInput(initClientForm), setEditMode(false);
 	};
 
 	const displayWrappedButtonsMob = () => {
@@ -51,30 +37,10 @@ const addClientForm = props => {
 		} else return false;
 	};
 
-	const getAllEmployeesHandler = async () => {
-		const api = await getAllEmployees()
+	const addClientHandler = () => {
+		const api = addOrUpdateNewClient(userData)
 			.then(response => {
-				const getEmployeesData = response.data.map(employee => {
-					return employee;
-				});
-				props.setEmployeeData(getEmployeesData);
-			})
-			.catch(error => {
-				props.setIsLoading(false);
-				if (error.response) {
-					console.log(error.response);
-				} else if (error.request) {
-					console.log(error.request);
-				}
-			});
-		return api;
-	};
-
-	const addEmployeesHandler = () => {
-		const api = saveEmployees(userData)
-			.then(response => {
-				console.log(response), props.setIsLoading(false);
-				getAllEmployeesHandler(), resetForm();
+				console.log(response), props.setIsLoading(false), resetForm();
 			})
 			.catch(error => {
 				props.setIsLoading(false);
@@ -94,7 +60,7 @@ const addClientForm = props => {
 			isPageLoad.current = false;
 			return;
 		}
-		addEmployeesHandler();
+		addClientHandler();
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userData]);
@@ -103,13 +69,10 @@ const addClientForm = props => {
 		e.preventDefault();
 		const formData = [
 			{
-				Id: employeeId,
+				Id: clientId,
 				Name: formInput.name.value.trim(),
 				Phone: formInput.mobOperator.value + formInput.phone.value.trim(),
 				Email: formInput.email.value.trim(),
-				UserName: formInput.userName.value.trim(),
-				Password: formInput.password.value.trim(),
-				/* serviceProviderId: formInput.serviceProviderId.value, */
 			},
 		];
 
@@ -120,7 +83,7 @@ const addClientForm = props => {
 			responseHandler(
 				props.setShowResponseModal,
 				modalAnimation,
-				'Morate uneti ime radnika!',
+				'Morate uneti ime klijenta!',
 				'red'
 			);
 			props.setShowBackdrop(classes.backdropIn);
@@ -152,46 +115,6 @@ const addClientForm = props => {
 				props.setShowResponseModal,
 				modalAnimation,
 				'Morate uneti validan broj telefona!',
-				'red'
-			);
-			props.setShowBackdrop(classes.backdropIn);
-		} else if (!formInput.userName.value.trim()) {
-			updateValidity(setFormInput, 'userName', formInput, '', false);
-			responseHandler(
-				props.setShowResponseModal,
-				modalAnimation,
-				'Morate uneti korisničko ime!',
-				'red'
-			);
-			props.setShowBackdrop(classes.backdropIn);
-		} else if (!formInput.password.value.trim() && !editMode) {
-			updateValidity(setFormInput, 'password', formInput, '', false);
-			responseHandler(props.setShowResponseModal, modalAnimation, 'Morate uneti lozinku!', 'red');
-			props.setShowBackdrop(classes.backdropIn);
-		} else if (!formInput.passConfirm.value.trim() && !editMode) {
-			updateValidity(setFormInput, 'passConfirm', formInput, '', false);
-			responseHandler(
-				props.setShowResponseModal,
-				modalAnimation,
-				'Morate uneti potvrdu izabrane lozinke!',
-				'red'
-			);
-			props.setShowBackdrop(classes.backdropIn);
-		} else if (formInput.password.value.trim() !== formInput.passConfirm.value.trim()) {
-			updateValidity(setFormInput, 'password', formInput, '', false);
-			responseHandler(
-				props.setShowResponseModal,
-				modalAnimation,
-				'Lozinka i potvrda moraju biti jednake!',
-				'red'
-			);
-			props.setShowBackdrop(classes.backdropIn);
-		} else if (formInput.serviceProviderId.value === '') {
-			updateValidity(setFormInput, 'serviceProviderId', formInput, '', false);
-			responseHandler(
-				props.setShowResponseModal,
-				modalAnimation,
-				'Morate izabrati salon za koji želite dodati radnika!',
 				'red'
 			);
 			props.setShowBackdrop(classes.backdropIn);
@@ -272,16 +195,6 @@ const addClientForm = props => {
 				/>
 				<Input
 					type="text"
-					name="userName"
-					className={editMode ? readOnlyClassName : inputClassName}
-					placeholder="Unesite korisničko ime"
-					value={formInput.userName.value}
-					maxLength="50"
-					onChange={e => inputChangedHandler(e, 'userName', formInput, setFormInput)}
-					invalid={!formInput.userName.valid}
-				/>
-				<Input
-					type="text"
 					name="email"
 					placeholder="Unesite  e-mail adresu"
 					className={inputClassName}
@@ -321,43 +234,12 @@ const addClientForm = props => {
 					invalid={!formInput.phone.valid}
 				/>
 				<Input
-					type="password"
-					name="password"
-					className={inputClassName}
-					placeholder="Izaberite lozinku"
-					value={formInput.password.value}
-					maxLength="50"
-					onChange={e => inputChangedHandler(e, 'password', formInput, setFormInput)}
-					invalid={!formInput.password.valid}
-				/>
-				<Input
-					type="password"
-					name="passConfirm"
-					className={inputClassName}
-					placeholder="Ponovo unseite lozinku"
-					value={formInput.passConfirm.value}
-					maxLength="50"
-					onChange={e => inputChangedHandler(e, 'passConfirm', formInput, setFormInput)}
-					invalid={!formInput.passConfirm.valid}
-				/>
-				<Input
 					type="button"
 					value="dodaj"
 					display={isMobile ? 'none' : 'block'}
 					className={[classes.ChoiceButton, classes.Add].join(' ')}
 					onClick={onSubmit}
 				/>
-				{/* <EmployeesList
-				listOfEmployees={props.employeeData}
-				addForSelectedClassName={classes.addForSelected}
-				id={employeeId}
-				setId={setEmployeeId}
-				selectedServiceProvider={formInput.serviceProviderId.value}
-				setEditMode={setEditMode}
-				displayToolBox={displayToolBox}
-				setDisplayToolBox={setDisplayToolBox}
-				emptyListMessage={'Izaberite salon'}
-			/> */}
 				<Input
 					type="button"
 					value="odustani"
@@ -379,7 +261,7 @@ const addClientForm = props => {
 				displayForward="none"
 				displaySave="block"
 				displayAdd="none"
-				displayStopEdit={'block'}
+				displayStopEdit={editMode ? 'block' : 'none'}
 				stopEdit={() => {
 					resetForm(),
 						props.setDisplayAddClientForm('none'),

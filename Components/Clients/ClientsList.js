@@ -41,6 +41,17 @@ const ClientsList = props => {
 		theadCellWidth.current.offsetWidth = width;
 	};
 
+	const indexNum = i => {
+		const index = i + 1;
+		if (index < 10) {
+			return '00' + index;
+		} else if (index > 9 && index < 100) {
+			return '0' + index;
+		} else if (index > 99) {
+			return index;
+		}
+	};
+
 	useEffect(() => {
 		if (isPageLoad.current) {
 			isPageLoad.current = false;
@@ -69,198 +80,25 @@ const ClientsList = props => {
 		return (
 			<div className={classes.ListTableMob}>
 				<div className={classes.Tbody}>
-					<div className={classes.TbodyRow}>
-						<div className={classes.NumMob}>001</div>
-						<div className={classes.ListDataContainer}>
-							<div>Marko Mirkovic</div>
-							<div>0600000000</div>
-							<div>jovan.stefanovic87su@gmaILS.com</div>
-							<div>01.02.2021.</div>
-						</div>
-						<div className={classes.ListOptions}>
-							<FontAwesomeIcon
-								icon={faWrench}
-								className={[classes.Icon, props.IconClassName].join(' ')}
-								onClick={() => props.setDisplayWrappedTools('flex')}
-							/>
-						</div>
-					</div>
-					<div className={classes.TbodyRow}>
-						<div className={classes.NumMob}>001</div>
-						<div className={classes.ListDataContainer}>
-							<div>Marko Mirkovic</div>
-							<div>0600000000</div>
-							<div>jovan.stefanovic87su@gmaILS.com</div>
-							<div>01.02.2021.</div>
-						</div>
-						<div className={classes.ListOptions}>
-							<FontAwesomeIcon
-								icon={faWrench}
-								className={[classes.Icon, props.IconClassName].join(' ')}
-								onClick={() => props.setDisplayWrappedTools('flex')}
-							/>
-						</div>
-					</div>
-					<div className={classes.TbodyRow}>
-						<div className={classes.NumMob}>001</div>
-						<div className={classes.ListDataContainer}>
-							<div>Marko Mirkovic</div>
-							<div>0600000000</div>
-							<div>jovan.stefanovic87su@gmaILS.com</div>
-							<div>01.02.2021.</div>
-						</div>
-						<div className={classes.ListOptions}>
-							<FontAwesomeIcon
-								icon={faWrench}
-								className={[classes.Icon, props.IconClassName].join(' ')}
-								onClick={() => props.setDisplayWrappedTools('flex')}
-							/>
-						</div>
-					</div>
-					<div className={classes.TbodyRow}>
-						<div className={classes.NumMob}>001</div>
-						<div className={classes.ListDataContainer}>
-							<div>Marko Mirkovic</div>
-							<div>0600000000</div>
-							<div>jovan.stefanovic87su@gmaILS.com</div>
-							<div>01.02.2021.</div>
-						</div>
-						<div className={classes.ListOptions}>
-							<FontAwesomeIcon
-								icon={faWrench}
-								className={[classes.Icon, props.IconClassName].join(' ')}
-								onClick={() => props.setDisplayWrappedTools('flex')}
-							/>
-						</div>
-					</div>
-					<div className={classes.TbodyRow}>
-						<div className={classes.NumMob}>001</div>
-						<div className={classes.ListDataContainer}>
-							<div>Marko Mirkovic</div>
-							<div>0600000000</div>
-							<div>jovan.stefanovic87su@gmaILS.com</div>
-							<div>01.02.2021.</div>
-						</div>
-						<div className={classes.ListOptions}>
-							<FontAwesomeIcon
-								icon={faWrench}
-								className={[classes.Icon, props.IconClassName].join(' ')}
-								onClick={() => props.setDisplayWrappedTools('flex')}
-							/>
-						</div>
-					</div>
-					<div className={classes.TbodyRow}>
-						<div className={classes.NumMob}>001</div>
-						<div className={classes.ListDataContainer}>
-							<div>Marko Mirkovic</div>
-							<div>0600000000</div>
-							<div>jovan.stefanovic87su@gmaILS.com</div>
-							<div>01.02.2021.</div>
-						</div>
-						<div className={classes.ListOptions}>
-							<FontAwesomeIcon
-								icon={faWrench}
-								className={[classes.Icon, props.IconClassName].join(' ')}
-								onClick={() => props.setDisplayWrappedTools('flex')}
-							/>
-						</div>
-					</div>
-					<div className={classes.TbodyRow}>
-						<div className={classes.NumMob}>001</div>
-						<div className={classes.ListDataContainer}>
-							<div>Marko Mirkovic</div>
-							<div>0600000000</div>
-							<div>jovan.stefanovic87su@gmaILS.com</div>
-							<div>01.02.2021.</div>
-						</div>
-						<div className={classes.ListOptions}>
-							<FontAwesomeIcon
-								icon={faWrench}
-								className={[classes.Icon, props.IconClassName].join(' ')}
-								onClick={() => props.setDisplayWrappedTools('flex')}
-							/>
-						</div>
-					</div>
-					<div className={classes.TbodyRow}>
-						<div className={classes.NumMob}>001</div>
-						<div className={classes.ListDataContainer}>
-							<div>Marko Mirkovic</div>
-							<div>0600000000</div>
-							<div>jovan.stefanovic87su@gmaILS.com</div>
-							<div>01.02.2021.</div>
-						</div>
-						<div className={classes.ListOptions}>
-							<FontAwesomeIcon
-								icon={faWrench}
-								className={[classes.Icon, props.IconClassName].join(' ')}
-								onClick={() => props.setDisplayWrappedTools('flex')}
-							/>
-						</div>
-					</div>
-					<div className={classes.TbodyRow}>
-						<div className={classes.NumMob}>001</div>
-						<div className={classes.ListDataContainer}>
-							<div>Marko Mirkovic</div>
-							<div>0600000000</div>
-							<div>jovan.stefanovic87su@gmaILS.com</div>
-							<div>01.02.2021.</div>
-						</div>
-						<div className={classes.ListOptions}>
-							<FontAwesomeIcon
-								icon={faWrench}
-								className={[classes.Icon, props.IconClassName].join(' ')}
-								onClick={() => props.setDisplayWrappedTools('flex')}
-							/>
-						</div>
-					</div>
-					<div className={classes.TbodyRow}>
-						<div className={classes.NumMob}>001</div>
-						<div className={classes.ListDataContainer}>
-							<div>Marko Mirkovic</div>
-							<div>0600000000</div>
-							<div>jovan.stefanovic87su@gmaILS.com</div>
-							<div>01.02.2021.</div>
-						</div>
-						<div className={classes.ListOptions}>
-							<FontAwesomeIcon
-								icon={faWrench}
-								className={[classes.Icon, props.IconClassName].join(' ')}
-								onClick={() => props.setDisplayWrappedTools('flex')}
-							/>
-						</div>
-					</div>
-					<div className={classes.TbodyRow}>
-						<div className={classes.NumMob}>001</div>
-						<div className={classes.ListDataContainer}>
-							<div>Marko Mirkovic</div>
-							<div>0600000000</div>
-							<div>jovan.stefanovic87su@gmaILS.com</div>
-							<div>01.02.2021.</div>
-						</div>
-						<div className={classes.ListOptions}>
-							<FontAwesomeIcon
-								icon={faWrench}
-								className={[classes.Icon, props.IconClassName].join(' ')}
-								onClick={() => props.setDisplayWrappedTools('flex')}
-							/>
-						</div>
-					</div>
-					<div className={classes.TbodyRow}>
-						<div className={classes.NumMob}>001</div>
-						<div className={classes.ListDataContainer}>
-							<div>Marko Mirkovic</div>
-							<div>0600000000</div>
-							<div>jovan.stefanovic87su@gmaILS.com</div>
-							<div>01.02.2021.</div>
-						</div>
-						<div className={classes.ListOptions}>
-							<FontAwesomeIcon
-								icon={faWrench}
-								className={[classes.Icon, props.IconClassName].join(' ')}
-								onClick={() => props.setDisplayWrappedTools('flex')}
-							/>
-						</div>
-					</div>
+					{props.clients.map((client, i) => {
+						return (
+							<div className={classes.TbodyRow}>
+								<div className={classes.NumMob}>{indexNum(i)}</div>
+								<div className={classes.ListDataContainer}>
+									<div>{client.name}</div>
+									<div>{client.phone}</div>
+									<div>{client.email}</div>
+								</div>
+								<div className={classes.ListOptions}>
+									<FontAwesomeIcon
+										icon={faWrench}
+										className={[classes.Icon, props.IconClassName].join(' ')}
+										onClick={() => props.setDisplayWrappedTools('flex')}
+									/>
+								</div>
+							</div>
+						);
+					})}
 					<div style={{ height: '50vw' }}></div>
 				</div>
 			</div>

@@ -6,6 +6,18 @@ import classes from '../UI/UI.module.scss';
 
 const ServicesList = props => {
 	const { isMobile } = useDeviceDetect();
+
+	const indexNum = i => {
+		const index = i + 1;
+		if (index < 10) {
+			return '00' + index;
+		} else if (index > 9 && index < 100) {
+			return '0' + index;
+		} else if (index > 99) {
+			return index;
+		}
+	};
+
 	if (isMobile) {
 		return (
 			<div className={classes.ListTableMob}>
@@ -13,7 +25,7 @@ const ServicesList = props => {
 					{props.services.map((service, i) => {
 						return (
 							<div className={classes.TbodyRow} key={service.id}>
-								<div className={classes.NumMob}>{i + 1}</div>
+								<div className={classes.NumMob}>{indexNum(i)}</div>
 								<div className={classes.ListDataContainer}>
 									<div>{service.name}</div>
 									<div>{service.description}</div>

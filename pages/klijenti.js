@@ -8,6 +8,7 @@ import ServiceProvidersEmployees from '../Components/DataFromBE/Clients';
 import Head from 'next/head';
 import Layout from '../Components/hoc/Layout/Layout';
 import Backdrop from '../Components/UI/Backdrop';
+import ResponseModal from '../Components/UI/Modal/ResponseModal';
 import ListBody from '../Components/UI/List/ListBody/ListBody';
 import ListHead from '../Components/UI/List/ListHead/ListHead';
 import ClientsList from '../Components/Clients/ClientsList';
@@ -15,6 +16,7 @@ import AddClientForm from '../Components/Clients/AddClientForm';
 import InviteClient from '../Components/AddToList/InviteClient';
 import AddClientButton from '../Components/UI/AddClientButton';
 import WrappedTools from '../Components/UI/WrappedTools';
+import Loader from '../Components/UI/Loader';
 
 import classes from '../Components/Navigation/Navigation.module.scss';
 
@@ -22,11 +24,13 @@ const Clients = props => {
 	const { isMobile } = useDeviceDetect();
 	const modalAnimationIn = isMobile ? classes.modalInMob : classes.modalInPC;
 	const modalAnimationOut = isMobile ? classes.modalOutMob : classes.modalOutPC;
+	const [isLoading, setIsLoading] = useState(false);
 	const [displayInviteClient, setDisplayInviteClient] = useState('none');
 	const [showInviteClient, setShowInviteClient] = useState('');
 	const [displayAddClientForm, setDisplayAddClientForm] = useState('none');
 	const [displayWrappedTools, setDisplayWrappedTools] = useState('none');
 	const [showBackdrop, setShowBackdrop] = useState('');
+	const [employeeData, setEmployeeData] = useState(props.employees);
 	const [displayConfirmModal, setDisplayConfirmModal] = useState('none');
 	const [showResponseModal, setShowResponseModal] = useState({
 		animation: '',
@@ -54,59 +58,79 @@ const Clients = props => {
 				classNameEmployeeSelect={classes.EmployeeSelect}
 				selectData={ServiceProvidersEmployees}
 				sms="10"
-				license="5"
-			/>
-			<Backdrop
-				backdropAnimation={showBackdrop}
-				onClick={() => {
-					setShowBackdrop(classes.backdropOut),
-						setDisplayAddClientForm('none'),
-						setShowInviteClient(classes.slideOutLeft);
-				}}
-			/>
-			<WrappedTools
-				displayWrappedTools={displayWrappedTools}
-				setDisplayWrappedTools={setDisplayWrappedTools}
-				className={classes.WrappedToolsContainer}
-				displayWrappedToolsChkBox="none"
-			/>
-			<AddClientForm
-				serviceProviderData={props.serviceProviders}
-				displayAddClientForm={displayAddClientForm}
-				setDisplayAddClientForm={setDisplayAddClientForm}
-				setShowBackdrop={setShowBackdrop}
-			/>
-			<InviteClient
-				display={displayInviteClient}
-				animation={showInviteClient}
-				backdropAnimation={showBackdrop}
-				setShowBackdrop={setShowBackdrop}
-				setShowInviteClient={setShowInviteClient}
-			/>
-			<ListHead
-				title="Lista klijenata"
-				displayCopy="none"
-				displayPaste="none"
-				displaySelectWeek="none"
-				displaySave="none"
-				displayLink="none"
-				add="klijenta"
-				addNew={faUserPlus}
-				onAdd={() => {
-					setDisplayAddClientForm('block'), setShowBackdrop(classes.backdropIn);
-				}}
-			/>
-			<ListBody>
-				<ClientsList setDisplayWrappedTools={setDisplayWrappedTools} />
-			</ListBody>
-			<AddClientButton
-				onClick={() => {
-					setShowInviteClient(classes.slideInLeft),
-						setShowBackdrop(classes.backdropIn),
-						setDisplayConfirmModal('none'),
-						setDisplayInviteClient('block');
-				}}
-			/>
+				license="5">
+				<Loader loading={isLoading} />
+				<Backdrop
+					backdropAnimation={showBackdrop}
+					onClick={() => {
+						setShowBackdrop(classes.backdropOut),
+							setDisplayAddClientForm('none'),
+							setShowInviteClient(classes.slideOutLeft);
+					}}
+				/>
+				<ResponseModal
+					message={showResponseModal.message}
+					modalAnimation={showResponseModal.animation}
+					displayLinkButton="none"
+					displayFormButton="block"
+					borderColor={showResponseModal.border}
+					link="/"
+					onClick={() => {
+						setShowResponseModal(
+							{
+								...showResponseModal,
+								animation: modalAnimationOut,
+								border: null,
+							},
+							setShowBackdrop(classes.backdropOut)
+						);
+					}}
+				/>
+				<WrappedTools
+					displayWrappedTools={displayWrappedTools}
+					setDisplayWrappedTools={setDisplayWrappedTools}
+					className={classes.WrappedToolsContainer}
+					displayWrappedToolsChkBox="none"
+				/>
+				<AddClientForm
+					displayAddClientForm={displayAddClientForm}
+					setDisplayAddClientForm={setDisplayAddClientForm}
+					setShowResponseModal={setShowResponseModal}
+					setShowBackdrop={setShowBackdrop}
+					setIsLoading={setIsLoading}
+				/>
+				<InviteClient
+					display={displayInviteClient}
+					animation={showInviteClient}
+					backdropAnimation={showBackdrop}
+					setShowBackdrop={setShowBackdrop}
+					setShowInviteClient={setShowInviteClient}
+				/>
+				<ListHead
+					title="Lista klijenata"
+					displayCopy="none"
+					displayPaste="none"
+					displaySelectWeek="none"
+					displaySave="none"
+					displayLink="none"
+					add="klijenta"
+					addNew={faUserPlus}
+					onAdd={() => {
+						setDisplayAddClientForm('block'), setShowBackdrop(classes.backdropIn);
+					}}
+				/>
+				<ListBody>
+					<ClientsList setDisplayWrappedTools={setDisplayWrappedTools} clients={props.clients} />
+				</ListBody>
+				<AddClientButton
+					onClick={() => {
+						setShowInviteClient(classes.slideInLeft),
+							setShowBackdrop(classes.backdropIn),
+							setDisplayConfirmModal('none'),
+							setDisplayInviteClient('block');
+					}}
+				/>
+			</Layout>
 		</>
 	);
 };
@@ -119,6 +143,8 @@ export async function getServerSideProps(ctx) {
 	const resEmployees = await fetchJson(employeesUrl, 'get', token);
 	const servicesUrl = `appointments/getAllServices`;
 	const resServices = await fetchJson(servicesUrl, 'get', token);
+	const clientsUrl = `users/getClients`;
+	const resClients = await fetchJson(clientsUrl, 'get', token);
 	const guideStatusUrl = `users/getCompanyGuideStatus`;
 	const resGuideStatusUrl = await fetchJson(guideStatusUrl, 'get', token);
 
@@ -134,6 +160,10 @@ export async function getServerSideProps(ctx) {
 		return name;
 	});
 
+	const clients = resClients.data.map(name => {
+		return name;
+	});
+
 	const userStatus = resGuideStatusUrl.data;
 
 	return {
@@ -142,6 +172,7 @@ export async function getServerSideProps(ctx) {
 			serviceProviders,
 			employees,
 			services,
+			clients,
 			userStatus,
 		},
 	};
