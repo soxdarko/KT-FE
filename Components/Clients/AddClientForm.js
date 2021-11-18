@@ -1,18 +1,15 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import {
 	useDeviceDetect,
 	inputChangedHandler,
 	updateValidity,
 	responseHandler,
 } from '../../helpers/universalFunctions';
-/* import { saveEmployees } from '../../api/saveEmployees';
-import { getAllEmployees } from '../../api/getAllEmployees'; */
 import { addOrUpdateNewClient } from '../../api/addOrUpdateNewClient';
-import initClientForm from './initClientForm';
+import { getClients } from '../../api/getClients';
 
 import Input from '../UI/Forms/Input';
 import Select from '../UI/Select';
-import EmployeesList from '../SetupForms/EmployeesList';
 import WrappedButtonsMob from '../UI/WrappedButtonsMob';
 
 import classes from '../../Components/SetupForms/SetupForms.module.scss';
@@ -21,35 +18,61 @@ const addClientForm = props => {
 	const { isMobile } = useDeviceDetect();
 	const isPageLoad = useRef(true);
 	const modalAnimation = isMobile ? classes.modalInMob : classes.modalInPC;
-	const [userData, setUserData] = useState({});
-	const [clientId, setClientId] = useState(null);
-	const [editMode, setEditMode] = useState(false);
 
-	const [formInput, setFormInput] = useState(initClientForm);
-
-	const resetForm = () => {
-		setClientId(null), setFormInput(initClientForm), setEditMode(false);
-	};
-
-	const displayWrappedButtonsMob = () => {
-		if (isMobile && props.displayAddClientForm === 'block') {
-			return true;
-		} else return false;
-	};
-
-	const addClientHandler = () => {
-		const api = addOrUpdateNewClient(userData)
+	const getClientsHandler = async () => {
+		const api = await getClients()
 			.then(response => {
-				console.log(response), props.setIsLoading(false), resetForm();
+				const getClientsData = response.data.map(client => {
+					return client;
+				});
+				props.setClientData(getClientsData);
 			})
 			.catch(error => {
-				props.setIsLoading(false);
 				if (error.response) {
 					console.log(error.response);
 				} else if (error.request) {
 					console.log(error.request);
 				} else {
+					console.log('nesto drugo getClients');
+				}
+			});
+		return api;
+	};
+
+	const errorMessage = () => {
+		responseHandler(
+			props.setShowResponseModal,
+			modalAnimation,
+			'Došlo je do greške, pokušajte ponovo!',
+			'red'
+		);
+	};
+
+	const addClientHandler = () => {
+		const api = addOrUpdateNewClient(props.userData)
+			.then(response => {
+				console.log(response);
+				getClientsHandler();
+				props.setIsLoading(false);
+				props.resetForm();
+				props.setDisplayInfoModal(props.modalAnimationIn);
+			})
+			.catch(error => {
+				if (error.response) {
+					props.setShowBackdrop(classes.backdropIn);
+					console.log(error.response);
+					errorMessage();
+					props.setIsLoading(false);
+				} else if (error.request) {
+					props.setShowBackdrop(classes.backdropIn);
+					errorMessage();
+					console.log(error.request);
+					props.setIsLoading(false);
+				} else {
+					props.setShowBackdrop(classes.backdropIn);
+					errorMessage();
 					console.log('nesto drugo');
+					props.setIsLoading(false);
 				}
 			});
 		api;
@@ -63,23 +86,21 @@ const addClientForm = props => {
 		addClientHandler();
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [userData]);
+	}, [props.userData]);
 
 	const onSubmit = e => {
 		e.preventDefault();
-		const formData = [
-			{
-				Id: clientId,
-				Name: formInput.name.value.trim(),
-				Phone: formInput.mobOperator.value + formInput.phone.value.trim(),
-				Email: formInput.email.value.trim(),
-			},
-		];
-
+		const formData = {
+			Id: props.clientId,
+			Name: props.formInput.name.value.trim(),
+			Phone: props.formInput.mobOperator.value + props.formInput.phone.value.trim(),
+			Email: props.formInput.email.value.trim(),
+			Description: props.formInput.description.value.trim(),
+		};
 		const emailPattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
 		const numericPattern = /^\d+$/;
-		if (!formInput.name.value.trim()) {
-			updateValidity(setFormInput, 'name', formInput, '', false);
+		if (!props.formInput.name.value.trim()) {
+			updateValidity(props.setFormInput, 'name', props.formInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
 				modalAnimation,
@@ -87,8 +108,11 @@ const addClientForm = props => {
 				'red'
 			);
 			props.setShowBackdrop(classes.backdropIn);
-		} else if (!formInput.email.value.trim() || !emailPattern.test(formInput.email.value)) {
-			updateValidity(setFormInput, 'email', formInput, '', false);
+		} else if (
+			!props.formInput.email.value.trim() ||
+			!emailPattern.test(props.formInput.email.value)
+		) {
+			updateValidity(props.setFormInput, 'email', props.formInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
 				modalAnimation,
@@ -96,8 +120,8 @@ const addClientForm = props => {
 				'red'
 			);
 			props.setShowBackdrop(classes.backdropIn);
-		} else if (!formInput.mobOperator.value) {
-			updateValidity(setFormInput, 'mobOperator', formInput, '', false);
+		} else if (!props.formInput.mobOperator.value) {
+			updateValidity(props.setFormInput, 'mobOperator', props.formInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
 				modalAnimation,
@@ -106,11 +130,11 @@ const addClientForm = props => {
 			);
 			props.setShowBackdrop(classes.backdropIn);
 		} else if (
-			!formInput.phone.value.trim() ||
-			!numericPattern.test(formInput.phone.value) ||
-			formInput.phone.value.length < 6
+			!props.formInput.phone.value.trim() ||
+			!numericPattern.test(props.formInput.phone.value) ||
+			props.formInput.phone.value.length < 6
 		) {
-			updateValidity(setFormInput, 'phone', formInput, '', false);
+			updateValidity(props.setFormInput, 'phone', props.formInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
 				modalAnimation,
@@ -119,19 +143,19 @@ const addClientForm = props => {
 			);
 			props.setShowBackdrop(classes.backdropIn);
 		} else {
-			setUserData(formData);
+			props.setUserData(formData);
 			props.setIsLoading(true);
 		}
 	};
 
 	/* Load data for edit in formInput state */
-	/* useEffect(() => {
-		props.employeeData.filter(item => {
-			if (item.id === employeeId) {
+	useEffect(() => {
+		props.clientsData.filter(item => {
+			if (item.id === props.clientId) {
 				const mobOperator = item.phone.substring(0, 3);
 				const phone = item.phone.substring(3, item.phone.length);
-				return setFormInput({
-					...formInput,
+				return props.setFormInput({
+					...props.formInput,
 					name: {
 						value: item.name,
 						touched: false,
@@ -152,20 +176,20 @@ const addClientForm = props => {
 						touched: false,
 						valid: true,
 					},
-					userName: {
-						value: item.userName,
+					description: {
+						value: item.description,
 						touched: false,
 						valid: true,
 					},
-					serviceProviderId: {
-						value: item.serviceProviderId,
+					id: {
+						value: item.id,
 						touched: false,
 						valid: true,
 					},
 				});
 			}
 		});
-	}, [employeeId]); */
+	}, [props.clientId]);
 
 	const inputClassName = isMobile ? classes.InputTextMob : classes.InputText;
 	const readOnlyClassName = isMobile ? classes.ReadOnlyMob : classes.ReadOnly;
@@ -189,26 +213,26 @@ const addClientForm = props => {
 					name="name"
 					placeholder="Unesite ime i prezime"
 					className={inputClassName}
-					value={formInput.name.value}
-					onChange={e => inputChangedHandler(e, 'name', formInput, setFormInput)}
-					invalid={!formInput.name.valid}
+					value={props.formInput.name.value}
+					onChange={e => inputChangedHandler(e, 'name', props.formInput, props.setFormInput)}
+					invalid={!props.formInput.name.valid}
 				/>
 				<Input
 					type="text"
 					name="email"
 					placeholder="Unesite  e-mail adresu"
 					className={inputClassName}
-					value={formInput.email.value}
-					onChange={e => inputChangedHandler(e, 'email', formInput, setFormInput)}
-					invalid={!formInput.email.valid}
+					value={props.formInput.email.value}
+					onChange={e => inputChangedHandler(e, 'email', props.formInput, props.setFormInput)}
+					invalid={!props.formInput.email.valid}
 				/>
 				<Select
 					name="mobOperator"
 					className={isMobile ? classes.MobileOperatorMob : classes.MobileOperator}
 					display="inline-block"
-					value={formInput.mobOperator.value}
-					onChange={e => inputChangedHandler(e, 'mobOperator', formInput, setFormInput)}
-					invalid={!formInput.mobOperator.valid}>
+					value={props.formInput.mobOperator.value}
+					onChange={e => inputChangedHandler(e, 'mobOperator', props.formInput, props.setFormInput)}
+					invalid={!props.formInput.mobOperator.valid}>
 					<option value="" disabled selected>
 						06x
 					</option>
@@ -229,9 +253,17 @@ const addClientForm = props => {
 					className={isMobile ? classes.PhoneNumberMob : classes.PhoneNumber}
 					placeholder="Unesite broj telefona"
 					maxLength="7"
-					value={formInput.phone.value}
-					onChange={e => inputChangedHandler(e, 'phone', formInput, setFormInput)}
-					invalid={!formInput.phone.valid}
+					value={props.formInput.phone.value}
+					onChange={e => inputChangedHandler(e, 'phone', props.formInput, props.setFormInput)}
+					invalid={!props.formInput.phone.valid}
+				/>
+				<Input
+					type="text"
+					name="description"
+					placeholder="Dodatne informacije"
+					className={inputClassName}
+					value={props.formInput.description.value}
+					onChange={e => inputChangedHandler(e, 'description', props.formInput, props.setFormInput)}
 				/>
 				<Input
 					type="button"
@@ -252,20 +284,18 @@ const addClientForm = props => {
 				/>
 			</div>
 			<WrappedButtonsMob
-				style={{ display: props.displayAddClientForm }}
-				forward={() => {
-					props.setDisplayAddClientForm('none'), props.setShowBackdrop(classes.backdropOut);
-				}}
+				display={props.displayAddClientForm}
 				save={onSubmit}
-				isMobile={displayWrappedButtonsMob()}
+				isMobile={props.displayWrappedButtonsMob(props.displayAddClientForm)}
 				displayForward="none"
 				displaySave="block"
 				displayAdd="none"
-				displayStopEdit={editMode ? 'block' : 'none'}
+				displayStopEdit="block"
 				stopEdit={() => {
-					resetForm(),
-						props.setDisplayAddClientForm('none'),
-						props.setShowBackdrop(classes.backdropOut);
+					props.setDisplayAddClientForm('none'),
+						props.setShowBackdrop(classes.backdropOut),
+						props.setEditMode(false),
+						props.resetForm();
 				}}
 			/>
 		</>

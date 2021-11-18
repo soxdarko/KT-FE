@@ -80,25 +80,33 @@ const ClientsList = props => {
 		return (
 			<div className={classes.ListTableMob}>
 				<div className={classes.Tbody}>
-					{props.clients.map((client, i) => {
-						return (
-							<div className={classes.TbodyRow}>
-								<div className={classes.NumMob}>{indexNum(i)}</div>
-								<div className={classes.ListDataContainer}>
-									<div>{client.name}</div>
-									<div>{client.phone}</div>
-									<div>{client.email}</div>
+					{props.clientsData
+						.filter(
+							data =>
+								data.name.toLowerCase().includes(props.searchInput) ||
+								(data.mobOperator + data.phone).includes(props.searchInput)
+						)
+						.map((client, i) => {
+							return (
+								<div className={classes.TbodyRow}>
+									<div className={classes.NumMob}>{indexNum(i)}</div>
+									<div className={classes.ListDataContainer}>
+										<div>{client.name}</div>
+										<div>{client.phone}</div>
+										<div>{client.email}</div>
+									</div>
+									<div className={classes.ListOptions}>
+										<FontAwesomeIcon
+											icon={faWrench}
+											className={[classes.Icon, props.IconClassName].join(' ')}
+											onClick={() => {
+												props.setDisplayWrappedTools('flex'), props.setClientId(client.id);
+											}}
+										/>
+									</div>
 								</div>
-								<div className={classes.ListOptions}>
-									<FontAwesomeIcon
-										icon={faWrench}
-										className={[classes.Icon, props.IconClassName].join(' ')}
-										onClick={() => props.setDisplayWrappedTools('flex')}
-									/>
-								</div>
-							</div>
-						);
-					})}
+							);
+						})}
 					<div style={{ height: '50vw' }}></div>
 				</div>
 			</div>

@@ -112,7 +112,7 @@
 	border-color: red;
 }
 
-.Form {
+/* .Form {
 	position: fixed;
 	overflow: auto;
 	width: 100%;
@@ -311,7 +311,7 @@
 	margin: 5px 0 30px 0;
 	font-size: 6vmin;
 	color: $base-orange-color;
-}
+} */
 
 .Filter {
 	display: block;
@@ -753,6 +753,7 @@
 .ListBodyMob {
 	@include RoundBottomBorders(20px);
 	display: flex;
+	flex-direction: column;
 	position: relative;
 	width: calc(100vw - 4px);
 	height: 75vh;
@@ -1346,6 +1347,12 @@
 			font-size: 1.2em;
 		}
 	}
+}
+
+.SearchBarContainer {
+	@include flexBoxCenter;
+	flex-direction: column;
+	padding-bottom: 5px;
 }
 
 @media only screen and (orientation: landscape) {

@@ -195,14 +195,10 @@ const Index = props => {
 			userStatus.userRole === 'Employee'
 		) {
 			router.push('/setupguide');
-		} else if (
-			(userStatus.guideStatus === 'WorkingHours' && userStatus.userRole === 'Company') ||
-			userStatus.userRole === 'ServiceProvider' ||
-			userStatus.userRole === 'Employee'
-		) {
-			router.push('/Kalendar');
+		} else if (userStatus.guideStatus === 'WorkingHours' && userStatus.userRole === 'Company') {
+			router.push('/kalendar');
 		} else if (userStatus.userRole === 'Client') {
-			alert('presmeriti klijenta na klijent kalendar stranicu');
+			alert('preusmeriti klijenta na klijent kalendar stranicu');
 		} else {
 			router.push('/');
 		}

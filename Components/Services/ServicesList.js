@@ -11,8 +11,10 @@ const ServicesList = props => {
 		const index = i + 1;
 		if (index < 10) {
 			return '00' + index;
+			1;
 		} else if (index > 9 && index < 100) {
 			return '0' + index;
+			1;
 		} else if (index > 99) {
 			return index;
 		}
@@ -22,27 +24,32 @@ const ServicesList = props => {
 		return (
 			<div className={classes.ListTableMob}>
 				<div className={classes.Tbody}>
-					{props.services.map((service, i) => {
-						return (
-							<div className={classes.TbodyRow} key={service.id}>
-								<div className={classes.NumMob}>{indexNum(i)}</div>
-								<div className={classes.ListDataContainer}>
-									<div>{service.name}</div>
-									<div>{service.description}</div>
-									<div>{service.duration + ' ' + 'min'}</div>
-									<div>{service.price + ' ' + 'rsd'}</div>
+					{props.servicesData
+						.filter(
+							data =>
+								data.name.toLowerCase().includes(props.searchInput) ||
+								data.description.toLowerCase().includes(props.searchInput)
+						)
+						.map((service, i) => {
+							return (
+								<div className={classes.TbodyRow} key={service.id}>
+									<div className={classes.NumMob}>{indexNum(i)}</div>
+									<div className={classes.ListDataContainer}>
+										<div>{service.name}</div>
+										<div>{service.description}</div>
+										<div>{service.duration + ' ' + 'min'}</div>
+										<div>{service.price + ' ' + 'rsd'}</div>
+									</div>
+									<div className={classes.ListOptions}>
+										<FontAwesomeIcon
+											icon={faWrench}
+											className={[classes.Icon, props.IconClassName].join(' ')}
+											onClick={() => props.setDisplayWrappedTools('flex')}
+										/>
+									</div>
 								</div>
-								<div className={classes.ListOptions}>
-									<FontAwesomeIcon
-										icon={faWrench}
-										className={[classes.Icon, props.IconClassName].join(' ')}
-										onClick={() => props.setDisplayWrappedTools('flex')}
-									/>
-								</div>
-							</div>
-						);
-					})}
-
+							);
+						})}
 					<div style={{ height: '50vw' }}></div>
 				</div>
 			</div>

@@ -3,6 +3,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { auth } from '../helpers/auth';
 import { fetchJson } from '../api/fetchJson';
 import ServiceProvidersEmployees from '../Components/DataFromBE/Clients';
+import initServicesForm from '../Components/SetupForms/initServicesForm';
 import Head from 'next/head';
 import Layout from '../Components/hoc/Layout/Layout';
 import Backdrop from '../Components/UI/Backdrop';
@@ -12,15 +13,30 @@ import ServicesList from '../Components/Services/ServicesList';
 import AddServicesForm from '../Components/SetupForms/AddServicesForm';
 import WrappedTools from '../Components/UI/WrappedTools';
 import CheckBox from '../Components/UI/CheckBox';
-import Input from '../Components/UI/Forms/Input';
-import Label from '../Components/UI/Forms/Label';
 
 import classes from '../Components/Navigation/Navigation.module.scss';
-import classesSetupForms from '../Components/SetupForms/SetupForms.module.scss';
 
 const Services = props => {
 	const [displayAddServicesForm, setDisplayAddServicesForm] = useState('none');
 	const [displayWrappedTools, setDisplayWrappedTools] = useState('none');
+	const [formInput, setFormInput] = useState(initServicesForm);
+	const [servicesData, setServicesData] = useState(props.services);
+	const [serviceId, setServiceId] = useState(null);
+	const [checkedEmployees, setCheckedEmployees] = useState([]);
+	const [displayDescription, setDisplayDescription] = useState('none');
+	const [descriptionEdit, setDescriptionEdit] = useState(false);
+	const [editMode, setEditMode] = useState(false);
+	const [showBackdrop, setShowBackdrop] = useState('');
+	const [dipslaySerachBar, setDipslaySerachBar] = useState('none');
+	const [searchInput, setSearchInput] = useState('');
+
+	const resetForm = () => {
+		if (descriptionEdit) {
+			return;
+		} else {
+			setServiceId(null), setFormInput(initClientForm), setEditMode(false);
+		}
+	};
 
 	return (
 		<>
@@ -45,53 +61,58 @@ const Services = props => {
 				sms="10"
 				license="5"
 			/>
-			<Backdrop
-				/* backdropAnimation={showBackdrop} */
-				onClick={() => {
-					setShowBackdrop(classes.backdropOut),
-						setShowConfirmModal(classes.modalDown),
-						setShowInviteClient(classes.slideOutLeft);
-				}}
-			/>
+			<Backdrop backdropAnimation={showBackdrop} />
 			<WrappedTools
 				displayWrappedTools={displayWrappedTools}
 				setDisplayWrappedTools={setDisplayWrappedTools}
+				descriptionEdit={descriptionEdit}
+				setDescriptionEdit={setDescriptionEdit}
+				formInput={formInput}
+				setFormInput={setFormInput}
+				setDataId={setServiceId}
+				initServicesForm={initServicesForm}
+				setEditMode={setEditMode}
 				className={[classes.WrappedToolsContainer, classes.WrappedToolsWithChkBox].join(' ')}
 				displayWrappedToolsChkBox="flex">
 				<div>
-					<CheckBox name="omiljenaUsluga" className={classes.addForSelectedServiceOptions} />
+					<CheckBox name="omiljenaUsluga" className={classes.addForSelected} />
 					<p>Omiljena usluga?</p>
 				</div>
 				<div>
-					<CheckBox name="izabranaUsluga" className={classes.addForSelectedServiceOptions} />
+					<CheckBox name="izabranaUsluga" className={classes.addForSelected} />
 					<p>Uvek izabrana usluga?</p>
 				</div>
 				<div>
-					<CheckBox name="koristimUslugu" className={classes.addForSelectedServiceOptions} />
+					<CheckBox name="koristimUslugu" className={classes.addForSelected} />
 					<p>Koristim uslugu!</p>
 				</div>
 				<div>
-					<CheckBox name="klijentiVideCenu" className={classes.addForSelectedServiceOptions} />
+					<CheckBox name="klijentiVideCenu" className={classes.addForSelected} />
 					<p>Klijenti vide cenu usluge?</p>
 				</div>
 				<div>
-					<CheckBox
-						name="klijentiVideUslugu"
-						className={classes.addForSelectedServiceOptions}
-						defaultChecked
-					/>
+					<CheckBox name="klijentiVideUslugu" className={classes.addForSelected} defaultChecked />
 					<p>Klijenti vide uslugu?</p>
 				</div>
 			</WrappedTools>
-			<div
-				className={[classesSetupForms.Form, classesSetupForms.FormLayout].join(' ')}
-				style={{ display: displayAddServicesForm }}>
+			<div className={[classes.Form, classes.FormLayout].join(' ')} style={{ zIndex: 999 }}>
 				<AddServicesForm
 					displayAddServicesForm={displayAddServicesForm}
 					setDisplayAddServicesForm={setDisplayAddServicesForm}
 					serviceProviderData={props.serviceProviders}
-					servicesData={props.services}
+					initServicesForm={initServicesForm}
+					servicesFormInput={formInput}
+					setServicesFormInput={setFormInput}
+					servicesData={servicesData}
+					setServicesData={setServicesData}
+					serviceId={serviceId}
+					setServiceId={setServiceId}
 					employeeData={props.employees}
+					checkedEmployees={checkedEmployees}
+					editMode={editMode}
+					setEditMode={setEditMode}
+					setShowBackdrop={setShowBackdrop}
+					setCheckedEmployees={setCheckedEmployees}
 					displayForward="none"
 					displayStopEdit="block"
 				/>
@@ -104,13 +125,23 @@ const Services = props => {
 				displayLink="none"
 				add="uslugu"
 				addNew={faPlus}
-				onAdd={() => setDisplayAddServicesForm('block')}
+				onAdd={() => {
+					setDisplayAddServicesForm('block'), setShowBackdrop(classes.backdropIn);
+				}}
+				onClickSearch={() => setDipslaySerachBar('flex')}
+				dipslaySerachBar={dipslaySerachBar}
+				setDipslaySerachBar={setDipslaySerachBar}
+				searchInput={searchInput}
+				setSearchInput={setSearchInput}
 			/>
 			<ListBody>
 				<ServicesList
-					services={props.services}
+					servicesData={props.services}
 					setDisplayWrappedTools={setDisplayWrappedTools}
+					serviceId={serviceId}
+					setServiceId={setServiceId}
 					services={props.services}
+					searchInput={searchInput}
 				/>
 			</ListBody>
 		</>

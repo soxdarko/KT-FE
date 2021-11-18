@@ -44,7 +44,10 @@ const SideDrawer = props => {
 										<p>Kalendar</p>
 									</div>
 								</NavItem>
-								<NavItem display="block" className={classes.NavItemServiceProviderMob} link="/">
+								<NavItem
+									display="block"
+									className={classes.NavItemServiceProviderMob}
+									link="/klijenti">
 									<div>
 										<FontAwesomeIcon
 											icon={faAddressBook}
@@ -54,7 +57,10 @@ const SideDrawer = props => {
 										<p>Lista klijenata</p>
 									</div>
 								</NavItem>
-								<NavItem display="block" className={classes.NavItemServiceProviderMob} link="/">
+								<NavItem
+									display="block"
+									className={classes.NavItemServiceProviderMob}
+									link="/usluge">
 									<div>
 										<FontAwesomeIcon
 											icon={faCut}

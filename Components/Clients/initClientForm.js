@@ -19,17 +19,7 @@ const initClientForm = {
 		touched: false,
 		valid: true,
 	},
-	userName: {
-		value: '',
-		touched: false,
-		valid: true,
-	},
-	password: {
-		value: '',
-		touched: false,
-		valid: true,
-	},
-	passConfirm: {
+	description: {
 		value: '',
 		touched: false,
 		valid: true,

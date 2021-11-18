@@ -4,6 +4,9 @@ import { fetchJson } from '../api/fetchJson';
 import { useDeviceDetect } from '../helpers/universalFunctions';
 import Head from 'next/head';
 import Layout from '../Components/hoc/Layout/Layout';
+import initServiceProviderForm from '../Components/SetupForms/initServiceProviderForm';
+import initEmployeeForm from '../Components/SetupForms/initEmployeeForm';
+import initServicesForm from '../Components/SetupForms/initServicesForm';
 import Backdrop from '../Components/UI/Backdrop';
 import AddServiceProvidersForm from '../Components/SetupForms/AddServiceProvidersForm';
 import AddEmployeeForm from '../Components/SetupForms/AddEmployeeForm';
@@ -20,16 +23,12 @@ import classes from '../Components/SetupForms/SetupForms.module.scss';
 const setupguide = props => {
 	const { isMobile } = useDeviceDetect();
 	const modalAnimationOut = isMobile ? classes.modalOutMob : classes.modalOutPC;
-
 	const [serviceProviderData, setServiceProviderData] = useState(props.serviceProviders);
 	const [employeeData, setEmployeeData] = useState(props.employees);
-
 	const isServiceProvider = props.serviceProviders.length !== 0 ? true : false;
 	const [singleEmployee, setSingleEmployee] = useState(false);
 	const [listOfEmployees, setListOfEmployees] = useState(props.employees);
-
 	const [servicesData, setServicesData] = useState(props.services);
-
 	const [isLoading, setIsLoading] = useState(false);
 	const [showBackdrop, setShowBackdrop] = useState('');
 	const [showResponseModal, setShowResponseModal] = useState({
@@ -53,6 +52,17 @@ const setupguide = props => {
 		};
 	});
 	const userGuideStatus = props.userStatus;
+	const [editMode, setEditMode] = useState(false);
+	const [checkedEmployees, setCheckedEmployees] = useState([]);
+	const [servProvFormInput, setServProvFormInput] = useState(initServiceProviderForm);
+	const [serviceProviderInfo, setServiceProviderInfo] = useState([]);
+	const [serviceProvidersList, setServiceProvidersList] = useState([]);
+	const [serviceProviderId, setServiceProviderId] = useState(null);
+	const [servicesFormInput, setServicesFormInput] = useState(initServicesForm);
+	const [emplyeesFormInput, setEmplyeesFormInput] = useState(initEmployeeForm);
+	const [employeeId, setEmployeeId] = useState(null);
+	const [workingTimeFormInput, setWorkingTimeFormInput] = useState([]);
+	const [workingHoursData, setWorkingHoursData] = useState({});
 
 	return (
 		<>
@@ -92,11 +102,10 @@ const setupguide = props => {
 				selectData={null}
 				backgroundColorLayout="#303030">
 				<Loader loading={isLoading} />
-				<div className={[classes.Form, classes.FormLayout].join(' ')}>
+				<div className={[classes.Form, classes.FormLayout, classes.FormBlackBg].join(' ')}>
 					<h2 className={isMobile ? classes.FormTitleMob : classes.FormTitle}>
 						VODIČ ZA PODEŠAVANJE
 					</h2>
-
 					<GreetingForm
 						displayGreeting={displayGreeting}
 						setDisplayGreeting={setDisplayGreeting}
@@ -140,10 +149,20 @@ const setupguide = props => {
 						modalAnimation={showResponseModal.animation}
 						setShowResponseModal={setShowResponseModal}
 						setShowBackdrop={setShowBackdrop}
+						initServiceProviderForm={initServiceProviderForm}
 						token={props.token}
-						/* serviceProviders={props.serviceProviders} */
+						servProvFormInput={servProvFormInput}
+						setServProvFormInput={setServProvFormInput}
 						serviceProviderData={serviceProviderData}
 						setServiceProviderData={setServiceProviderData}
+						serviceProviderInfo={serviceProviderInfo}
+						setServiceProviderInfo={setServiceProviderInfo}
+						serviceProvidersList={serviceProvidersList}
+						setServiceProvidersList={setServiceProvidersList}
+						serviceProviderId={serviceProviderId}
+						setServiceProviderId={setServiceProviderId}
+						editMode={editMode}
+						setEditMode={setEditMode}
 						setIsLoading={setIsLoading}
 					/>
 					<AddEmployeeForm
@@ -155,15 +174,23 @@ const setupguide = props => {
 						setShowResponseModal={setShowResponseModal}
 						setShowBackdrop={setShowBackdrop}
 						serviceProviderData={serviceProviderData}
+						initEmployeeForm={initEmployeeForm}
+						emplyeesFormInput={emplyeesFormInput}
+						setEmplyeesFormInput={setEmplyeesFormInput}
 						employeeData={employeeData}
+						employeeId={employeeId}
+						setEmployeeId={setEmployeeId}
 						setEmployeeData={setEmployeeData}
 						serviceProviderDatails={serviceProviderDatails}
+						editMode={editMode}
+						setEditMode={setEditMode}
 						setIsLoading={setIsLoading}
 					/>
 					<AddServicesForm
 						displayAddServicesForm={displayAddServicesForm}
 						setServicesData={setServicesData}
 						servicesData={servicesData}
+						initServicesForm={initServicesForm}
 						setDisplayAddServicesForm={setDisplayAddServicesForm}
 						setDisplayWorkingTimeForm={setDisplayWorkingTimeForm}
 						serviceProviders={props.serviceProviders}
@@ -172,9 +199,16 @@ const setupguide = props => {
 						setShowResponseModal={setShowResponseModal}
 						setShowBackdrop={setShowBackdrop}
 						employees={props.employees}
+						checkedEmployees={checkedEmployees}
+						setCheckedEmployees={setCheckedEmployees}
+						servicesFormInput={servicesFormInput}
+						setServicesFormInput={setServicesFormInput}
 						serviceProviderData={serviceProviderData}
+						serviceProviderId={serviceProviderId}
 						setIsLoading={setIsLoading}
 						serviceData={servicesData}
+						editMode={editMode}
+						setEditMode={setEditMode}
 						userGuideStatus={userGuideStatus.guideStatus}
 						setDisplayGreeting={setDisplayGreeting}
 						displayForward={'block'}
@@ -189,6 +223,14 @@ const setupguide = props => {
 						serviceProviderData={serviceProviderData}
 						employees={props.employees}
 						employeeData={employeeData}
+						employeeId={employeeId}
+						setEmployeeId={setEmployeeId}
+						setServiceProviderId={setServiceProviderId}
+						serviceProviderId={serviceProviderId}
+						workingTimeFormInput={workingTimeFormInput}
+						setWorkingTimeFormInput={setWorkingTimeFormInput}
+						workingHoursData={workingHoursData}
+						setWorkingHoursData={setWorkingHoursData}
 						token={props.token}
 						setIsLoading={setIsLoading}
 						userGuideStatus={userGuideStatus.guideStatus}

@@ -1,14 +1,10 @@
-import { useState } from 'react';
 import { useDeviceDetect, checkBoxGroupToArrayHandler } from '../../helpers/universalFunctions';
-
-import Input from '../UI/Forms/Input';
-import Label from '../UI/Forms/Label';
+import CheckBox from '../UI/CheckBox';
 
 import classes from './SetupForms.module.scss';
 
 const EmployeesPicker = props => {
 	const { isMobile } = useDeviceDetect();
-	const [showEmployees, setShowEmployees] = useState('none');
 
 	const displayEmployeesHeader = () => {
 		if (listItems.length === 0 && !props.editMode) {
@@ -34,14 +30,11 @@ const EmployeesPicker = props => {
 						onChange={e =>
 							checkBoxGroupToArrayHandler(e, props.checkedEmployees, props.setCheckedEmployees)
 						}>
-						<Input
-							type="checkbox"
-							id={`${filteredEmployee.id}${props.tag}`}
-							value={filteredEmployee.id}
+						<CheckBox
+							name={`${filteredEmployee.id}${props.tag}`}
 							className={props.addForSelectedClassName}
-							checked={props.checkedEmployees.includes(filteredEmployee.id) ? true : false}
+							defaultChecked={props.checkedEmployees.includes(filteredEmployee.id) ? true : false}
 						/>
-						<Label htmlFor={`${filteredEmployee.id}${props.tag}`} display={props.displayCheckBox} />
 					</td>
 				</tr>
 			);
@@ -56,14 +49,11 @@ const EmployeesPicker = props => {
 					onChange={e =>
 						checkBoxGroupToArrayHandler(e, props.checkedEmployees, props.setCheckedEmployees)
 					}>
-					<Input
-						type="checkbox"
-						id={`${employee.id}${props.tag}`}
-						value={employee.id}
+					<CheckBox
+						name={`${employee.id}${props.tag}`}
 						className={props.addForSelectedClassName}
-						checked={props.checkedEmployees.includes(employee.id) ? true : false}
+						defaultChecked={props.checkedEmployees.includes(employee.id) ? true : false}
 					/>
-					<Label htmlFor={`${employee.id}${props.tag}`} display={props.displayCheckBox} />
 				</td>
 			</tr>
 		);
