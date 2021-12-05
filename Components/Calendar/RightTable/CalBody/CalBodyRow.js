@@ -1,37 +1,45 @@
 import CalBodyCol from './CalBodyCol';
+import { Fragment, useEffect } from 'react';
 
-const CalBodyRow = (props) => (
-  <>
-    {props.minMaxWorkingHours.map((time, i) => {
-      const clickedTimeHandler = () => {
-        const cell = props.minMaxWorkingHours;
-        // eslint-disable-next-line no-shadow
-        for (const time of cell) {
-          if (time === cell[i]) {
-            return time;
-          }
-        }
-      };
+const CalBodyRow = (props) => {
+  const clickedTimeHandler = (i) => {
+    const cell = props.minMaxWorkingHours;
+    for (const time of cell) {
+      if (time === cell[i]) {
+        return time;
+      }
+    }
+  };
 
-      return (
-        // eslint-disable-next-line no-shadow
-        <tr key={i} onClick={(i) => clickedTimeHandler(i)}>
-          <CalBodyCol
-            daysInWeek={props.daysInWeek}
-            workingHoursInWeek={props.workingHoursInWeek}
-            isEnabled={props.isEnabled}
-            timeIndex={i}
-            time={clickedTimeHandler(i)}
-            setClickedCell={props.setClickedCell}
-            clickedCellState={props.clickedCell}
-            Appointments={props.Appointments}
-            onClick={props.onClick}
-            clientPicker={props.clientPicker}
-          />
-        </tr>
-      );
-    })}
-  </>
-);
+
+  return (
+    <>
+      {props.minMaxWorkingHours.map((time, i) => (
+          <tr key={i} onClick={() => console.log('<tr> click event')}>
+            {props.daysInWeek.map((days, i) =>
+                <Fragment key={days + i}>
+                    <CalBodyCol
+                      isEnabled={props.workingHoursInWeek[i].cell[i].enabled}
+                      cellDate={props.workingHoursInWeek[i].date}
+                      cellHour={props.workingHoursInWeek[i].cell[i].time}
+                      workingHoursInWeek={props.workingHoursInWeek}
+                      time={clickedTimeHandler(i)}
+                      setClickedCell={props.setClickedCell}
+                      clickedCellState={props.clickedCell}
+                      appointments={props.appointments}
+                      onClick={props.onClick}
+                      clientPicker={props.clientPicker}
+                      dayOfWeekNum={i}
+                    />
+                </Fragment>           
+              )
+            }
+          </tr>
+        ))      
+      }
+    </>
+  )
+}
+
 
 export default CalBodyRow;

@@ -1,12 +1,7 @@
-/* eslint-disable no-unused-vars */
 import { useState, useRef, useEffect } from 'react';
 import moment from 'moment';
-/* import axios from '../../utils/Axios/axios-appointments'; */
 import { useDeviceDetect } from '../../helpers/universalFunctions';
-import Clients from '../DataFromBE/Clients';
-import Appointments from '../DataFromBE/Appointments';
-import ServiceProvidersServices from '../DataFromBE/ServiceProvidersServices';
-
+import appointments from '../DataFromBE/appointments';
 import WorkingHours from './WorkingHours';
 import Days from './RightTable/CalHead/Days';
 import Time from './LeftTable/Time';
@@ -18,7 +13,6 @@ import ClientPickerForm from './Forms/ClientPickerForm';
 import ServicePickerForm from './Forms/ServicePickerForm';
 import Input from '../UI/Forms/Input';
 import Label from '../UI/Forms/Label';
-
 import classes from './Calendar.module.scss';
 import classesUI from '../UI/UI.module.scss';
 
@@ -73,12 +67,6 @@ const Calendar = props => {
 
 	/// ////////////// Date menagemant start/////////////////
 	const currYear = moment().format('YYYY');
-	/* const currMonday_ms = moment()
-    .locale('sr')
-    .add(7 * week, 'days')
-    .weekday(0)
-    .format('MMM D, YYY')
-    .toUpperCase(); */
 	const currMonday = moment()
 		.locale('sr')
 		.add(7 * week, 'days')
@@ -151,7 +139,7 @@ const Calendar = props => {
 							workingHoursInWeek={obj.workingHoursInWeek}
 							setClickedCell={setClickedCell}
 							clickedCellState={clickedCell}
-							Appointments={Appointments}
+							appointments={appointments}
 							clientPicker={() => {
 								setDisplayClientPicker('block'), props.showBackdrop();
 							}}
@@ -184,22 +172,11 @@ const Calendar = props => {
 		}
 	};
 
-	/* const appointmentAddHandler = () => {
-    const api = axios
-      .post('/appointments.json', appointment)
-      .then((response) => console.log(response))
-      .catch((error) => console.log(error));
-    api;
-  }; */
-
-	console.log(props.selectedEmployee);
-
 	useEffect(() => {
 		if (isPageLoad.current) {
 			isPageLoad.current = false;
 			return;
 		}
-		/* appointmentAddHandler(); */
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [appointment]);
 

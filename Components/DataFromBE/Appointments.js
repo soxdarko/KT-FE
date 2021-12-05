@@ -1,6 +1,6 @@
-const Appointments = [
+const appointments = [
   {
-    time: '08:30',
+    time: '10:30',
     serviceId: 1,
     serviceName: 'Sisanje i brijanje',
     price: 500,
@@ -10,10 +10,10 @@ const Appointments = [
     phone: '0604925469',
     duration: '10:30-11:30',
     color: 'orange',
-    date: 1605262413642,
+    date: 1636758000000,
   },
   {
-    time: '10:30',
+    time: '11:30',
     serviceId: 2,
     serviceName: 'Sisanje fade sa bradom',
     price: 350,
@@ -23,10 +23,10 @@ const Appointments = [
     phone: '0691120296',
     duration: '11:30-12:00',
     color: 'orange',
-    date: 1601856000000,
+    date: 1636758000000,
   },
   {
-    time: '14:30',
+    time: '10:30',
     numOfCellsTakes: 1,
     serviceId: 3,
     serviceName: 'Sisanje',
@@ -36,7 +36,7 @@ const Appointments = [
     phone: '0605003131',
     duration: '10:30-11:30',
     color: 'orange',
-    date: 1601856000000,
+    date: 1636671600000,
   },
   {
     time: '08:30',
@@ -49,7 +49,7 @@ const Appointments = [
     phone: '0645365485',
     duration: '08:30-09:30',
     color: 'orange',
-    date: 1602115200000,
+    date: 1636758000000,
   },
   {
     time: '08:30',
@@ -63,8 +63,8 @@ const Appointments = [
     phone: '0651234567',
     duration: '08:30-09:30',
     color: 'orange',
-    date: 1602201600000,
+    date: 1636844400000,
   },
 ];
 
-export default Appointments;
+export default appointments;

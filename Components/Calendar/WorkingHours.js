@@ -33,16 +33,16 @@ const data = [
 		workingHoursInWeek: [
 			{
 				day: 1,
-				date: 1601856000000, // datum u milisekundama bez vremena samo godina, mesec, dan, vreme ce se pokupiti iz svake celije
+				date: 1636326000000, // datum u milisekundama bez vremena samo godina, mesec, dan, vreme ce se pokupiti iz svake celije
 				cell: [
 					{ time: '08:00', enabled: true },
 					{ time: '08:30', enabled: true },
 					{ time: '09:00', enabled: true },
-					{ time: '09:30', enabled: false },
+					{ time: '09:30', enabled: true },
 					{ time: '10:00', enabled: true },
 					{ time: '10:30', enabled: true },
 					{ time: '11:00', enabled: true },
-					{ time: '11:30', enabled: false },
+					{ time: '11:30', enabled: true },
 					{ time: '12:00', enabled: true },
 					{ time: '12:30', enabled: true },
 					{ time: '13:00', enabled: true },
@@ -52,7 +52,7 @@ const data = [
 					{ time: '15:00', enabled: true },
 					{ time: '15:30', enabled: true },
 					{ time: '16:00', enabled: true },
-					{ time: '16:30', enabled: false },
+					{ time: '16:30', enabled: true },
 					{ time: '17:00', enabled: true },
 					{ time: '17:30', enabled: true },
 					{ time: '18:00', enabled: true },
@@ -64,7 +64,7 @@ const data = [
 			},
 			{
 				day: 2,
-				date: 1601942400000,
+				date: 1636412400000,
 				cell: [
 					{ time: '08:00', enabled: true },
 					{ time: '08:30', enabled: true },
@@ -75,13 +75,13 @@ const data = [
 					{ time: '11:00', enabled: true },
 					{ time: '11:30', enabled: true },
 					{ time: '12:00', enabled: true },
-					{ time: '12:30', enabled: false },
+					{ time: '12:30', enabled: true },
 					{ time: '13:00', enabled: true },
 					{ time: '13:30', enabled: true },
 					{ time: '14:00', enabled: true },
 					{ time: '14:30', enabled: true },
 					{ time: '15:00', enabled: true },
-					{ time: '15:30', enabled: false },
+					{ time: '15:30', enabled: true },
 					{ time: '16:00', enabled: true },
 					{ time: '16:30', enabled: true },
 					{ time: '17:00', enabled: true },
@@ -96,7 +96,7 @@ const data = [
 
 			{
 				day: 3,
-				date: 1602028800000,
+				date: 1636498800000,
 				cell: [
 					{ time: '08:00', enabled: true },
 					{ time: '08:30', enabled: true },
@@ -107,13 +107,13 @@ const data = [
 					{ time: '11:00', enabled: true },
 					{ time: '11:30', enabled: true },
 					{ time: '12:00', enabled: true },
-					{ time: '12:30', enabled: false },
+					{ time: '12:30', enabled: true },
 					{ time: '13:00', enabled: true },
 					{ time: '13:30', enabled: true },
 					{ time: '14:00', enabled: true },
 					{ time: '14:30', enabled: true },
 					{ time: '15:00', enabled: true },
-					{ time: '15:30', enabled: false },
+					{ time: '15:30', enabled: true },
 					{ time: '16:00', enabled: true },
 					{ time: '16:30', enabled: true },
 					{ time: '17:00', enabled: true },
@@ -128,7 +128,7 @@ const data = [
 
 			{
 				day: 4,
-				date: 1602115200000,
+				date: 1636585200000,
 				cell: [
 					{ time: '08:00', enabled: true },
 					{ time: '08:30', enabled: true },
@@ -139,13 +139,13 @@ const data = [
 					{ time: '11:00', enabled: true },
 					{ time: '11:30', enabled: true },
 					{ time: '12:00', enabled: true },
-					{ time: '12:30', enabled: false },
+					{ time: '12:30', enabled: true },
 					{ time: '13:00', enabled: true },
 					{ time: '13:30', enabled: true },
 					{ time: '14:00', enabled: true },
 					{ time: '14:30', enabled: true },
 					{ time: '15:00', enabled: true },
-					{ time: '15:30', enabled: false },
+					{ time: '15:30', enabled: true },
 					{ time: '16:00', enabled: true },
 					{ time: '16:30', enabled: true },
 					{ time: '17:00', enabled: true },
@@ -160,7 +160,7 @@ const data = [
 
 			{
 				day: 5,
-				date: 1602201600000,
+				date: 1636671600000,
 				cell: [
 					{ time: '08:00', enabled: true },
 					{ time: '08:30', enabled: true },
@@ -171,13 +171,13 @@ const data = [
 					{ time: '11:00', enabled: true },
 					{ time: '11:30', enabled: true },
 					{ time: '12:00', enabled: true },
-					{ time: '12:30', enabled: false },
+					{ time: '12:30', enabled: true },
 					{ time: '13:00', enabled: true },
 					{ time: '13:30', enabled: true },
 					{ time: '14:00', enabled: true },
 					{ time: '14:30', enabled: true },
 					{ time: '15:00', enabled: true },
-					{ time: '15:30', enabled: false },
+					{ time: '15:30', enabled: true },
 					{ time: '16:00', enabled: true },
 					{ time: '16:30', enabled: true },
 					{ time: '17:00', enabled: true },
@@ -186,13 +186,13 @@ const data = [
 					{ time: '18:30', enabled: true },
 					{ time: '19:00', enabled: true },
 					{ time: '19:30', enabled: true },
-					{ time: '20:00', enabled: true },
+					// { time: '20:00', enabled: true },
 				],
 			},
 
 			{
 				day: 6,
-				date: 1602288000000,
+				date: 1636758000000,
 				cell: [
 					{ time: '08:00', enabled: true },
 					{ time: '08:30', enabled: true },
@@ -203,13 +203,13 @@ const data = [
 					{ time: '11:00', enabled: true },
 					{ time: '11:30', enabled: true },
 					{ time: '12:00', enabled: true },
-					{ time: '12:30', enabled: false },
+					{ time: '12:30', enabled: true },
 					{ time: '13:00', enabled: true },
 					{ time: '13:30', enabled: true },
 					{ time: '14:00', enabled: true },
 					{ time: '14:30', enabled: true },
 					{ time: '15:00', enabled: true },
-					{ time: '15:30', enabled: false },
+					{ time: '15:30', enabled: true },
 					{ time: '16:00', enabled: true },
 					{ time: '16:30', enabled: true },
 					{ time: '17:00', enabled: true },
@@ -224,12 +224,12 @@ const data = [
 
 			{
 				day: 7,
-				date: 1602374400000,
+				date: 1636844400000,
 				cell: [
 					{ time: '08:00', enabled: true },
 					{ time: '08:30', enabled: true },
 					{ time: '09:00', enabled: true },
-					{ time: '09:30', enabled: false },
+					{ time: '09:30', enabled: true },
 					{ time: '10:00', enabled: true },
 					{ time: '10:30', enabled: true },
 					{ time: '11:00', enabled: true },

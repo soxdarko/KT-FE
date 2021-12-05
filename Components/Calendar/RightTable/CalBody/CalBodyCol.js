@@ -1,76 +1,68 @@
-/* eslint-disable no-shadow */
 import Appointment from './Appointment';
-
 import classes from '../../Calendar.module.scss';
+import { useEffect } from 'react';
 
-const CalBodyCol = (props) => (
-  <>
-    {props.daysInWeek.map((day, i) => {
-      const isEnbaled =
-        props.workingHoursInWeek[i].cell[props.timeIndex].enabled;
-      const cellDate = props.workingHoursInWeek[i].date;
-      const cellHour = props.workingHoursInWeek[i].cell[props.timeIndex].time;
-      /* const d = new Date();
-      const t = Date.now(); */
-      const Appointments = () => {
-        for (const hour of props.Appointments) {
-          if (hour.time === cellHour && hour.date === cellDate) {
-            if (hour.numOfCellsTakes === 1) {
-              return 149 * hour.numOfCellsTakes;
-            }
-            if (hour.numOfCellsTakes >= 2 && hour.numOfCellsTakes < 4) {
-              return 149 * hour.numOfCellsTakes + hour.numOfCellsTakes * 1.2;
-            }
-            return 149 * hour.numOfCellsTakes + hour.numOfCellsTakes * 1.8;
+const CalBodyCol = (props) => {
+   //useEffect(()=> console.log('props.cellDate',new Date(props.cellDate)), [])
+
+    const appointments = () => {
+      for (const hour of props.appointments) {
+        if (hour.time === props.cellHour && hour.date === props.cellDate) {
+          if (hour.numOfCellsTakes === 1) {
+            return 149 * hour.numOfCellsTakes;
           }
-        }
-      };
-
-      const appointment = (data) => {
-        // eslint-disable-next-line no-shadow
-        for (const appointment of props.Appointments) {
-          if (appointment.time === cellHour && appointment.date === cellDate) {
-            return appointment[data];
+          if (hour.numOfCellsTakes >= 2 && hour.numOfCellsTakes < 4) {
+            return 149 * hour.numOfCellsTakes + hour.numOfCellsTakes * 1.2;
           }
+          return 149 * hour.numOfCellsTakes + hour.numOfCellsTakes * 1.8;
         }
-      };
+      }
+    };
 
-      const clickedCellHandler = () => {
-        const cell = props.workingHoursInWeek;
-        for (const date of cell) {
-          if (date.date === cell[i].date) {
-            props.setClickedCell({
-              ...props.clickedCellState,
-              time: props.time,
-              date: date.date,
-            });
-          }
+    const appointment = (dataType) => {
+      for (const appointment of props.appointments) {
+        if (appointment.time === props.cellHour && appointment.date === props.cellDate) {
+          return appointment[dataType];
         }
-      };
+      }
+    };
 
-      const onClick = (i) => {
-        if (isEnbaled && !Appointments()) {
-          props.clientPicker(i), clickedCellHandler(i);
-        } else {
-          null;
+    const clickedCellHandler = () => {
+      const cell = props.workingHoursInWeek;
+      for (const date of cell) {
+        if (date.date === cell[props.dayOfWeekNum].date) {
+          props.setClickedCell({
+            ...props.clickedCellState,
+            time: props.time,
+            date: date.date,
+          });
         }
-      };
+      }
+    };
 
-      return (
-        // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
+    const onClick = (dayOfWeekNum) => {
+      if (props.isEnabled && !appointments()) {
+        props.clientPicker(dayOfWeekNum), clickedCellHandler(dayOfWeekNum);
+      } else {
+        null;
+      }
+    };
+
+  return (
+    <>
         <td
-          className={isEnbaled ? classes.CellEnabled : classes.CellDisabled}
-          key={i}
-          onClick={(i) => onClick(i)}
-          data-celldate={cellDate}
-          data-cellhour={cellHour}
+          className={props.isEnabled ? classes.CellEnabled : classes.CellDisabled}
+          key={props.dayOfWeekNum}
+          onClick={() => onClick(props.dayOfWeekNum)}
+          data-celldate={props.cellDate}
+          data-cellhour={props.cellHour}
         >
-          <p style={{ display: Appointments() ? 'none' : 'flex' }}>
-            {!isEnbaled ? 'zatvoreno' : 'rezerviši termin'}
+          <p style={{ display: appointments() ? 'none' : 'flex' }}>
+            {!props.isEnabled ? 'zatvoreno' : 'rezerviši termin'}
           </p>
           <Appointment
-            display={Appointments() ? 'flex' : 'none'}
-            height={`${Appointments()}px`}
+            display={appointments() ? 'flex' : 'none'}
+            height={`${appointments()}px`}
             className={classes.Appointment}
           >
             <h5>{appointment('duration')}</h5>
@@ -81,9 +73,8 @@ const CalBodyCol = (props) => (
             <h5>{appointment('price')} rsd</h5>
           </Appointment>
         </td>
-      );
-    })}
-  </>
-);
+    </>
+  )
+};
 
 export default CalBodyCol;

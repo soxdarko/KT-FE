@@ -200,7 +200,7 @@ const Index = props => {
 			userStatus.userRole === 'ServiceProvider' ||
 			userStatus.userRole === 'Employee'
 		) {
-			router.push('/Kalendar');
+			router.push('/kalendar');
 		} else if (userStatus.userRole === 'Client') {
 			alert('presmeriti klijenta na klijent kalendar stranicu');
 		} else {
