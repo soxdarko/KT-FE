@@ -24,13 +24,63 @@ const Calendar = props => {
 	const [daysInWeek, setDaysInWeek] = useState([]);
 	const [minMaxWorkingHours, setMinMaxWorkingWours] = useState([]);
 	const [workHourAppointments, setWorkHourAppointments] = useState([]);
+	const [workingHoursEveryDay, setWorkingHoursEveryDay] = useState([]);
+
+
+
+
+
+	useEffect(() => {
+		prepDaysInWeek();
+	}, []);
+
+	useEffect(() => {
+		prepMinMaxWorkingHours();
+		prepWorkingHours();
+	}, [daysInWeek]);
+
+	const prepWorkingHours = () => {
+		let prepWorkingHoursArr = [];
+		let workingHoursObj;
+		daysInWeek.map(d => {
+			let dateInWeek = (new Date(d.date)).getTime();
+			let breakMap = false;
+			props.workingHours.map(w => {
+				let dateOfWorkingHours = (new Date(w.date)).getTime();
+				if(!breakMap){
+					if(dateInWeek == dateOfWorkingHours){
+						workingHoursObj = w;
+						breakMap = true;
+					} else {
+						workingHoursObj = {
+							id: null,
+							date: d.date,
+							firstStartHour: null,
+							firstEndHour: null,
+							secondStartHour: null,
+							secondEndHour: null,
+							cellsDuration: null,
+							idAbsenceType: null
+						}
+					}
+						
+				}
+				
+			}) 
+			prepWorkingHoursArr.push(workingHoursObj);		
+		});
+		console.log('prepWorkingHoursArr',prepWorkingHoursArr)
+		setWorkingHoursEveryDay(prepWorkingHoursArr);
+	}
+
+
 
 	const prepDaysInWeek = () => {
 		const days = ['Pon', 'Uto', 'Sre', 'Cet', 'Pet', 'Sub', 'Ned'];
 		const prepDaysInWeek = days.map((d, i) => {
 			return { day: d, date: getDateFromDayOfWeek(new Date(), i)}
 		});
-		setMinMaxWorkingWours(prepDaysInWeek)
+		setDaysInWeek(prepDaysInWeek);
 	}
 
 	const prepMinMaxWorkingHours = () => {
@@ -55,8 +105,11 @@ const Calendar = props => {
 		}
 		setMinMaxWorkingWours(prepMinMaxWorkingHours);
 		prepWorkHourAppointment(prepMinMaxWorkingHours);
-
 	}
+
+
+
+
 
 	const minMaxHourExist = (minMaxHour, firstStartHour, firstEndHour, secondStartHour, secondEndHour) => {
 		return (minMaxHour >= firstStartHour && minMaxHour <= firstEndHour) ||
@@ -67,6 +120,7 @@ const Calendar = props => {
 		const prepWHA = [];
 		minMaxWorkingHours.map(minMaxHour => {
 			props.workingHours.map(h => {	
+				// console.log('workingHours', h, '....................................................................')
 				minMaxHourExist(minMaxHour, h.firstStartHour, h.firstEndHour, h.secondStartHour, h.secondEndHour)
 					? prepWHA.push({
 						date: h.date,
@@ -74,29 +128,33 @@ const Calendar = props => {
 						enabled: true,
 						absence: h.idAbsenceType,
 						appointment: props.appointments.map(a => {
-							console.log('a: ', a)
+							// console.log('appointment: ', a)
 							let whDate = Date.parse(h.date.split('T')[0]);
 							let apDate = Date.parse(a.dateStart.split('T')[0]);
 
-							console.log('whDate',whDate);
-							console.log('apDate',apDate);
+							// console.log('whDate',whDate);
+							// console.log('apDate',apDate);
 
-							let aDateTime = new Date(a.dateStart); //Date.parse(a.dateStart);
-							let aTime = aDateTime.getTime();
+							let aDateTime = new Date(a.dateStart); 
+							let aHour = aDateTime.getHours();
+							let aMin = aDateTime.getMinutes();
+							let aTime = aHour * 60 + aMin;  // convert time to minutes
 							
-							console.log('aDateTime',aDateTime);
-							console.log('aTime',aTime);
-							// return whDate == apDate && minMaxHour == aTime ? {
-							// 	id: a.id,
-							// 	dateStart: a.dateStart,
-							// 	dateEnd: a.dateEnd,
-							// 	description: a.description,
-							// 	idEmployee: a.idEmployee,
-							// 	employeeName: a.employeeName,
-							// 	idClient: a.idClient,
-							// 	clientName: a.clientName,
-							// 	services: a.services
-							// } : null 
+							// console.log('aDateTime',aDateTime);
+							// console.log('aHour: ', aHour);
+							// console.log('aMin', aMin);
+							// console.log('aTime',aTime);
+							return whDate == apDate && minMaxHour == aTime ? {
+								id: a.id,
+								dateStart: a.dateStart,
+								dateEnd: a.dateEnd,
+								description: a.description,
+								idEmployee: a.idEmployee,
+								employeeName: a.employeeName,
+								idClient: a.idClient,
+								clientName: a.clientName,
+								services: a.services
+							} : null 
 							return a
 						}).filter(a => a)
 					})
@@ -105,17 +163,19 @@ const Calendar = props => {
 						hours: minMaxHour,
 						enabled: false,
 						absence: null,
-						appointment: {}
+						appointment: []
 					})
 			})
 			
 		})
+		// console.log('=========================================================================================================================================================')
+		// console.log('=========================================================================================================================================================')
+		// console.log('=========================================================================================================================================================')
+		// console.log('prepWHA: ', prepWHA)
+		setWorkHourAppointments(prepWHA);
 	}
 
-	useEffect(() => {
-		prepDaysInWeek();
-		prepMinMaxWorkingHours();
-	}, []);
+
 	
 	
 	
@@ -231,7 +291,23 @@ const Calendar = props => {
 					onScroll={() => {
 						VerticalTaxing(), HorisontalTaxing();
 					}}>
-					{WorkingHours.map((obj, i) => (
+
+					{/* {minMaxWorkingHours.map((time) => (
+						<CalBodyRow
+							key={time}
+							time={time}
+							daysInWeek={daysInWeek}
+							workHourAppointments={workHourAppointments}
+							setClickedCell={setClickedCell}
+							clickedCellState={clickedCell}
+							clientPicker={() => {
+								setDisplayClientPicker('block'), props.showBackdrop();
+							}}
+						/>
+					))} */}
+
+
+					{/* {WorkingHours.map((obj, i) => (
 						<CalBodyRow
 							daysInWeek={obj.daysInWeek}
 							minMaxWorkingHours={obj.minMaxWorkingHours}
@@ -244,7 +320,7 @@ const Calendar = props => {
 								setDisplayClientPicker('block'), props.showBackdrop();
 							}}
 						/>
-					))}
+					))} */}
 				</tbody>
 			</table>
 		</div>
