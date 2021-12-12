@@ -15,11 +15,111 @@ import Input from '../UI/Forms/Input';
 import Label from '../UI/Forms/Label';
 import classes from './Calendar.module.scss';
 import classesUI from '../UI/UI.module.scss';
+import { getDateFromDayOfWeek } from '../../helpers/universalFunctions';
 
 const Calendar = props => {
 	const { isMobile } = useDeviceDetect();
 	const isPageLoad = useRef(true);
 	const checkedServices = [];
+	const [daysInWeek, setDaysInWeek] = useState([]);
+	const [minMaxWorkingHours, setMinMaxWorkingWours] = useState([]);
+	const [workHourAppointments, setWorkHourAppointments] = useState([]);
+
+	const prepDaysInWeek = () => {
+		const days = ['Pon', 'Uto', 'Sre', 'Cet', 'Pet', 'Sub', 'Ned'];
+		const prepDaysInWeek = days.map((d, i) => {
+			return { day: d, date: getDateFromDayOfWeek(new Date(), i)}
+		});
+		setMinMaxWorkingWours(prepDaysInWeek)
+	}
+
+	const prepMinMaxWorkingHours = () => {
+		let minHour = 1440; //24h
+		let maxHour = 0;
+		let cellDuration = 0;
+		props.workingHours.map(h => {
+			const arr = [h.firstStartHour, h.firstEndHour, h.secondStartHour, h.secondEndHour].filter(h => h);
+			const hour = Math.min(...arr);
+			cellDuration = h.cellsDuration;
+			if (hour < minHour) minHour = hour 
+		});
+		props.workingHours.map(h => {
+			const arr = [h.firstStartHour, h.firstEndHour, h.secondStartHour, h.secondEndHour].filter(h => h);
+			const hour = Math.max(...arr)
+			if (hour > maxHour) maxHour = hour 
+		});
+
+		const prepMinMaxWorkingHours = [];
+		for(let h = minHour; h <= maxHour; h += cellDuration){
+			prepMinMaxWorkingHours.push(h);
+		}
+		setMinMaxWorkingWours(prepMinMaxWorkingHours);
+		prepWorkHourAppointment(prepMinMaxWorkingHours);
+
+	}
+
+	const minMaxHourExist = (minMaxHour, firstStartHour, firstEndHour, secondStartHour, secondEndHour) => {
+		return (minMaxHour >= firstStartHour && minMaxHour <= firstEndHour) ||
+			(minMaxHour >= secondStartHour && minMaxHour <= secondEndHour)
+	}
+
+	const prepWorkHourAppointment = (minMaxWorkingHours) => {
+		const prepWHA = [];
+		minMaxWorkingHours.map(minMaxHour => {
+			props.workingHours.map(h => {	
+				minMaxHourExist(minMaxHour, h.firstStartHour, h.firstEndHour, h.secondStartHour, h.secondEndHour)
+					? prepWHA.push({
+						date: h.date,
+						hours: minMaxHour,
+						enabled: true,
+						absence: h.idAbsenceType,
+						appointment: props.appointments.map(a => {
+							console.log('a: ', a)
+							let whDate = Date.parse(h.date.split('T')[0]);
+							let apDate = Date.parse(a.dateStart.split('T')[0]);
+
+							console.log('whDate',whDate);
+							console.log('apDate',apDate);
+
+							let aDateTime = new Date(a.dateStart); //Date.parse(a.dateStart);
+							let aTime = aDateTime.getTime();
+							
+							console.log('aDateTime',aDateTime);
+							console.log('aTime',aTime);
+							// return whDate == apDate && minMaxHour == aTime ? {
+							// 	id: a.id,
+							// 	dateStart: a.dateStart,
+							// 	dateEnd: a.dateEnd,
+							// 	description: a.description,
+							// 	idEmployee: a.idEmployee,
+							// 	employeeName: a.employeeName,
+							// 	idClient: a.idClient,
+							// 	clientName: a.clientName,
+							// 	services: a.services
+							// } : null 
+							return a
+						}).filter(a => a)
+					})
+					: prepWHA.push({
+						date: h.date,
+						hours: minMaxHour,
+						enabled: false,
+						absence: null,
+						appointment: {}
+					})
+			})
+			
+		})
+	}
+
+	useEffect(() => {
+		prepDaysInWeek();
+		prepMinMaxWorkingHours();
+	}, []);
+	
+	
+	
+	
 
 	const [appointment, setAppointment] = useState({
 		date: null,

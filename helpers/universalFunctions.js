@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import Router from 'next/router';
+import moment from 'moment';
 
 export function useDeviceDetect() {
 	const [isMobile, setMobile] = useState(false);
@@ -183,4 +184,16 @@ export function useWindowSize() {
 		}
 	}, []); // Empty array ensures that effect is only run on mount
 	return windowSize;
+}
+
+export function getMonday( date ) {
+    var day = date.getDay() || 7;  
+    if( day !== 1 ) 
+        date.setHours(-24 * (day - 1)); 
+    return date;
+}
+
+export function getDateFromDayOfWeek( date, day ) {
+	const monday = getMonday(date);
+	return moment(monday).add(day, 'days').startOf('day').format();
 }
