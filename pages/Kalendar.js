@@ -72,9 +72,9 @@ export async function getServerSideProps(ctx) {
 	const resServices = await fetchJson(servicesUrl, 'get', token);
 	const guideStatusUrl = `users/getCompanyGuideStatus`;
 	const resGuideStatusUrl = await fetchJson(guideStatusUrl, 'get', token);
-	const workingHoursUrl = `settings/getWorkingHours?employeeId=A34DAEF4-615E-48BD-2B71-08D9A67C247C&dateOfMonday=2021-12-06`
+	const workingHoursUrl = `settings/getWorkingHours?employeeId=A34DAEF4-615E-48BD-2B71-08D9A67C247C&dateOfMonday=2021-12-13`
 	const workingHours = await fetchJson(workingHoursUrl, 'get', token).then(res => res.data);
-	const appointmentUrl = `appointments/getAppointments?employeeId=A34DAEF4-615E-48BD-2B71-08D9A67C247C&dateOfMonday=2021-12-06`
+	const appointmentUrl = `appointments/getAppointments?employeeId=A34DAEF4-615E-48BD-2B71-08D9A67C247C&dateOfMonday=2021-12-13`
 	const appointments = await fetchJson(appointmentUrl, 'get', token).then(res => res.data);
 
 	const serviceProviders = resServiceProviders.data.map(name => {

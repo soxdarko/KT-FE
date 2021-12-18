@@ -24,10 +24,7 @@ const Calendar = props => {
 	const [daysInWeek, setDaysInWeek] = useState([]);
 	const [minMaxWorkingHours, setMinMaxWorkingWours] = useState([]);
 	const [workHourAppointments, setWorkHourAppointments] = useState([]);
-	const [workingHoursEveryDay, setWorkingHoursEveryDay] = useState([]);
-
-
-
+	const days = ['Pon', 'Uto', 'Sre', 'Cet', 'Pet', 'Sub', 'Ned'];
 
 
 	useEffect(() => {
@@ -35,11 +32,47 @@ const Calendar = props => {
 	}, []);
 
 	useEffect(() => {
-		prepMinMaxWorkingHours();
-		prepWorkingHours();
+		daysInWeek.length > 0 && prepMinMaxWorkingHours();
 	}, [daysInWeek]);
 
-	const prepWorkingHours = () => {
+	useEffect(() => {
+		minMaxWorkingHours.length > 0 && prepWorkingHoursForEveryDay();
+	},[minMaxWorkingHours])
+
+
+	const prepDaysInWeek = () => {
+		const prepDaysInWeek = days.map((d, i) => {
+			return { day: d, date: getDateFromDayOfWeek(new Date(), i)}
+		});
+		setDaysInWeek(prepDaysInWeek);
+	}
+
+
+	const prepMinMaxWorkingHours = () => {
+		let minHour = 1440; //24h
+		let maxHour = 0;
+		let cellDuration = 0;
+		props.workingHours.map(h => {
+			const arr = [h.firstStartHour, h.firstEndHour, h.secondStartHour, h.secondEndHour].filter(h => h);
+			const hour = Math.min(...arr);
+			cellDuration = h.cellsDuration;
+			if (hour < minHour) minHour = hour 
+		});
+		props.workingHours.map(h => {
+			const arr = [h.firstStartHour, h.firstEndHour, h.secondStartHour, h.secondEndHour].filter(h => h);
+			const hour = Math.max(...arr)
+			if (hour > maxHour) maxHour = hour 
+		});
+
+		const prepMinMaxWorkingHours = [];
+		for(let h = minHour; h <= maxHour; h += cellDuration){
+			prepMinMaxWorkingHours.push(h);
+		}
+		setMinMaxWorkingWours(prepMinMaxWorkingHours);
+	}
+
+
+	const prepWorkingHoursForEveryDay = () => {
 		let prepWorkingHoursArr = [];
 		let workingHoursObj;
 		daysInWeek.map(d => {
@@ -69,45 +102,9 @@ const Calendar = props => {
 			}) 
 			prepWorkingHoursArr.push(workingHoursObj);		
 		});
-		console.log('prepWorkingHoursArr',prepWorkingHoursArr)
-		setWorkingHoursEveryDay(prepWorkingHoursArr);
+
+		prepWorkHourAppointment(minMaxWorkingHours, prepWorkingHoursArr);
 	}
-
-
-
-	const prepDaysInWeek = () => {
-		const days = ['Pon', 'Uto', 'Sre', 'Cet', 'Pet', 'Sub', 'Ned'];
-		const prepDaysInWeek = days.map((d, i) => {
-			return { day: d, date: getDateFromDayOfWeek(new Date(), i)}
-		});
-		setDaysInWeek(prepDaysInWeek);
-	}
-
-	const prepMinMaxWorkingHours = () => {
-		let minHour = 1440; //24h
-		let maxHour = 0;
-		let cellDuration = 0;
-		props.workingHours.map(h => {
-			const arr = [h.firstStartHour, h.firstEndHour, h.secondStartHour, h.secondEndHour].filter(h => h);
-			const hour = Math.min(...arr);
-			cellDuration = h.cellsDuration;
-			if (hour < minHour) minHour = hour 
-		});
-		props.workingHours.map(h => {
-			const arr = [h.firstStartHour, h.firstEndHour, h.secondStartHour, h.secondEndHour].filter(h => h);
-			const hour = Math.max(...arr)
-			if (hour > maxHour) maxHour = hour 
-		});
-
-		const prepMinMaxWorkingHours = [];
-		for(let h = minHour; h <= maxHour; h += cellDuration){
-			prepMinMaxWorkingHours.push(h);
-		}
-		setMinMaxWorkingWours(prepMinMaxWorkingHours);
-		prepWorkHourAppointment(prepMinMaxWorkingHours);
-	}
-
-
 
 
 
@@ -116,69 +113,66 @@ const Calendar = props => {
 			(minMaxHour >= secondStartHour && minMaxHour <= secondEndHour)
 	}
 
-	const prepWorkHourAppointment = (minMaxWorkingHours) => {
+	const prepWorkHourAppointment = (minMaxWorkingHours, workingHours) => {
 		const prepWHA = [];
-		minMaxWorkingHours.map(minMaxHour => {
-			props.workingHours.map(h => {	
-				// console.log('workingHours', h, '....................................................................')
+		workingHours.map((h,i) => {
+			prepWHA.push({
+				date: h.date,
+				wha: []
+			});
+			minMaxWorkingHours.map(minMaxHour => {		
 				minMaxHourExist(minMaxHour, h.firstStartHour, h.firstEndHour, h.secondStartHour, h.secondEndHour)
-					? prepWHA.push({
-						date: h.date,
+					? prepWHA[i].wha.push({
 						hours: minMaxHour,
 						enabled: true,
 						absence: h.idAbsenceType,
-						appointment: props.appointments.map(a => {
-							// console.log('appointment: ', a)
-							let whDate = Date.parse(h.date.split('T')[0]);
-							let apDate = Date.parse(a.dateStart.split('T')[0]);
-
-							// console.log('whDate',whDate);
-							// console.log('apDate',apDate);
-
-							let aDateTime = new Date(a.dateStart); 
-							let aHour = aDateTime.getHours();
-							let aMin = aDateTime.getMinutes();
-							let aTime = aHour * 60 + aMin;  // convert time to minutes
-							
-							// console.log('aDateTime',aDateTime);
-							// console.log('aHour: ', aHour);
-							// console.log('aMin', aMin);
-							// console.log('aTime',aTime);
-							return whDate == apDate && minMaxHour == aTime ? {
-								id: a.id,
-								dateStart: a.dateStart,
-								dateEnd: a.dateEnd,
-								description: a.description,
-								idEmployee: a.idEmployee,
-								employeeName: a.employeeName,
-								idClient: a.idClient,
-								clientName: a.clientName,
-								services: a.services
-							} : null 
-							return a
-						}).filter(a => a)
+						appointment: getAppointments(h.date, minMaxHour)
 					})
-					: prepWHA.push({
-						date: h.date,
+					: prepWHA[i].wha.push({
 						hours: minMaxHour,
 						enabled: false,
 						absence: null,
-						appointment: []
+						appointment: {}
 					})
-			})
-			
+			})		
 		})
-		// console.log('=========================================================================================================================================================')
-		// console.log('=========================================================================================================================================================')
-		// console.log('=========================================================================================================================================================')
-		// console.log('prepWHA: ', prepWHA)
+		console.log('prepWHA',prepWHA)
 		setWorkHourAppointments(prepWHA);
 	}
 
+	const getAppointments = (date, minMaxHour) => {
+		const appointment = props.appointments.map(a => {
+			let whDate = Date.parse(date.split('T')[0]);
+			let apDate = Date.parse(a.dateStart.split('T')[0]);
 
-	
-	
-	
+			let aDateTime = new Date(a.dateStart); 
+			let aHour = aDateTime.getHours();
+			let aMin = aDateTime.getMinutes();
+			let aTime = aHour * 60 + aMin;  // convert time to minutes
+		
+			return whDate == apDate && minMaxHour == aTime ? {
+				id: a.id,
+				dateStart: a.dateStart,
+				dateEnd: a.dateEnd,
+				description: a.description,
+				idEmployee: a.idEmployee,
+				employeeName: a.employeeName,
+				idClient: a.idClient,
+				clientName: a.clientName,
+				services: a.services
+			} : null 
+		}).filter(a => a);
+
+		console.log('appointment',appointment);
+
+
+		return appointment.length > 0 ? appointment[0] : {};
+	}
+
+
+	useEffect(() => {
+		console.log('workHourAppointments', workHourAppointments)
+	}, [workHourAppointments])
 	
 
 	const [appointment, setAppointment] = useState({
@@ -280,9 +274,7 @@ const Calendar = props => {
 			<table className={classes.calRightTable}>
 				<thead ref={cloneHeadScrollLeft} style={{ width: isMobile ? '100%' : '97%' }}>
 					<tr>
-						{WorkingHours.map(obj => (
-							<Days days={obj.daysInWeek} key={obj.daysInWeek} date={currMondayName} />
-						))}
+						<Days days={days} key={days} date={currMondayName} />
 					</tr>
 				</thead>
 				<tbody
@@ -292,11 +284,10 @@ const Calendar = props => {
 						VerticalTaxing(), HorisontalTaxing();
 					}}>
 
-					{/* {minMaxWorkingHours.map((time) => (
+					{minMaxWorkingHours.map((time) => (
 						<CalBodyRow
 							key={time}
 							time={time}
-							daysInWeek={daysInWeek}
 							workHourAppointments={workHourAppointments}
 							setClickedCell={setClickedCell}
 							clickedCellState={clickedCell}
@@ -304,23 +295,8 @@ const Calendar = props => {
 								setDisplayClientPicker('block'), props.showBackdrop();
 							}}
 						/>
-					))} */}
+					))}
 
-
-					{/* {WorkingHours.map((obj, i) => (
-						<CalBodyRow
-							daysInWeek={obj.daysInWeek}
-							minMaxWorkingHours={obj.minMaxWorkingHours}
-							key={i}
-							workingHoursInWeek={obj.workingHoursInWeek}
-							setClickedCell={setClickedCell}
-							clickedCellState={clickedCell}
-							appointments={appointments}
-							clientPicker={() => {
-								setDisplayClientPicker('block'), props.showBackdrop();
-							}}
-						/>
-					))} */}
 				</tbody>
 			</table>
 		</div>

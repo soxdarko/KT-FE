@@ -1,7 +1,7 @@
 import CalBodyCol from './CalBodyCol';
 import { Fragment, useEffect } from 'react';
 
-const CalBodyRow = (props) => {
+const CalBodyRow = ({workHourAppointments, time}) => {
   const clickedTimeHandler = (i) => {
     const cell = props.minMaxWorkingHours;
     for (const time of cell) {
@@ -13,30 +13,23 @@ const CalBodyRow = (props) => {
 
 
   return (
-    <>
       <tr>
-        {props.daysInWeek.map((day, i) =>
-            <Fragment key={day + i}>
-              {}
-                <CalBodyCol
-                  isEnabled={props.workingHoursInWeek[i].cell[i].enabled}
-                  cellDate={props.workingHoursInWeek[i].date}
-                  cellHour={props.workingHoursInWeek[i].cell[i].time}
-                  workingHoursInWeek={props.workingHoursInWeek}
-                  time={clickedTimeHandler(i)}
-                  setClickedCell={props.setClickedCell}
-                  clickedCellState={props.clickedCell}
-                  appointments={props.appointments}
-                  onClick={props.onClick}
-                  clientPicker={props.clientPicker}
-                  dayOfWeekNum={i}
-                />
-            </Fragment>           
-          )
-        }
+        {workHourAppointments && workHourAppointments.map((day, i) => 
+            day.wha.map(wha => wha.hours == time &&
+                (
+                  <Fragment key={'CalBodyCol' + i}>
+                      <CalBodyCol 
+                          date={day.date} 
+                          time={time}
+                          enabled={wha.enabled}
+                          absence={wha.absence}
+                          appointment={wha.appointment}
+                      />
+                  </Fragment>
+                )
+            )
+        )}
       </tr> 
-
-    </>
   )
 }
 
