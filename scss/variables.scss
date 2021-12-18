@@ -1,4 +1,5 @@
 $small: 700px;
+$pastel-yellow-color: #fdfd96;
 $base-background-color: #303030;
 $alt-background-color: #303030;
 $header-background-color: #202020;
@@ -829,13 +830,13 @@ select {
 }
 
 .backdropIn {
-	animation: backdropin 600ms ease-in-out forwards;
-	-webkit-animation: backdropin 600ms ease-in-out forwards;
+	animation: backdropin 300ms ease-in-out forwards;
+	-webkit-animation: backdropin 300ms ease-in-out forwards;
 }
 
 .backdropOut {
-	animation: backdropout 600ms ease-in-out forwards;
-	-webkit-animation: backdropout 600ms ease-in-out forwards;
+	animation: backdropout 300ms ease-in-out forwards;
+	-webkit-animation: backdropout 300ms ease-in-out forwards;
 }
 
 .searchBarOpen {
@@ -915,7 +916,7 @@ select {
 	position: relative;
 	flex-direction: column;
 	width: 100vw;
-	height: auto;
+	height: 100vh;
 	justify-content: center;
 	z-index: 999;
 	form {
@@ -971,10 +972,54 @@ select {
 	}
 }
 
-.DescriptionMob {
+.DescriptionContainer {
+	position: absolute;
+	width: 100vw;
+	margin-top: 50px;
+	z-index: 99999999;
+	.DescriptionArea {
+		display: block;
+		width: 50vw;
+		max-width: 500px;
+		margin: 20px auto 0 auto;
+		font-size: 1rem;
+		z-index: 99999999;
+	}
+	h3 {
+		font-size: 1.4rem;
+		text-align: center;
+		color: white;
+		z-index: 99999999;
+	}
+	.SaveDescription {
+		display: block;
+		position: relative;
+		margin: 20px auto 0 auto;
+		z-index: 99999999;
+	}
+	.ExitDescription {
+		display: block;
+		position: relative;
+		margin: 20px auto 0 auto;
+		z-index: 99999999;
+		color: red;
+	}
+}
+
+.DescriptionContainerMob {
 	position: absolute;
 	width: 98vw;
 	z-index: 9999999;
+	h3 {
+		/* margin: 10px 0 5px 0;
+		font-size: 1.4rem; */
+		text-align: center;
+		color: white;
+		z-index: 99999999;
+	}
+	.DescriptionArea {
+		width: 98vw;
+	}
 }
 
 .addForSelected + label {

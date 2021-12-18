@@ -52,7 +52,7 @@ const SideDrawer = props => {
 										<FontAwesomeIcon
 											icon={faAddressBook}
 											className={classes.sideDrawerIconMob}
-											style={{ color: props.colorClinetsIcon }}
+											style={{ color: props.colorClientsIcon }}
 										/>
 										<p>Lista klijenata</p>
 									</div>
@@ -142,7 +142,7 @@ const SideDrawer = props => {
 							<FontAwesomeIcon
 								icon={faAddressBook}
 								className={classes.sideDrawerIconPC}
-								style={{ color: props.colorClinetsIcon }}
+								style={{ color: props.colorClientsIcon }}
 							/>
 							<NavItem display="block" className={classes.NavItemServiceProviderPC} link="/">
 								<Input

@@ -39,8 +39,28 @@ const Login = props => {
 				props.setIsLoading(false);
 				if (error.response) {
 					console.log(error.response);
+					responseHandler(
+						props.setShowResponseModal,
+						props.modalAnimationIn,
+						'Došlo je do greške, obratite nam se putem kontakt forme!',
+						'red'
+					);
 				} else if (error.request) {
 					console.log(error.request);
+					responseHandler(
+						props.setShowResponseModal,
+						props.modalAnimationIn,
+						'Došlo je do greške, obratite nam se putem kontakt forme!',
+						'red'
+					);
+				} else {
+					console.log(error);
+					responseHandler(
+						props.setShowResponseModal,
+						props.modalAnimationIn,
+						'Došlo je do greške, obratite nam se putem kontakt forme!',
+						'red'
+					);
 				}
 			});
 		return api;
@@ -55,32 +75,38 @@ const Login = props => {
 		const api = userLogin(userData)
 			.then(response => {
 				console.log(response);
-				responseHandler(
-					props.setShowResponseModal,
-					modalAnimation,
-					'Uspešno ste se prijavili',
-					'green',
-					'none'
-				);
-				props.setShowBackdrop(classes.backdropIn);
+				props.completnessMessageHandler('Uspešno ste se prijavili!');
 				getGuideStatus();
+				setFormInput(initState);
 			})
 			.catch(error => {
 				if (error.response) {
 					console.log(error.response);
 					responseHandler(
 						props.setShowResponseModal,
-						modalAnimation,
+						props.modalAnimationIn,
 						'Uneli ste pogrešno korisničko ime ili lozinku!',
 						'red'
 					);
-					props.setShowBackdrop(classes.backdropIn);
 				} else if (error.request) {
 					console.log(error.request);
+					responseHandler(
+						props.setShowResponseModal,
+						props.modalAnimationIn,
+						'Došlo je do greške, obratite nam se putem kontakt forme!',
+						'red'
+					);
+				} else {
+					console.log(error);
+					responseHandler(
+						props.setShowResponseModal,
+						props.modalAnimationIn,
+						'Došlo je do greške, obratite nam se putem kontakt forme!',
+						'red'
+					);
 				}
 			});
 		api;
-		setFormInput(initState);
 	};
 
 	useEffect(() => {
@@ -112,9 +138,9 @@ const Login = props => {
 				placeholder="Uneti lozinku"
 				className={buttonClassName(classes.FormButtonMob, classes.FormButton)}
 				onClick={() => {
-					props.setDisplayLogin('none'),
-						props.setDisplayPassRecovery('block'),
-						setFormInput(initState);
+					props.setDisplayLogin('none');
+					props.setDisplayPassRecovery('block');
+					setFormInput(initState);
 				}}
 			/>
 			<Input
@@ -126,16 +152,14 @@ const Login = props => {
 				color="orangered"
 				display={props.clientAuth === 1 ? 'none !important' : 'block'}
 				onClick={() => {
-					props.setDisplayLogin('none'),
-						props.setDisplayTabContainer('none'),
-						setFormInput(initState),
-						props.setShowBackdrop(classes.backdropOut);
+					props.setDisplayLogin('none');
+					props.setDisplayTabContainer('none');
+					setFormInput(initState);
+					props.setShowBackdrop(classes.backdropOut);
 				}}
 			/>
 		</>
 	);
-
-	const modalAnimation = isMobile ? classes.modalInMob : classes.modalInPC;
 
 	const onSubmit = e => {
 		e.preventDefault();
@@ -153,11 +177,10 @@ const Login = props => {
 			});
 			responseHandler(
 				props.setShowResponseModal,
-				modalAnimation,
+				props.modalAnimationIn,
 				'Morate uneti korisničko ime!',
 				'red'
 			);
-			props.setShowBackdrop(classes.backdropIn);
 		} else if (!formInput.password.value.trim()) {
 			setFormInput({
 				...formInput,
@@ -166,11 +189,14 @@ const Login = props => {
 					valid: false,
 				},
 			});
-			responseHandler(props.setShowResponseModal, modalAnimation, 'Morate uneti lozinku!', 'red');
-			props.setShowBackdrop(classes.backdropIn);
+			responseHandler(
+				props.setShowResponseModal,
+				props.modalAnimationIn,
+				'Morate uneti lozinku!',
+				'red'
+			);
 		} else {
 			setLoginUser(formData);
-			props.setDisplayLogin('none');
 		}
 	};
 
@@ -181,6 +207,7 @@ const Login = props => {
 			<Input
 				type="text"
 				name="username"
+				id={props.inputId}
 				value={formInput.userName.value}
 				placeholder="UNESITE KORISNIČKO IME"
 				className={inputClassName}

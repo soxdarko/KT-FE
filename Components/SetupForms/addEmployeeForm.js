@@ -17,16 +17,9 @@ import classes from '../../Components/SetupForms/SetupForms.module.scss';
 
 const addEmployeeForm = props => {
 	const { isMobile } = useDeviceDetect();
-	const isPageLoad = useRef(true);
-	const modalAnimation = isMobile ? classes.modalInMob : classes.modalInPC;
+	const isComponentLoad = useRef(true);
 	const [userData, setUserData] = useState({});
 	const [displayToolBox, setDisplayToolBox] = useState('none');
-
-	const resetForm = () => {
-		props.setEmployeeId(null),
-			props.setEmplyeesFormInput(props.initEmployeeForm),
-			props.setEditMode(false);
-	};
 
 	const serviceProvidersPreview = serviceProviders => {
 		const listItems = serviceProviders.map(serviceProvider => {
@@ -48,11 +41,17 @@ const addEmployeeForm = props => {
 				props.setEmployeeData(getEmployeesData);
 			})
 			.catch(error => {
-				props.setIsLoading(false);
 				if (error.response) {
 					console.log(error.response);
+					error.response.data.map(err => {
+						props.errorMessage(err.errorMessage);
+					});
 				} else if (error.request) {
 					console.log(error.request);
+					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+				} else {
+					console.log(error);
+					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
 				}
 			});
 		return api;
@@ -61,25 +60,34 @@ const addEmployeeForm = props => {
 	const addEmployeesHandler = () => {
 		const api = saveEmployees(userData)
 			.then(response => {
-				console.log(response), props.setIsLoading(false);
-				getAllEmployeesHandler(), resetForm();
+				console.log(response);
+				getAllEmployeesHandler();
+				props.resetForm();
+				props.completenessMessage();
 			})
 			.catch(error => {
-				props.setIsLoading(false);
 				if (error.response) {
+					error.response.data.map(err => {
+						console.log(error.response);
+						error.response.data.map(err => {
+							props.errorMessage(err.errorMessage);
+						});
+					});
 					console.log(error.response);
 				} else if (error.request) {
 					console.log(error.request);
+					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
 				} else {
-					console.log('nesto drugo');
+					console.log(error);
+					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
 				}
 			});
 		api;
 	};
 
 	useEffect(() => {
-		if (isPageLoad.current) {
-			isPageLoad.current = false;
+		if (isComponentLoad.current) {
+			isComponentLoad.current = false;
 			return;
 		}
 		addEmployeesHandler();
@@ -108,7 +116,7 @@ const addEmployeeForm = props => {
 			updateValidity(props.setEmplyeesFormInput, 'name', props.emplyeesFormInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				modalAnimation,
+				props.modalAnimationIn,
 				'Morate uneti ime radnika!',
 				'red'
 			);
@@ -120,7 +128,7 @@ const addEmployeeForm = props => {
 			updateValidity(props.setEmplyeesFormInput, 'email', props.emplyeesFormInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				modalAnimation,
+				props.modalAnimationIn,
 				'Morate uneti validnu e-mail adresu!',
 				'red'
 			);
@@ -129,7 +137,7 @@ const addEmployeeForm = props => {
 			updateValidity(props.setEmplyeesFormInput, 'mobOperator', props.emplyeesFormInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				modalAnimation,
+				props.modalAnimationIn,
 				'Morate izabrati pozivni broj!',
 				'red'
 			);
@@ -142,7 +150,7 @@ const addEmployeeForm = props => {
 			updateValidity(props.setEmplyeesFormInput, 'phone', props.emplyeesFormInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				modalAnimation,
+				props.modalAnimationIn,
 				'Morate uneti validan broj telefona!',
 				'red'
 			);
@@ -151,20 +159,25 @@ const addEmployeeForm = props => {
 			updateValidity(props.setEmplyeesFormInput, 'userName', props.emplyeesFormInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				modalAnimation,
+				props.modalAnimationIn,
 				'Morate uneti korisničko ime!',
 				'red'
 			);
 			props.setShowBackdrop(classes.backdropIn);
 		} else if (!props.emplyeesFormInput.password.value.trim() && !props.editMode) {
 			updateValidity(props.setEmplyeesFormInput, 'password', props.emplyeesFormInput, '', false);
-			responseHandler(props.setShowResponseModal, modalAnimation, 'Morate uneti lozinku!', 'red');
+			responseHandler(
+				props.setShowResponseModal,
+				props.modalAnimationIn,
+				'Morate uneti lozinku!',
+				'red'
+			);
 			props.setShowBackdrop(classes.backdropIn);
 		} else if (!props.emplyeesFormInput.passConfirm.value.trim() && !props.editMode) {
 			updateValidity(props.setEmplyeesFormInput, 'passConfirm', props.emplyeesFormInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				modalAnimation,
+				props.modalAnimationIn,
 				'Morate uneti potvrdu izabrane lozinke!',
 				'red'
 			);
@@ -176,7 +189,7 @@ const addEmployeeForm = props => {
 			updateValidity(props.setEmplyeesFormInput, 'password', props.emplyeesFormInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				modalAnimation,
+				props.modalAnimationIn,
 				'Lozinka i potvrda moraju biti jednake!',
 				'red'
 			);
@@ -191,7 +204,7 @@ const addEmployeeForm = props => {
 			);
 			responseHandler(
 				props.setShowResponseModal,
-				modalAnimation,
+				props.modalAnimationIn,
 				'Morate izabrati salon za koji želite dodati radnika!',
 				'red'
 			);
@@ -248,7 +261,9 @@ const addEmployeeForm = props => {
 	const inputClassName = isMobile ? classes.InputTextMob : classes.InputText;
 	const readOnlyClassName = isMobile ? classes.ReadOnlyMob : classes.ReadOnly;
 	return (
-		<div style={{ display: props.displayAddEmployeeForm }}>
+		<div
+			style={{ display: props.displayAddEmployeeForm }}
+			className={props.isSetupGuide ? '' : classes.AddForm}>
 			<h3>Unesite radnike</h3>
 			<Select
 				name="serviceProviderId"
@@ -363,7 +378,7 @@ const addEmployeeForm = props => {
 			/>
 			<Input
 				type="button"
-				value="dodaj"
+				value={props.editMode ? 'Sačuvaj' : 'Dodaj'}
 				display={isMobile ? 'none' : 'block'}
 				className={[classes.ChoiceButton, classes.Add].join(' ')}
 				onClick={onSubmit}
@@ -381,24 +396,35 @@ const addEmployeeForm = props => {
 			/>
 			<Input
 				type="button"
-				value="nastavi >>>"
-				display={isMobile ? 'none' : 'inline-block'}
+				value="Nastavi >>>"
+				display={props.displayForward}
 				className={isMobile ? classes.ForwardMob : classes.Forward}
 				onClick={() => {
-					props.setDisplayAddEmployeeForm('none'), props.setDisplayAddServicesForm('block');
+					props.setDisplayAddEmployeeForm('none');
+					props.setDisplayAddServicesForm('block');
 				}}
+			/>
+			<Input
+				type="button"
+				value="Odustani"
+				display={props.displayStopEdit}
+				color="red"
+				className={isMobile ? classes.ForwardMob : classes.Forward}
+				onClick={() => props.resetForm()}
 			/>
 			<WrappedButtonsMob
 				forward={() => {
-					props.setDisplayAddEmployeeForm('none'), props.setDisplayAddServicesForm('block');
+					props.setDisplayAddEmployeeForm('none');
+					props.setDisplayAddServicesForm('block');
 				}}
 				save={onSubmit}
 				isMobile={isMobile}
-				displayForward="block"
+				displayForward={props.displayForwardMob}
 				displaySave="block"
 				displayAdd="none"
-				displayStopEdit={props.editMode ? 'block' : 'none'}
-				stopEdit={() => resetForm()}
+				displayStopEdit={props.displayStopEditMob}
+				stopEdit={() => props.resetForm()}
+				validation={true}
 			/>
 		</div>
 	);

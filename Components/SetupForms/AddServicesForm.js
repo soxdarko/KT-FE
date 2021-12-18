@@ -6,8 +6,6 @@ import {
 	responseHandler,
 } from '../../helpers/universalFunctions';
 import { saveServicesToManyEmployees } from '../../api/saveServicesToManyEmployees';
-import { addNewService } from '../../api/addNewService';
-import { getAllServices } from '../../api/getAllServices';
 
 import Input from '../UI/Forms/Input';
 import Select from '../UI/Select';
@@ -19,9 +17,8 @@ import classes from './SetupForms.module.scss';
 
 const AddServicesForm = props => {
 	const { isMobile } = useDeviceDetect();
-	const isPageLoad = useRef(true);
-	const modalAnimation = isMobile ? classes.modalInMob : classes.modalInPC;
-	const [newServiceData, setNewServiceData] = useState({});
+	const isComponentLoad = useRef(true);
+	const [userData, setUserData] = useState({});
 
 	const resetForm = () => {
 		props.setServiceId(null), props.setServicesFormInput(props.initServicesForm);
@@ -37,76 +34,66 @@ const AddServicesForm = props => {
 		));
 	};
 
-	const getAllServicesHandler = async () => {
-		const api = await getAllServices()
+	/* const addServiceHandler = () => {
+		const api = addNewService(props.userServiceData, props.checkedEmployees)
 			.then(response => {
-				const getServicesData = response.data.map(service => {
-					return service;
-				});
-				props.setServicesData(getServicesData);
-			})
-			.catch(error => {
-				props.setIsLoading(false);
-				if (error.response) {
-					console.log(error.response);
-				} else if (error.request) {
-					console.log(error.request);
-				}
-			});
-		return api;
-	};
-
-	const addServiceHandler = () => {
-		const api = addNewService(newServiceData, props.checkedEmployees)
-			.then(response => {
-				console.log(response), props.setIsLoading(false);
-				props.setServicesFormInput(props.initServicesForm);
+				console.log(response);
 				getAllServicesHandler();
 				resetForm();
+				props.completnessMessageHandler('Uspešno sačuvano');
 			})
 			.catch(error => {
-				props.setIsLoading(false);
 				if (error.response) {
 					console.log(error.response);
+					error.response.data.map(err => {
+						props.errorMessage(err.errorMessage);
+					});
 				} else if (error.request) {
 					console.log(error.request);
+					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
 				} else {
-					console.log('nesto drugo');
+					console.log(error);
+					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
 				}
 			});
 		api;
-	};
+	}; */
 
 	const addServiceToManyHandler = () => {
-		const api = saveServicesToManyEmployees(newServiceData)
+		const api = saveServicesToManyEmployees(userData)
 			.then(response => {
-				console.log(response), props.setIsLoading(false);
-				getAllServicesHandler();
+				console.log(response);
+				props.getAllServicesHandler();
 				props.setServicesFormInput(props.initServicesForm);
+				props.completnessMessageHandler('Uspešno sačuvano');
 			})
 			.catch(error => {
-				props.setIsLoading(false);
 				if (error.response) {
-					console.log(error.response);
+					console.log(error);
+					/* error.response.data.map(err => {
+						props.errorMessage(err.errorMessage);
+					}); */
 				} else if (error.request) {
 					console.log(error.request);
+					props.errorMessage('Došlo je do greške, pokušajte ponovo');
 				} else {
-					console.log('nesto drugo');
+					console.log(error);
+					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
 				}
 			});
 		api;
 	};
 
 	useEffect(() => {
-		if (isPageLoad.current) {
-			isPageLoad.current = false;
+		if (isComponentLoad.current) {
+			isComponentLoad.current = false;
 			return;
 		}
 
 		/* addServiceToManyHandler(); */
-		props.employees.length < 1 ? addServiceHandler() : addServiceToManyHandler();
+		addServiceToManyHandler();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [newServiceData]);
+	}, [userData]);
 
 	const onSubmit = e => {
 		e.preventDefault();
@@ -129,7 +116,7 @@ const AddServicesForm = props => {
 			updateValidity(props.setServicesFormInput, 'serviceName', props.servicesFormInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				modalAnimation,
+				props.modalAnimationIn,
 				'Morate uneti naziv usluge!',
 				'red'
 			);
@@ -138,7 +125,7 @@ const AddServicesForm = props => {
 			updateValidity(props.setServicesFormInput, 'duration', props.servicesFormInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				modalAnimation,
+				props.modalAnimationIn,
 				'Morate izabrati dužinu trajanja usluge!',
 				'red'
 			);
@@ -146,13 +133,13 @@ const AddServicesForm = props => {
 		} else if (props.checkedEmployees.length === 0) {
 			responseHandler(
 				props.setShowResponseModal,
-				modalAnimation,
+				props.modalAnimationIn,
 				'Morate izabrati minimum jednog radnika!',
 				'red'
 			);
 			props.setShowBackdrop(classes.backdropIn);
 		} else {
-			setNewServiceData(formData);
+			setUserData(formData);
 			props.setIsLoading(true);
 		}
 	};
@@ -168,21 +155,14 @@ const AddServicesForm = props => {
 		return listItems;
 	};
 
-	/* const allServicesPreview = () => {
-		return props.servicesData.map(service => (
-			<option key={service.id} value={service.id}>
-				{service.name}
-			</option>
-		));
-	}; */
-
+	/* Load data for edit in formInput state */
 	useEffect(() => {
 		props.servicesData.filter(item => {
 			if (item.id === props.serviceId) {
 				props.setCheckedEmployees(item.employees);
 				return props.setServicesFormInput({
 					...props.servicesFormInput,
-					id: null,
+					id: item.id,
 					serviceName: {
 						value: item.name,
 						touched: false,
@@ -214,8 +194,6 @@ const AddServicesForm = props => {
 		});
 	}, [props.serviceId]);
 
-	const inputClassName = isMobile ? classes.InputTextMob : classes.InputText;
-
 	const displayForm = () => {
 		if (props.userGuideStatus === 'Employees') {
 			props.setDisplayGreeting('none');
@@ -226,17 +204,22 @@ const AddServicesForm = props => {
 	};
 
 	useEffect(() => {
-		if (isPageLoad.current) {
-			isPageLoad.current = false;
+		if (isComponentLoad.current) {
+			isComponentLoad.current = false;
 			return;
 		}
 		displayForm();
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	const inputClassName = isMobile ? classes.InputTextMob : classes.InputText;
+
 	return (
 		<>
-			<div style={{ display: props.displayAddServicesForm }} className={classes.AddForm}>
+			<div
+				style={{ display: props.displayAddServicesForm }}
+				className={[classes.Form, classes.FormLayout, classes.FormBlackBg].join(' ')}>
 				<h3>Unesite usluge</h3>
 				<Select
 					name="serviceProviderId"
@@ -259,7 +242,7 @@ const AddServicesForm = props => {
 				<Input
 					type="text"
 					name="serviceName"
-					placeholder="Naziv usluge"
+					placeholder="Unesite naziv usluge"
 					className={inputClassName}
 					value={props.servicesFormInput.serviceName.value}
 					onChange={e =>
@@ -275,7 +258,7 @@ const AddServicesForm = props => {
 				<Input
 					type="text"
 					name="description"
-					placeholder="Opis usluge"
+					placeholder="Unesite opis usluge"
 					className={inputClassName}
 					value={props.servicesFormInput.description.value}
 					onChange={e =>
@@ -303,7 +286,7 @@ const AddServicesForm = props => {
 				<Input
 					type="number"
 					name="price"
-					placeholder="Cena usluge"
+					placeholder="Unesite cenu usluge"
 					maxLength="10"
 					className={inputClassName}
 					value={props.servicesFormInput.price.value}
@@ -321,10 +304,11 @@ const AddServicesForm = props => {
 					setCheckedEmployees={props.setCheckedEmployees}
 					emptyListMessage={'Izaberite salon'}
 					tag="services"
+					displayEmployeesPicker={props.displayEmployeesPicker}
 				/>
 				<Input
 					type="button"
-					value="dodaj"
+					value={props.editMode ? 'Sačuvaj' : 'Dodaj'}
 					className={
 						isMobile
 							? [classes.ChoiceButton, classes.AddMob].join(' ')
@@ -333,6 +317,14 @@ const AddServicesForm = props => {
 					display={isMobile ? 'none' : 'block'}
 					marginBottom="20px"
 					onClick={onSubmit}
+				/>
+				<Input
+					type="button"
+					value="Odustani"
+					display={props.displayCancel}
+					color="red"
+					className={isMobile ? classes.ForwardMob : classes.Forward}
+					onClick={() => props.abortAddService()}
 				/>
 				{/* <Select
 				displaySelect="block"
@@ -351,8 +343,8 @@ const AddServicesForm = props => {
 			</Select> */}
 				<Input
 					type="button"
-					value="nastavi >>>"
-					display={isMobile ? 'none' : 'inline-block'}
+					value="Nastavi >>>"
+					display={props.displayForward}
 					className={isMobile ? classes.ForwardMob : classes.Forward}
 					onClick={() => {
 						props.setDisplayAddServicesForm('none'), props.setDisplayWorkingTimeForm('block');
@@ -370,10 +362,11 @@ const AddServicesForm = props => {
 				}}
 				save={onSubmit}
 				isMobile={isMobile && props.displayAddServicesForm === 'block' ? true : false}
-				displayForward={props.displayForward}
+				displayForward={props.displayForwardMob}
 				displaySave="block"
 				displayAdd="none"
-				displayStopEdit={props.displayStopEdit}
+				displayStopEdit={props.displayStopEditMob}
+				validation={props.validation}
 			/>
 		</>
 	);

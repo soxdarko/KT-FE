@@ -4,7 +4,7 @@ import { saveEmployees } from '../../api/saveEmployees';
 import QuestionForm from './QuestionForm/QuestionForm';
 
 const EmployeeQuestionForm = props => {
-	const isPageLoad = useRef(true);
+	const isComponentLoad = useRef(true);
 
 	const singleEmployeeHandler = e => {
 		e.preventDefault();
@@ -19,25 +19,28 @@ const EmployeeQuestionForm = props => {
 				console.log(response);
 				props.setIsLoading(false);
 				props.setDisplayEmployeeQuestionForm('none');
-				return response;
 			})
 			.catch(error => {
 				props.setIsLoading(false);
 				if (error.response) {
 					console.log(error.response);
-					props.setDisplayEmployeeQuestionForm('none');
+					error.response.data.map(err => {
+						props.errorMessage(err.errorMessage);
+					});
 				} else if (error.request) {
 					console.log(error.request);
+					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
 				} else {
-					console.log('nesto trece');
+					console.log(error);
+					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
 				}
 			});
 		api;
 	};
 
 	useEffect(() => {
-		if (isPageLoad.current) {
-			isPageLoad.current = false;
+		if (isComponentLoad.current) {
+			isComponentLoad.current = false;
 			return;
 		}
 		addNewEmployeeHandler();
@@ -55,8 +58,8 @@ const EmployeeQuestionForm = props => {
 	};
 
 	useEffect(() => {
-		if (isPageLoad.current) {
-			isPageLoad.current = false;
+		if (isComponentLoad.current) {
+			isComponentLoad.current = false;
 			return;
 		}
 		displayForm();

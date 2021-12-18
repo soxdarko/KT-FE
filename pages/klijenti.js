@@ -3,7 +3,9 @@ import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { auth } from '../helpers/auth';
 import { fetchJson } from '../api/fetchJson';
 import nextCookie from 'next-cookies';
-import { useDeviceDetect } from '../helpers/universalFunctions';
+import { useDeviceDetect, responseHandler } from '../helpers/universalFunctions';
+import { banClient } from '../api/banClient';
+import { getClients } from '../api/getClients';
 import initClientForm from '../Components/Clients/initClientForm';
 import ServiceProvidersEmployees from '../Components/DataFromBE/Clients';
 import Head from 'next/head';
@@ -11,6 +13,7 @@ import Layout from '../Components/hoc/Layout/Layout';
 import Backdrop from '../Components/UI/Backdrop';
 import ResponseModal from '../Components/UI/Modal/ResponseModal';
 import InfoModal from '../Components/UI/Modal/InfoModal';
+import ConfirmModal from '../Components/UI/Modal/ConfirmModal';
 import ListBody from '../Components/UI/List/ListBody/ListBody';
 import ListHead from '../Components/UI/List/ListHead/ListHead';
 import ClientsList from '../Components/Clients/ClientsList';
@@ -30,6 +33,7 @@ const Clients = props => {
 	const modalAnimationOut = isMobile ? classes.modalOutMob : classes.modalOutPC;
 	const [isLoading, setIsLoading] = useState(false);
 	const [formInput, setFormInput] = useState(initClientForm);
+	const [completnessMessage, setCompletnessMessage] = useState('Uspešno sačuvano!');
 	const [userData, setUserData] = useState({});
 	const [clientsData, setClientData] = useState(props.clients);
 	const [clientId, setClientId] = useState(null);
@@ -43,7 +47,12 @@ const Clients = props => {
 	const [showBackdrop, setShowBackdrop] = useState('');
 	const [dipslaySerachBar, setDipslaySerachBar] = useState('none');
 	const [searchInput, setSearchInput] = useState('');
-	const [displayInfoModal, setDisplayInfoModal] = useState('');
+	const [showInfoModal, setShowInfoModal] = useState('');
+	const [showConfirmModal, setShowConfirmModal] = useState({
+		animation: '',
+		message: null,
+		border: '',
+	});
 	const [showResponseModal, setShowResponseModal] = useState({
 		animation: '',
 		message: null,
@@ -60,8 +69,72 @@ const Clients = props => {
 		if (descriptionEdit) {
 			return;
 		} else {
-			setClientId(null), setFormInput(initClientForm), setEditMode(false);
+			setClientId(null);
+			setEditMode(false);
 		}
+	};
+
+	const errorMessage = message => {
+		responseHandler(setShowResponseModal, modalAnimationIn, message, 'red');
+		setIsLoading(false);
+		setShowBackdrop(classes.backdropIn);
+	};
+
+	const completnessMessageHandler = message => {
+		setShowInfoModal(modalAnimationIn);
+		setIsLoading(false);
+		setCompletnessMessage(message);
+	};
+
+	const getClientsHandler = async deleted => {
+		const api = await getClients(deleted)
+			.then(response => {
+				const getClientsData = response.data.map(client => {
+					return client;
+				});
+				setClientData(getClientsData);
+				1;
+			})
+			.catch(error => {
+				if (error.response) {
+					console.log(error.response);
+					error.response.data.map(err => {
+						props.errorMessage(err.errorMessage);
+					});
+				} else if (error.request) {
+					console.log(error.request);
+					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+				} else {
+					console.log(error);
+					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+				}
+			});
+		return api;
+	};
+
+	const banClientHandler = () => {
+		const api = banClient(clientId)
+			.then(response => {
+				console.log(response);
+				getClientsHandler(false);
+				resetForm();
+				completnessMessageHandler('Klijent uspešno uklonjen');
+			})
+			.catch(error => {
+				if (error.response) {
+					console.log(error.response);
+					error.response.data.map(err => {
+						errorMessage(err.errorMessage);
+					});
+				} else if (error.request) {
+					console.log(error.request);
+					errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+				} else {
+					console.log(error);
+					errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+				}
+			});
+		api;
 	};
 
 	useEffect(() => {
@@ -70,7 +143,7 @@ const Clients = props => {
 			return;
 		}
 		const autoModalDisplay = () => {
-			setDisplayInfoModal(modalAnimationOut);
+			setShowInfoModal(modalAnimationOut);
 		};
 
 		const timer = setTimeout(() => {
@@ -78,7 +151,7 @@ const Clients = props => {
 		}, 2000);
 
 		return () => clearTimeout(timer);
-	}, [displayInfoModal]);
+	}, [showInfoModal]);
 
 	return (
 		<>
@@ -93,7 +166,7 @@ const Clients = props => {
 				displayToolbarBookingBtn="none"
 				displaySelect="none"
 				displayNotifLabel="block"
-				colorProfileIcon="#fc9815"
+				colorClientsIcon="#fc9815"
 				classNameCal={classes.sideDrawerButtonActive}
 				classNameClients={classes.sideDrawerButton}
 				classNameServices={classes.sideDrawerButton}
@@ -105,16 +178,16 @@ const Clients = props => {
 				<Loader loading={isLoading} />
 				<Backdrop
 					backdropAnimation={showBackdrop}
-					onClick={() => {
+					/* onClick={() => {
 						setShowBackdrop(classes.backdropOut),
 							setDisplayAddClientForm('none'),
 							setShowInviteClient(classes.slideOutLeft),
 							setDisplayDescription('none');
-					}}
+					}} */
 				/>
 				<InfoModal
-					message="Uspešno sačuvano!"
-					modalAnimation={displayInfoModal}
+					message={completnessMessage}
+					modalAnimation={showInfoModal}
 					borderColor="green"
 				/>
 				<ResponseModal
@@ -125,16 +198,30 @@ const Clients = props => {
 					borderColor={showResponseModal.border}
 					link="/"
 					onClick={() => {
-						setShowResponseModal(
-							{
-								...showResponseModal,
-								animation: modalAnimationOut,
-								border: null,
-							},
-							setShowBackdrop(classes.backdropOut)
-						);
+						setShowResponseModal({
+							...showResponseModal,
+							animation: modalAnimationOut,
+							border: null,
+						});
 					}}
 					resetForm={resetForm}
+				/>
+				<ConfirmModal
+					animation={showConfirmModal.animation}
+					submitValue="Da"
+					message={showConfirmModal.message}
+					borderColor={showConfirmModal.border}
+					onSubmit={() => {
+						banClientHandler(clientId);
+						setShowConfirmModal({ ...showConfirmModal, animation: modalAnimationOut });
+						setShowBackdrop(classes.backdropOut);
+						setDisplayWrappedTools('none');
+					}}
+					onDecline={() => {
+						setClientId(null);
+						setShowConfirmModal({ ...showConfirmModal, animation: modalAnimationOut });
+						setShowBackdrop(classes.backdropOut);
+					}}
 				/>
 				<WrappedTools
 					displayWrappedTools={displayWrappedTools}
@@ -142,13 +229,21 @@ const Clients = props => {
 					setDisplayDescription={setDisplayDescription}
 					setDescriptionEdit={setDescriptionEdit}
 					setShowBackdrop={setShowBackdrop}
+					setShowConfirmModal={setShowConfirmModal}
+					modalAnimationIn={modalAnimationIn}
+					responseHandler={responseHandler}
+					formInput={formInput}
+					setFormInput={setFormInput}
+					setEditMode={setEditMode}
 					displayWrappedToolsChkBox="none"
 					setDataId={setClientId}
 					className={classes.WrappedToolsContainer}
-					onCLickEdit={() => {
-						setDisplayAddClientForm('block'),
-							setShowBackdrop(classes.backdropIn),
-							setEditMode(true);
+					initForm={initClientForm}
+					isMobile={isMobile}
+					onClickEdit={() => {
+						setDisplayAddClientForm('block');
+						setShowBackdrop(classes.backdropIn);
+						setEditMode(true);
 					}}
 					resetForm={resetForm}
 				/>
@@ -167,6 +262,7 @@ const Clients = props => {
 					setIsLoading={setIsLoading}
 				/>
 				<AddClientForm
+					getClientsHandler={getClientsHandler}
 					formInput={formInput}
 					userData={userData}
 					setUserData={setUserData}
@@ -178,14 +274,18 @@ const Clients = props => {
 					setClientId={setClientId}
 					editMode={editMode}
 					setEditMode={setEditMode}
-					setDisplayInfoModal={setDisplayInfoModal}
+					setShowInfoModal={setShowInfoModal}
 					displayAddClientForm={displayAddClientForm}
 					setDisplayAddClientForm={setDisplayAddClientForm}
 					setShowResponseModal={setShowResponseModal}
 					setShowBackdrop={setShowBackdrop}
+					setDisplayDescription={setDisplayDescription}
 					displayWrappedButtonsMob={displayWrappedButtonsMob}
 					modalAnimationIn={modalAnimationIn}
 					resetForm={resetForm}
+					errorMessage={errorMessage}
+					completnessMessageHandler={completnessMessageHandler}
+					isPageLoad={isPageLoad}
 					setIsLoading={setIsLoading}
 				/>
 				<InviteClient
@@ -205,7 +305,9 @@ const Clients = props => {
 					add="klijenta"
 					addNew={faUserPlus}
 					onAdd={() => {
-						setDisplayAddClientForm('block'), setShowBackdrop(classes.backdropIn);
+						setDisplayAddClientForm('block');
+						setShowBackdrop(classes.backdropIn);
+						setFormInput(initClientForm);
 					}}
 					onClickSearch={() => setDipslaySerachBar('flex')}
 					dipslaySerachBar={dipslaySerachBar}
@@ -216,11 +318,21 @@ const Clients = props => {
 				<ListBody>
 					<ClientsList
 						setDisplayWrappedTools={setDisplayWrappedTools}
+						setShowBackdrop={setShowBackdrop}
+						setDisplayAddClientForm={setDisplayAddClientForm}
+						setDisplayDescription={setDisplayDescription}
+						setDescriptionEdit={setDescriptionEdit}
 						/* clientsData={searchInput === null ? clientsData : filterData()} */
 						clientsData={clientsData}
 						clientId={clientId}
 						setClientId={setClientId}
 						searchInput={searchInput}
+						editMode={editMode}
+						setEditMode={setEditMode}
+						modalAnimationIn={modalAnimationIn}
+						showConfirmModal={showConfirmModal}
+						setShowConfirmModal={setShowConfirmModal}
+						responseHandler={responseHandler}
 					/>
 				</ListBody>
 				<AddClientButton
@@ -243,7 +355,7 @@ export async function getServerSideProps(ctx) {
 	const resEmployees = await fetchJson(employeesUrl, 'get', token);
 	const servicesUrl = `appointments/getAllServices`;
 	const resServices = await fetchJson(servicesUrl, 'get', token);
-	const clientsUrl = `users/getClients`;
+	const clientsUrl = `users/getClients?deleted=${false}`;
 	const resClients = await fetchJson(clientsUrl, 'get', token);
 	const guideStatusUrl = `users/getCompanyGuideStatus`;
 	const resGuideStatusUrl = await fetchJson(guideStatusUrl, 'get', token);

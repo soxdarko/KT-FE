@@ -19,14 +19,12 @@ import Input from '../UI/Forms/Input';
 import Select from '../UI/Select';
 import AbsenceRadio from './AbsenceRadio';
 import WrappedButtonsMob from '../UI/WrappedButtonsMob';
-/* import EmployeesPicker from './EmployeesPicker'; */
 
 import classes from './SetupForms.module.scss';
 
 const WorkingTimeForm = props => {
 	const { isMobile } = useDeviceDetect();
-	const isPageLoad = useRef(true);
-	const modalAnimation = isMobile ? classes.modalInMob : classes.modalInPC;
+	const isComponentLoad = useRef(true);
 	/* const [serviceProviderId, setServiceProviderId] = useState(null); */
 	/* const [indexOfDay, setIndexOfDay] = useState(0); */
 	/* const [weekIndex, setWeekIndex] = useState(0); */
@@ -140,11 +138,17 @@ const WorkingTimeForm = props => {
 				}
 			})
 			.catch(error => {
-				props.setIsLoading(false);
 				if (error.response) {
 					console.log(error.response);
+					error.response.data.map(err => {
+						props.errorMessage(err.errorMessage);
+					});
 				} else if (error.request) {
 					console.log(error.request);
+					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+				} else {
+					console.log(error);
+					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
 				}
 			});
 		return api;
@@ -153,22 +157,14 @@ const WorkingTimeForm = props => {
 	const addWorkingHoursHandler = () => {
 		const api = saveWorkingHoursToMany(props.workingHoursData)
 			.then(response => {
-				console.log(response),
-					responseHandler(
-						props.setShowResponseModal,
-						modalAnimation,
-						'Radno vreme uspešno sačuvano',
-						'green'
-					);
-				props.setIsLoading(false);
-				props.displayWorkingTimeForm('none');
+				console.log(response);
+				props.completnessMessageHandler('Uspešno sačuvano');
 			})
 			.catch(error => {
-				props.setIsLoading(false);
 				if (error.response) {
 					error.response.data.map(err => {
 						const Input = err.type[0].toLowerCase() + err.type.slice(1);
-						responseHandler(props.setShowResponseModal, modalAnimation, err.errorMessage, 'red');
+						props.errorMessage(err.errorMessage);
 						updateValidity(
 							props.setWorkingTimeFormInput,
 							Input,
@@ -176,21 +172,21 @@ const WorkingTimeForm = props => {
 							'',
 							false
 						);
-						props.setShowBackdrop(classes.backdropIn);
 					});
 				} else if (error.request) {
 					console.log(error.request);
+					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
 				} else {
-					console.log('nesto drugo');
+					console.log(error);
+					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
 				}
 			});
 		api;
-		console.log('service added');
 	};
 
 	useEffect(() => {
-		if (isPageLoad.current) {
-			isPageLoad.current = false;
+		if (isComponentLoad.current) {
+			isComponentLoad.current = false;
 			return;
 		}
 		addWorkingHoursHandler();
@@ -268,8 +264,8 @@ const WorkingTimeForm = props => {
 
 	//Format getWorkingHours
 	useEffect(() => {
-		if (isPageLoad.current) {
-			isPageLoad.current = false;
+		if (isComponentLoad.current) {
+			isComponentLoad.current = false;
 			return;
 		}
 
@@ -351,8 +347,8 @@ const WorkingTimeForm = props => {
 	};
 
 	useEffect(() => {
-		if (isPageLoad.current) {
-			isPageLoad.current = false;
+		if (isComponentLoad.current) {
+			isComponentLoad.current = false;
 			return;
 		}
 		/* getTimeHandler(setHoursFromGet, numHour); */
@@ -360,8 +356,8 @@ const WorkingTimeForm = props => {
 	}, [props.workingTimeFormInput]);
 
 	useEffect(() => {
-		if (isPageLoad.current) {
-			isPageLoad.current = false;
+		if (isComponentLoad.current) {
+			isComponentLoad.current = false;
 			return;
 		}
 		if (props.employeeId) {
@@ -393,8 +389,8 @@ const WorkingTimeForm = props => {
 	}, [props.employeeId]);
 
 	useEffect(() => {
-		if (isPageLoad.current) {
-			isPageLoad.current = false;
+		if (isComponentLoad.current) {
+			isComponentLoad.current = false;
 			return;
 		}
 
@@ -446,8 +442,8 @@ const WorkingTimeForm = props => {
 	};
 
 	useEffect(() => {
-		if (isPageLoad.current) {
-			isPageLoad.current = false;
+		if (isComponentLoad.current) {
+			isComponentLoad.current = false;
 			return;
 		}
 		displayForm();
@@ -507,7 +503,7 @@ const WorkingTimeForm = props => {
 					</option>
 					{employeesPreview(props.serviceProviderData)}
 				</Select>
-				<div>
+				<div style={{ pointerEvents: props.employeeId ? 'auto' : 'none' }}>
 					<div className={classes.WorkingTimeContainerMob}>
 						<div className={classes.FormOverlayMob} style={{ display: displayOverlay }}></div>
 						<div className={classes.WorkingTimeHead}>
@@ -742,13 +738,16 @@ const WorkingTimeForm = props => {
 					displaySave="block"
 					displayAdd="none"
 					displayStopEdit="none"
+					validation={props.employeeId}
 				/>
 			</div>
 		);
 	} else {
 		/* **************** DESKTOP ****************/
 		return (
-			<div style={{ display: props.displayWorkingTimeForm }}>
+			<div
+				style={{ display: props.displayWorkingTimeForm }}
+				className={props.isSetupGuide ? '' : classes.AddForm}>
 				<h3>Unesite radno vreme</h3>
 				<div className={classes.WorkingTimeHeader}>
 					<Input type="button" value="Kopiraj" />
@@ -1039,6 +1038,8 @@ const WorkingTimeForm = props => {
 					value="Sačuvaj"
 					className={[classes.ChoiceButton, classes.Save].join(' ')}
 					display="block"
+					pointerEvents={props.employeeId ? 'auto' : 'none'}
+					color={props.employeeId ? 'orange' : 'gray'}
 					onClick={onSubmit}
 				/>
 				<Input

@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { auth } from '../helpers/auth';
 import { fetchJson } from '../api/fetchJson';
-import { useDeviceDetect } from '../helpers/universalFunctions';
+import { useDeviceDetect, responseHandler } from '../helpers/universalFunctions';
 import Head from 'next/head';
 import Layout from '../Components/hoc/Layout/Layout';
+import { getAllServices } from '../api/getAllServices';
 import initServiceProviderForm from '../Components/SetupForms/initServiceProviderForm';
 import initEmployeeForm from '../Components/SetupForms/initEmployeeForm';
 import initServicesForm from '../Components/SetupForms/initServicesForm';
@@ -11,6 +12,7 @@ import Backdrop from '../Components/UI/Backdrop';
 import AddServiceProvidersForm from '../Components/SetupForms/AddServiceProvidersForm';
 import AddEmployeeForm from '../Components/SetupForms/AddEmployeeForm';
 import ResponseModal from '../Components/UI/Modal/ResponseModal';
+import InfoModal from '../Components/UI/Modal/InfoModal';
 import ServiceProviderQuestionForm from '../Components/SetupForms/ServiceProviderQuestionForm';
 import EmployeeQuestionForm from '../Components/SetupForms/EmployeesQuestionForm';
 import GreetingForm from '../Components/SetupForms/GreetingForm';
@@ -22,6 +24,8 @@ import classes from '../Components/SetupForms/SetupForms.module.scss';
 
 const setupguide = props => {
 	const { isMobile } = useDeviceDetect();
+	const isPageLoad = useRef(true);
+	const modalAnimationIn = isMobile ? classes.modalInMob : classes.modalInPC;
 	const modalAnimationOut = isMobile ? classes.modalOutMob : classes.modalOutPC;
 	const [serviceProviderData, setServiceProviderData] = useState(props.serviceProviders);
 	const [employeeData, setEmployeeData] = useState(props.employees);
@@ -31,6 +35,8 @@ const setupguide = props => {
 	const [servicesData, setServicesData] = useState(props.services);
 	const [isLoading, setIsLoading] = useState(false);
 	const [showBackdrop, setShowBackdrop] = useState('');
+	const [showInfoModal, setShowInfoModal] = useState('');
+	const [completnessMessage, setCompletnessMessage] = useState('Uspešno sačuvano!'); //za sada nije bilo potrebe za izmenom teksta
 	const [showResponseModal, setShowResponseModal] = useState({
 		animation: '',
 		message: null,
@@ -64,31 +70,65 @@ const setupguide = props => {
 	const [workingTimeFormInput, setWorkingTimeFormInput] = useState([]);
 	const [workingHoursData, setWorkingHoursData] = useState({});
 
+	const errorMessage = message => {
+		responseHandler(setShowResponseModal, modalAnimationIn, message, 'red');
+		setShowBackdrop(classes.backdropIn);
+		setIsLoading(false);
+	};
+
+	const completnessMessageHandler = message => {
+		setShowInfoModal(modalAnimationIn);
+		setIsLoading(false);
+		setCompletnessMessage(message);
+	};
+
+	useEffect(() => {
+		if (isPageLoad.current) {
+			isPageLoad.current = false;
+			return;
+		}
+		const autoModalDisplay = () => {
+			setShowInfoModal(modalAnimationOut);
+		};
+
+		const timer = setTimeout(() => {
+			autoModalDisplay();
+		}, 2000);
+
+		return () => clearTimeout(timer);
+	}, [showInfoModal]);
+
+	const getAllServicesHandler = async () => {
+		const api = await getAllServices()
+			.then(response => {
+				const getServicesData = response.data.map(service => {
+					return service;
+				});
+				setServicesData(getServicesData);
+			})
+			.catch(error => {
+				if (error.response) {
+					console.log(error.response);
+					error.response.data.map(err => {
+						props.errorMessage(err.errorMessage);
+					});
+				} else if (error.request) {
+					console.log(error.request);
+					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+				} else {
+					console.log(error);
+					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+				}
+			});
+		return api;
+	};
+
 	return (
 		<>
 			<Head>
 				<title>KlikTermin | Podešavanja</title>
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
 			</Head>
-			<Backdrop backdropAnimation={showBackdrop} />
-			<ResponseModal
-				message={showResponseModal.message}
-				modalAnimation={showResponseModal.animation}
-				displayLinkButton="none"
-				displayFormButton="block"
-				borderColor={showResponseModal.border}
-				link="/"
-				onClick={() => {
-					setShowResponseModal(
-						{
-							...showResponseModal,
-							animation: modalAnimationOut,
-							border: null,
-						},
-						setShowBackdrop(classes.backdropOut)
-					);
-				}}
-			/>
 			<Layout
 				displayHamButton="none"
 				displaySideDrawerMob="none"
@@ -102,6 +142,30 @@ const setupguide = props => {
 				selectData={null}
 				backgroundColorLayout="#303030">
 				<Loader loading={isLoading} />
+				<Backdrop backdropAnimation={showBackdrop} />
+				<InfoModal
+					message={completnessMessage}
+					modalAnimation={showInfoModal}
+					borderColor="green"
+				/>
+				<ResponseModal
+					message={showResponseModal.message}
+					modalAnimation={showResponseModal.animation}
+					displayLinkButton="none"
+					displayFormButton="block"
+					borderColor={showResponseModal.border}
+					link="/"
+					onClick={() => {
+						setShowResponseModal(
+							{
+								...showResponseModal,
+								animation: modalAnimationOut,
+								border: null,
+							},
+							setShowBackdrop(classes.backdropOut)
+						);
+					}}
+				/>
 				<div className={[classes.Form, classes.FormLayout, classes.FormBlackBg].join(' ')}>
 					<h2 className={isMobile ? classes.FormTitleMob : classes.FormTitle}>
 						VODIČ ZA PODEŠAVANJE
@@ -111,7 +175,6 @@ const setupguide = props => {
 						setDisplayGreeting={setDisplayGreeting}
 						setDisplayServiceProviderQuestionForm={setDisplayServiceProviderQuestionForm}
 						setDisplayEmployeeQuestionForm={setDisplayEmployeeQuestionForm}
-						token={props.token}
 						isServiceProvider={isServiceProvider}
 						userGuideStatus={userGuideStatus.guideStatus}
 					/>
@@ -120,7 +183,6 @@ const setupguide = props => {
 						setDisplayServiceProviderQuestionForm={setDisplayServiceProviderQuestionForm}
 						setDisplayEmployeeQuestionForm={setDisplayEmployeeQuestionForm}
 						setDisplayAddServiceProvidersForm={setDisplayAddServiceProvidersForm}
-						token={props.token}
 						isServiceProvider={isServiceProvider}
 						serviceProviderData={serviceProviderData}
 						setServiceProviderData={setServiceProviderData}
@@ -135,7 +197,6 @@ const setupguide = props => {
 						setDisplayAddServicesForm={setDisplayAddServicesForm}
 						singleEmployee={singleEmployee}
 						setSingleEmployee={setSingleEmployee}
-						token={props.token}
 						isServiceProvider={isServiceProvider}
 						serviceProviderData={serviceProviderData}
 						setIsLoading={setIsLoading}
@@ -150,7 +211,6 @@ const setupguide = props => {
 						setShowResponseModal={setShowResponseModal}
 						setShowBackdrop={setShowBackdrop}
 						initServiceProviderForm={initServiceProviderForm}
-						token={props.token}
 						servProvFormInput={servProvFormInput}
 						setServProvFormInput={setServProvFormInput}
 						serviceProviderData={serviceProviderData}
@@ -164,27 +224,44 @@ const setupguide = props => {
 						editMode={editMode}
 						setEditMode={setEditMode}
 						setIsLoading={setIsLoading}
+						errorMessage={errorMessage}
+						displayStopEdit="none"
+						displayStopEditMob="none"
+						completnessMessage={completnessMessage}
+						isSetupGuide={true}
+						validation={true}
 					/>
 					<AddEmployeeForm
 						displayAddEmployeeForm={displayAddEmployeeForm}
 						setDisplayAddEmployeeForm={setDisplayAddEmployeeForm}
 						setDisplayAddServicesForm={setDisplayAddServicesForm}
 						setListOfEmployees={setListOfEmployees}
-						modalAnimation={showResponseModal.animation}
-						setShowResponseModal={setShowResponseModal}
 						setShowBackdrop={setShowBackdrop}
+						setShowResponseModal={setShowResponseModal}
 						serviceProviderData={serviceProviderData}
 						initEmployeeForm={initEmployeeForm}
 						emplyeesFormInput={emplyeesFormInput}
 						setEmplyeesFormInput={setEmplyeesFormInput}
 						employeeData={employeeData}
+						setEmployeeData={setEmployeeData}
 						employeeId={employeeId}
 						setEmployeeId={setEmployeeId}
-						setEmployeeData={setEmployeeData}
-						serviceProviderDatails={serviceProviderDatails}
 						editMode={editMode}
 						setEditMode={setEditMode}
+						displayForward={isMobile ? 'none' : 'block-block'}
+						displayForwardMob={isMobile ? 'block' : 'none'}
+						resetForm={() => {
+							setEmployeeId(null);
+							setEmplyeesFormInput(initEmployeeForm);
+							setEditMode(false);
+						}}
 						setIsLoading={setIsLoading}
+						modalAnimationIn={modalAnimationIn}
+						displayStopEdit={editMode && !isMobile ? 'inline-block' : 'none'}
+						displayStopEditMob={editMode ? 'inline-block' : 'none'}
+						completnessMessage={completnessMessage}
+						validation={true}
+						isSetupGuide={true}
 					/>
 					<AddServicesForm
 						displayAddServicesForm={displayAddServicesForm}
@@ -198,7 +275,6 @@ const setupguide = props => {
 						listOfEmployees={listOfEmployees}
 						setShowResponseModal={setShowResponseModal}
 						setShowBackdrop={setShowBackdrop}
-						employees={props.employees}
 						checkedEmployees={checkedEmployees}
 						setCheckedEmployees={setCheckedEmployees}
 						servicesFormInput={servicesFormInput}
@@ -209,10 +285,22 @@ const setupguide = props => {
 						serviceData={servicesData}
 						editMode={editMode}
 						setEditMode={setEditMode}
+						abortAddService={null}
 						userGuideStatus={userGuideStatus.guideStatus}
 						setDisplayGreeting={setDisplayGreeting}
-						displayForward={'block'}
-						displayStopEdit={'none'}
+						displayEmployeesPicker="block"
+						displayForward={isMobile ? 'none' : 'block-block'}
+						displayForwardMob={isMobile ? 'block' : 'none'}
+						errorMessage={errorMessage}
+						setCompletnessMessage={setCompletnessMessage}
+						modalAnimationIn={modalAnimationIn}
+						completnessMessageHandler={completnessMessageHandler}
+						displayStopEdit="none"
+						displayStopEditMob="none"
+						validation={true}
+						isSetupGuide={true}
+						displayCancel="none"
+						getAllServicesHandler={getAllServicesHandler}
 					/>
 					<WorkingTimeForm
 						displayWorkingTimeForm={displayWorkingTimeForm}
@@ -221,8 +309,6 @@ const setupguide = props => {
 						setShowResponseModal={setShowResponseModal}
 						setShowBackdrop={setShowBackdrop}
 						serviceProviderData={serviceProviderData}
-						employees={props.employees}
-						employeeData={employeeData}
 						employeeId={employeeId}
 						setEmployeeId={setEmployeeId}
 						setServiceProviderId={setServiceProviderId}
@@ -231,10 +317,17 @@ const setupguide = props => {
 						setWorkingTimeFormInput={setWorkingTimeFormInput}
 						workingHoursData={workingHoursData}
 						setWorkingHoursData={setWorkingHoursData}
-						token={props.token}
 						setIsLoading={setIsLoading}
 						userGuideStatus={userGuideStatus.guideStatus}
 						setDisplayGreeting={setDisplayGreeting}
+						errorMessage={errorMessage}
+						modalAnimationIn={modalAnimationIn}
+						completnessMessageHandler={completnessMessageHandler}
+						completnessMessage={completnessMessage}
+						displayStopEdit="none"
+						displayStopEditMob="none"
+						validation={employeeId}
+						isSetupGuide={true}
 					/>
 				</div>
 			</Layout>

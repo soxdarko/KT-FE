@@ -42,7 +42,6 @@ const ListHead = props => {
 				</Select>
 				<ListHeadButton
 					className={classes.CopyWeek}
-					value={isMobile ? '' : 'Pretraga'}
 					faIcon={faSearch}
 					display={props.displaySearch}
 					onClick={props.onClickSearch}
@@ -68,12 +67,14 @@ const ListHead = props => {
 					onClick={props.onSave}
 				/>
 			</div>
-			<div className={classes.SearchBarContainer} style={{ display: props.dipslaySerachBar }}>
+			<div
+				className={isMobile ? classes.SearchBarContainerMob : classes.SearchBarContainer}
+				style={{ display: props.dipslaySerachBar }}>
 				<Input
 					type="text"
 					name="searchBar"
 					value={props.searchInput}
-					className={inputClassName}
+					className={isMobile ? inputClassName : [inputClassName, classes.SearchBar].join(' ')}
 					onChange={e => props.setSearchInput(e.target.value.toLowerCase())}></Input>
 				<Input
 					type="button"

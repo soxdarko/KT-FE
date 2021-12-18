@@ -1,12 +1,11 @@
 import { fetchJson } from '../../api/fetchJson';
 
 export default async (req, res) => {
-	const deleted = req.body.deleted;
 	const cookie = req.headers.cookie;
 	const token = cookie.substring(cookie.indexOf('=') + 1);
-	const url = `users/getClients?deleted=${deleted}`;
+	const url = `settings/getSettingsServices`;
 
-	async function getClients() {
+	async function getSettingsServices() {
 		const api = await fetchJson(url, 'get', token)
 			.then(res => {
 				return res.data;
@@ -18,7 +17,7 @@ export default async (req, res) => {
 		return api;
 	}
 
-	const data = getClients();
+	const data = getSettingsServices();
 
 	res.statusCode = 200;
 	res.json(await data);

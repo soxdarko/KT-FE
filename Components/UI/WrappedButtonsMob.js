@@ -17,7 +17,11 @@ const WrappedButtonsMob = props => {
 			<Button
 				type="primary"
 				className={classes.Btn_Add}
-				style={{ display: props.displaySave }}
+				style={{
+					display: props.displaySave,
+					pointerEvents: props.validation ? 'auto' : 'none',
+					color: props.validation ? 'orange' : 'gray',
+				}}
 				icon={<SaveOutlined />}
 				onClick={e => props.save(e)}
 			/>

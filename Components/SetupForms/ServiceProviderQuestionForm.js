@@ -5,32 +5,36 @@ import { getAllServiceProviders } from '../../api/getAllServiceProviders';
 import QuestionForm from './QuestionForm/QuestionForm';
 
 const ServiceProviderQuestionForm = props => {
-	const isPageLoad = useRef(true);
+	const isComponentLoad = useRef(true);
 	const [singleServiceProvider, setSingleServiceProvider] = useState(false);
 
 	const getAllServiceProvidersHandler = async () => {
-		const api = await getAllServiceProviders(props.token)
+		const api = await getAllServiceProviders()
 			.then(response => {
 				const getServiceProviderName = response.data.map(serviceProvider => {
 					return serviceProvider;
 				});
 				props.setServiceProviderData(getServiceProviderName);
-				console.log(getServiceProviderName);
 			})
 			.catch(error => {
 				if (error.response) {
 					console.log(error.response);
+					error.response.data.map(err => {
+						props.errorMessage(err.errorMessage);
+					});
 				} else if (error.request) {
 					console.log(error.request);
+					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
 				} else {
-					console.log('nesto drugo');
+					console.log(error);
+					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
 				}
 			});
 		return api;
 	};
 
 	const addNewServiceProviderHandler = () => {
-		const api = addNewServiceProvider({}, props.token)
+		const api = addNewServiceProvider({})
 			.then(response => {
 				console.log(response);
 				props.setIsLoading(false);
@@ -42,19 +46,23 @@ const ServiceProviderQuestionForm = props => {
 				props.setIsLoading(false);
 				if (error.response) {
 					console.log(error.response);
-					/* window.location = '/'; */
+					error.response.data.map(err => {
+						props.errorMessage(err.errorMessage);
+					});
 				} else if (error.request) {
 					console.log(error.request);
+					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
 				} else {
-					console.log('nesto drugo');
+					console.log(error);
+					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
 				}
 			});
 		api;
 	};
 
 	useEffect(() => {
-		if (isPageLoad.current) {
-			isPageLoad.current = false;
+		if (isComponentLoad.current) {
+			isComponentLoad.current = false;
 			return;
 		}
 		addNewServiceProviderHandler();

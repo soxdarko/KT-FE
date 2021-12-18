@@ -1,10 +1,13 @@
+import { useDeviceDetect } from '../../../helpers/universalFunctions';
 import TextArea from './TextArea';
 import Input from './Input';
-
-import classes from '../UI.module.scss';
 import WrappedButtonsMob from '../WrappedButtonsMob';
 
+import classes from '../UI.module.scss';
+
 const ClientDescription = props => {
+	const { isMobile } = useDeviceDetect();
+
 	const onSubmit = e => {
 		e.preventDefault();
 		const formData = {
@@ -19,12 +22,13 @@ const ClientDescription = props => {
 	};
 
 	return (
-		<div style={{ display: props.displayDescription }}>
+		<div
+			style={{ display: props.displayDescription }}
+			className={isMobile ? classes.DescriptionContainerMob : classes.DescriptionContainer}>
+			<h3>Dodatne informacije</h3>
 			<TextArea
 				value={props.formInput.description.value}
-				setFormInput={props.setFormInput}
-				setClientData={props.setClientData}
-				className={classes.DescriptionMob}
+				className={classes.DescriptionArea}
 				minRows="5"
 				onChange={e =>
 					props.setFormInput({
@@ -35,7 +39,25 @@ const ClientDescription = props => {
 					})
 				}
 			/>
-			<Input type="button" value="sačavaj" />
+			<Input
+				type="button"
+				value="Sačavaj"
+				className={classes.SaveDescription}
+				display={isMobile ? 'none' : 'block'}
+				onClick={onSubmit}
+			/>
+			<Input
+				type="button"
+				value="Zatvori"
+				className={classes.ExitDescription}
+				display={isMobile ? 'none' : 'block'}
+				onClick={() => {
+					props.setDisplayDescription('none');
+					props.setShowBackdrop(classes.backdropOut);
+					props.setDescriptionEdit(false);
+					props.resetForm();
+				}}
+			/>
 			<WrappedButtonsMob
 				save={onSubmit}
 				isMobile={props.displayWrappedButtonsMob(props.displayDescription)}
@@ -49,6 +71,7 @@ const ClientDescription = props => {
 						props.setDescriptionEdit(false),
 						props.resetForm();
 				}}
+				validation="true"
 			/>
 		</div>
 	);

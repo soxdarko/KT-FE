@@ -17,8 +17,7 @@ import TextArea from 'antd/lib/input/TextArea';
 
 const AddServiceProvidersForm = props => {
 	const { isMobile } = useDeviceDetect();
-	const isPageLoad = useRef(true);
-	const modalAnimation = isMobile ? classes.modalInMob : classes.modalInPC;
+	const isComponentLoad = useRef(true);
 	const [displayToolBox, setDisplayToolBox] = useState('none');
 
 	const resetForm = () => {
@@ -38,10 +37,15 @@ const AddServiceProvidersForm = props => {
 			.catch(error => {
 				if (error.response) {
 					console.log(error.response);
+					error.response.data.map(err => {
+						props.errorMessage(err.errorMessage);
+					});
 				} else if (error.request) {
 					console.log(error.request);
+					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
 				} else {
 					console.log('nesto drugo');
+					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
 				}
 			});
 		return api;
@@ -50,34 +54,31 @@ const AddServiceProvidersForm = props => {
 	const addServiceProviderHandler = () => {
 		const api = saveServiceProviders(props.serviceProviderInfo)
 			.then(response => {
-				console.log(response),
-					props.setIsLoading(false),
-					getAllServiceProvidersHandler(),
-					props.setServiceProviderId(null),
-					props.setServProvFormInput(props.initServiceProviderForm);
+				console.log(response);
+				getAllServiceProvidersHandler();
+				props.completenessMessage();
 			})
 			.catch(error => {
 				props.setIsLoading(false);
 				if (error.response) {
 					console.log(error.response);
-					/* error.response.data.map(err => {
-						const Input = err.type[0].toLowerCase() + err.type.slice(1);
-						responseHandler(props.setShowResponseModal, modalAnimation, err.errorMessage, 'red');
-						updateValidity(props.setServProvFormInput, Input, props.servProvFormInput, '', false);
-						props.setShowBackdrop(classes.backdropIn);
-					}); */
+					error.response.data.map(err => {
+						props.errorMessage(err.errorMessage);
+					});
 				} else if (error.request) {
 					console.log(error.request);
+					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
 				} else {
-					console.log('nesto drugo');
+					console.log(error);
+					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
 				}
 			});
 		api;
 	};
 
 	useEffect(() => {
-		if (isPageLoad.current) {
-			isPageLoad.current = false;
+		if (isComponentLoad.current) {
+			isComponentLoad.current = false;
 			return;
 		}
 		addServiceProviderHandler();
@@ -107,14 +108,19 @@ const AddServiceProvidersForm = props => {
 			);
 			responseHandler(
 				props.setShowResponseModal,
-				modalAnimation,
+				props.modalAnimationIn,
 				'Morate uneti naziv salona!',
 				'red'
 			);
 			props.setShowBackdrop(classes.backdropIn);
 		} else if (!props.servProvFormInput.city.value.trim()) {
 			updateValidity(props.setServProvFormInput, 'city', props.servProvFormInput, '', false);
-			responseHandler(props.setShowResponseModal, modalAnimation, 'Morate uneti grad!', 'red');
+			responseHandler(
+				props.setShowResponseModal,
+				props.modalAnimationIn,
+				'Morate uneti grad!',
+				'red'
+			);
 			props.setShowBackdrop(classes.backdropIn);
 		} else {
 			props.setServiceProviderInfo(formData);
@@ -154,7 +160,9 @@ const AddServiceProvidersForm = props => {
 	const inputClassName = isMobile ? classes.InputTextMob : classes.InputText;
 	const textAreaClassName = isMobile ? classes.InformationsInputMob : classes.InformationsInput;
 	return (
-		<div style={{ display: props.displayAddServiceProvidersForm }}>
+		<div
+			style={{ display: props.displayAddServiceProvidersForm }}
+			className={props.isSetupGuide ? '' : classes.AddForm}>
 			<h3>Unesite podatke salona</h3>
 			<Input
 				type="text"
@@ -208,7 +216,6 @@ const AddServiceProvidersForm = props => {
 			/>
 			<ServiceProvidersList
 				serviceProviderData={props.serviceProviderData}
-				addForSelectedClassName={classes.addForSelected}
 				displayToolBox={displayToolBox}
 				setDisplayToolBox={setDisplayToolBox}
 				id={props.serviceProviderId}

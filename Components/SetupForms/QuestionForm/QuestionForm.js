@@ -1,6 +1,6 @@
-import classes from '../../SetupForms/SetupForms.module.scss';
-
 import Input from '../../UI/Forms/Input';
+
+import classes from '../../SetupForms/SetupForms.module.scss';
 
 const QuestionFrom = props => (
 	<form style={{ display: props.displayQuestionForm }} className={classes.GuideForm}>

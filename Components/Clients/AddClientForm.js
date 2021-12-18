@@ -6,7 +6,6 @@ import {
 	responseHandler,
 } from '../../helpers/universalFunctions';
 import { addOrUpdateNewClient } from '../../api/addOrUpdateNewClient';
-import { getClients } from '../../api/getClients';
 
 import Input from '../UI/Forms/Input';
 import Select from '../UI/Select';
@@ -16,71 +15,39 @@ import classes from '../../Components/SetupForms/SetupForms.module.scss';
 
 const addClientForm = props => {
 	const { isMobile } = useDeviceDetect();
-	const isPageLoad = useRef(true);
-	const modalAnimation = isMobile ? classes.modalInMob : classes.modalInPC;
-
-	const getClientsHandler = async () => {
-		const api = await getClients()
-			.then(response => {
-				const getClientsData = response.data.map(client => {
-					return client;
-				});
-				props.setClientData(getClientsData);
-			})
-			.catch(error => {
-				if (error.response) {
-					console.log(error.response);
-				} else if (error.request) {
-					console.log(error.request);
-				} else {
-					console.log('nesto drugo getClients');
-				}
-			});
-		return api;
-	};
-
-	const errorMessage = () => {
-		responseHandler(
-			props.setShowResponseModal,
-			modalAnimation,
-			'Došlo je do greške, pokušajte ponovo!',
-			'red'
-		);
-	};
+	const isComponentLoad = useRef(true);
 
 	const addClientHandler = () => {
 		const api = addOrUpdateNewClient(props.userData)
 			.then(response => {
 				console.log(response);
-				getClientsHandler();
-				props.setIsLoading(false);
+				props.getClientsHandler(false);
 				props.resetForm();
-				props.setDisplayInfoModal(props.modalAnimationIn);
+				props.setDisplayAddClientForm('none');
+				props.setDisplayDescription('none');
+				props.setShowBackdrop(classes.backdropOut);
+				props.completnessMessageHandler('Uspešno sačuvano');
 			})
 			.catch(error => {
 				if (error.response) {
-					props.setShowBackdrop(classes.backdropIn);
 					console.log(error.response);
-					errorMessage();
-					props.setIsLoading(false);
+					error.response.data.map(err => {
+						props.errorMessage(err.errorMessage);
+					});
 				} else if (error.request) {
-					props.setShowBackdrop(classes.backdropIn);
-					errorMessage();
 					console.log(error.request);
-					props.setIsLoading(false);
+					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
 				} else {
-					props.setShowBackdrop(classes.backdropIn);
-					errorMessage();
-					console.log('nesto drugo');
-					props.setIsLoading(false);
+					console.log(error);
+					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
 				}
 			});
 		api;
 	};
 
 	useEffect(() => {
-		if (isPageLoad.current) {
-			isPageLoad.current = false;
+		if (isComponentLoad.current) {
+			isComponentLoad.current = false;
 			return;
 		}
 		addClientHandler();
@@ -103,7 +70,7 @@ const addClientForm = props => {
 			updateValidity(props.setFormInput, 'name', props.formInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				modalAnimation,
+				props.modalAnimationIn,
 				'Morate uneti ime klijenta!',
 				'red'
 			);
@@ -115,7 +82,7 @@ const addClientForm = props => {
 			updateValidity(props.setFormInput, 'email', props.formInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				modalAnimation,
+				props.modalAnimationIn,
 				'Morate uneti validnu e-mail adresu!',
 				'red'
 			);
@@ -124,7 +91,7 @@ const addClientForm = props => {
 			updateValidity(props.setFormInput, 'mobOperator', props.formInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				modalAnimation,
+				props.modalAnimationIn,
 				'Morate izabrati pozivni broj!',
 				'red'
 			);
@@ -137,7 +104,7 @@ const addClientForm = props => {
 			updateValidity(props.setFormInput, 'phone', props.formInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				modalAnimation,
+				props.modalAnimationIn,
 				'Morate uneti validan broj telefona!',
 				'red'
 			);
@@ -220,7 +187,7 @@ const addClientForm = props => {
 				<Input
 					type="text"
 					name="email"
-					placeholder="Unesite  e-mail adresu"
+					placeholder="Unesite e-mail adresu"
 					className={inputClassName}
 					value={props.formInput.email.value}
 					onChange={e => inputChangedHandler(e, 'email', props.formInput, props.setFormInput)}
@@ -274,12 +241,14 @@ const addClientForm = props => {
 				/>
 				<Input
 					type="button"
-					value="odustani"
+					value="Odustani"
 					display={isMobile ? 'none' : 'inline-block'}
 					color="red"
 					className={isMobile ? classes.ForwardMob : classes.Forward}
 					onClick={() => {
-						props.setDisplayAddClientForm('none'), props.setShowBackdrop(classes.backdropOut);
+						props.setDisplayAddClientForm('none');
+						props.setShowBackdrop(classes.backdropOut);
+						props.resetForm();
 					}}
 				/>
 			</div>
@@ -291,11 +260,12 @@ const addClientForm = props => {
 				displaySave="block"
 				displayAdd="none"
 				displayStopEdit="block"
+				validation={true}
 				stopEdit={() => {
-					props.setDisplayAddClientForm('none'),
-						props.setShowBackdrop(classes.backdropOut),
-						props.setEditMode(false),
-						props.resetForm();
+					props.setDisplayAddClientForm('none');
+					props.setShowBackdrop(classes.backdropOut);
+					props.setEditMode(false);
+					props.resetForm();
 				}}
 			/>
 		</>

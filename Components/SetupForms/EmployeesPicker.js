@@ -31,7 +31,8 @@ const EmployeesPicker = props => {
 							checkBoxGroupToArrayHandler(e, props.checkedEmployees, props.setCheckedEmployees)
 						}>
 						<CheckBox
-							name={`${filteredEmployee.id}${props.tag}`}
+							name={filteredEmployee.id}
+							/* id={filteredEmployee.id} */
 							className={props.addForSelectedClassName}
 							defaultChecked={props.checkedEmployees.includes(filteredEmployee.id) ? true : false}
 						/>
@@ -50,7 +51,9 @@ const EmployeesPicker = props => {
 						checkBoxGroupToArrayHandler(e, props.checkedEmployees, props.setCheckedEmployees)
 					}>
 					<CheckBox
-						name={`${employee.id}${props.tag}`}
+						/* name={`${employee.id}${props.tag}`} */
+						name={employee.id}
+						id={employee.id}
 						className={props.addForSelectedClassName}
 						defaultChecked={props.checkedEmployees.includes(employee.id) ? true : false}
 					/>
@@ -82,7 +85,9 @@ const EmployeesPicker = props => {
 	}); */
 
 	return (
-		<div className={isMobile ? classes.ReviewMob : classes.Review}>
+		<div
+			className={isMobile ? classes.ReviewMob : classes.Review}
+			style={{ display: props.displayEmployeesPicker }}>
 			<h4>{props.title}</h4>
 			<div style={{ display: displayEmployeesHeader() }}>{props.emptyListMessage}</div>
 			<table className={classes.SetupGuideListContainer} style={{ display: displayEmployees() }}>

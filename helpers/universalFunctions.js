@@ -136,9 +136,9 @@ export const currDayFormat = day => {
 
 export const checkBoxGroupToArrayHandler = (e, state, setState) => {
 	if (e.target.checked) {
-		setState([...state, e.target.value]);
+		setState([...state, e.target.id]);
 	} else {
-		setState(state.filter(item => item !== e.target.value));
+		setState(state.filter(item => item !== e.target.id));
 	}
 };
 
