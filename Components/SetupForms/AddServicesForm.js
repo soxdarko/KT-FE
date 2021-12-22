@@ -18,7 +18,7 @@ import classes from './SetupForms.module.scss';
 const AddServicesForm = props => {
 	const { isMobile } = useDeviceDetect();
 	const isComponentLoad = useRef(true);
-	const [userData, setUserData] = useState({});
+	const [serviceData, setServiceData] = useState({});
 
 	const resetForm = () => {
 		props.setServiceId(null), props.setServicesFormInput(props.initServicesForm);
@@ -60,12 +60,15 @@ const AddServicesForm = props => {
 	}; */
 
 	const addServiceToManyHandler = () => {
-		const api = saveServicesToManyEmployees(userData)
+		const api = saveServicesToManyEmployees(serviceData)
 			.then(response => {
 				console.log(response);
 				props.getAllServicesHandler();
-				props.setServicesFormInput(props.initServicesForm);
+				props.resetForm();
+				/* props.isSetupGuide ? props.setServicesFormInput(props.initServicesForm) : {}; */
+				/* setServiceId(null); */
 				props.completnessMessageHandler('Uspešno sačuvano');
+				props.setDisplayAddServicesForm(props.isSetupGuide ? 'block' : 'none');
 			})
 			.catch(error => {
 				if (error.response) {
@@ -93,7 +96,7 @@ const AddServicesForm = props => {
 		/* addServiceToManyHandler(); */
 		addServiceToManyHandler();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [userData]);
+	}, [serviceData]);
 
 	const onSubmit = e => {
 		e.preventDefault();
@@ -139,7 +142,7 @@ const AddServicesForm = props => {
 			);
 			props.setShowBackdrop(classes.backdropIn);
 		} else {
-			setUserData(formData);
+			setServiceData(formData);
 			props.setIsLoading(true);
 		}
 	};
@@ -356,9 +359,9 @@ const AddServicesForm = props => {
 					props.setDisplayAddServicesForm('none'), props.setDisplayWorkingTimeForm('block');
 				}}
 				stopEdit={() => {
-					props.setDisplayAddServicesForm('none'),
-						props.setServicesFormInput(props.initServicesForm),
-						props.setShowBackdrop(classes.backdropOut);
+					props.setDisplayAddServicesForm('none');
+					isMobile ? {} : props.setServicesFormInput(props.initServicesForm);
+					props.setShowBackdrop(classes.backdropOut);
 				}}
 				save={onSubmit}
 				isMobile={isMobile && props.displayAddServicesForm === 'block' ? true : false}

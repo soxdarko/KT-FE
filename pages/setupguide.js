@@ -259,7 +259,8 @@ const setupguide = props => {
 						modalAnimationIn={modalAnimationIn}
 						displayStopEdit={editMode && !isMobile ? 'inline-block' : 'none'}
 						displayStopEditMob={editMode ? 'inline-block' : 'none'}
-						completnessMessage={completnessMessage}
+						completnessMessageHandler={completnessMessageHandler}
+						errorMessage={errorMessage}
 						validation={true}
 						isSetupGuide={true}
 					/>
@@ -286,6 +287,7 @@ const setupguide = props => {
 						editMode={editMode}
 						setEditMode={setEditMode}
 						abortAddService={null}
+						resetForm={() => setServicesFormInput(initServicesForm)}
 						userGuideStatus={userGuideStatus.guideStatus}
 						setDisplayGreeting={setDisplayGreeting}
 						displayEmployeesPicker="block"

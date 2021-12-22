@@ -1,4 +1,6 @@
+import { useState, useEffect, useRef } from 'react';
 import { useDeviceDetect } from '../../../helpers/universalFunctions';
+import { saveServicesToManyEmployees } from '../../../api/saveServicesToManyEmployees';
 import TextArea from './TextArea';
 import Input from './Input';
 
@@ -7,6 +9,43 @@ import WrappedButtonsMob from '../WrappedButtonsMob';
 
 const ServiceDescription = props => {
 	const { isMobile } = useDeviceDetect();
+	const isComponentLoad = useRef(true);
+
+	const saveDescription = () => {
+		const api = saveServicesToManyEmployees(props.serviceDescriptionData)
+			.then(response => {
+				console.log(response);
+				props.getAllServicesHandler();
+				props.completnessMessageHandler('Uspešno sačuvano');
+			})
+			.catch(error => {
+				if (error.response) {
+					console.log(error);
+					error.response.data.map(err => {
+						props.errorMessage(err.errorMessage);
+					});
+				} else if (error.request) {
+					console.log(error.request);
+					props.errorMessage('Došlo je do greške, pokušajte ponovo');
+				} else {
+					console.log(error);
+					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+				}
+			});
+		api;
+	};
+
+	useEffect(() => {
+		if (isComponentLoad.current) {
+			isComponentLoad.current = false;
+			return;
+		}
+
+		/* addServiceToManyHandler(); */
+		saveDescription();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [props.serviceDescriptionData]);
+
 	const onSubmit = e => {
 		e.preventDefault();
 		const formData = [
@@ -23,8 +62,8 @@ const ServiceDescription = props => {
 				Deleted: props.formInput.deleted,
 			},
 		];
-		props.setUserServiceData(formData);
-		/* props.setIsLoading(true); */
+		props.setServiceDescriptionData(formData);
+		props.setIsLoading(true);
 	};
 
 	return (

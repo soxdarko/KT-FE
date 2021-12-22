@@ -63,7 +63,7 @@ const addEmployeeForm = props => {
 				console.log(response);
 				getAllEmployeesHandler();
 				props.resetForm();
-				props.completenessMessage();
+				props.completnessMessageHandler('Radnik uspešno sačuvan');
 			})
 			.catch(error => {
 				if (error.response) {

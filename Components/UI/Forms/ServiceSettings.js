@@ -1,5 +1,4 @@
 import CheckBox from '../CheckBox';
-import { inputChangedHandlerCheckBox } from '../../../helpers/universalFunctions';
 
 import classes from '../../SetupForms/SetupForms.module.scss';
 

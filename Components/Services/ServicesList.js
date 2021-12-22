@@ -1,10 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { useDeviceDetect } from '../../helpers/universalFunctions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBan, faPaperPlane, faEdit, faIdCard, faWrench } from '@fortawesome/free-solid-svg-icons';
+import { faBan, faEdit, faWrench } from '@fortawesome/free-solid-svg-icons';
 
 import classes from '../UI/UI.module.scss';
-import { Button } from 'antd';
 
 const ServicesList = props => {
 	const { isMobile } = useDeviceDetect();
@@ -167,9 +166,9 @@ const ServicesList = props => {
 									<div
 										style={{ width: editWidth }}
 										onClick={() => {
+											props.setServiceId(service.id);
 											props.setDisplayAddServicesForm('block');
 											props.setEditMode(true);
-											props.setServiceId(service.id);
 											props.setServiceSettingsData(props.serviceSettings[i]);
 										}}>
 										<FontAwesomeIcon
@@ -178,7 +177,13 @@ const ServicesList = props => {
 											style={{ color: 'yellow' }}
 										/>
 									</div>
-									<div style={{ width: removeWidth }}>
+									<div
+										style={{ width: removeWidth }}
+										onClick={() => {
+											props.setServiceId(service.id);
+											props.setShowConfirmModal(props.modalAnimationIn);
+											props.setShowBackdrop(classes.backdropIn);
+										}}>
 										<FontAwesomeIcon
 											icon={faBan}
 											className={[classes.Icon, props.IconClassName].join(' ')}
