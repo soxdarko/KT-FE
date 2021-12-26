@@ -1,9 +1,9 @@
 import Appointment from './Appointment';
 import classes from '../../Calendar.module.scss';
 import { useEffect } from 'react';
-import { isObjEmpty } from '../../../../helpers/universalFunctions';
+import { isObjEmpty, getTimeString } from '../../../../helpers/universalFunctions';
 
-const CalBodyCol = ({date, time, enabled, absence, appointment}) => {
+const CalBodyCol = ({date, time, enabled, absence, appointment, clientPicker, setClickedCell}) => {
    //useEffect(()=> console.log('props.cellDate',new Date(props.cellDate)), [])
 
     // const appointments = () => {
@@ -28,49 +28,56 @@ const CalBodyCol = ({date, time, enabled, absence, appointment}) => {
     //   }
     // };
 
-    // const clickedCellHandler = () => {
-    //   const cell = props.workingHoursInWeek;
-    //   for (const date of cell) {
-    //     if (date.date === cell[props.dayOfWeekNum].date) {
-    //       props.setClickedCell({
-    //         ...props.clickedCellState,
-    //         time: props.time,
-    //         date: date.date,
-    //       });
-    //     }
-    //   }
-    // };
+    const onClick = () => {
+      const dateStart = date.replace('00:00:00', getTimeString(time, true));
+      const mDateStart = Date.parse(dateStart);
+      const mCurrentDateTime = Date.now();
+      if(mDateStart > mCurrentDateTime)
+        if (enabled && isObjEmpty(appointment)) {
+          clientPicker();
+          setClickedCell((clickedCellState) => ({
+            ...clickedCellState,
+            time: time,
+            date: date,
+          }));
+        } else {
+          null;
+        }
+    };
 
-    // const onClick = (dayOfWeekNum) => {
-    //   if (props.isEnabled && !appointments()) {
-    //     props.clientPicker(dayOfWeekNum), clickedCellHandler(dayOfWeekNum);
-    //   } else {
-    //     null;
-    //   }
-    // };
+    const getAppointmentTime = () => {
+      if(!isObjEmpty(appointment)) {
+        const timeStart = appointment.dateStart.split('T')[1];
+        const timeEnd = appointment.dateEnd.split('T')[1];
+        return `${timeStart.substring(0,5)} - ${timeEnd.substring(0,5)}`;
+      }
+      
+    }
 
   return (
     <>
         <td
           className={enabled ? classes.CellEnabled : classes.CellDisabled}
-          // onClick={() => onClick(props.dayOfWeekNum)}
-          data-celldate={date}
-          data-cellhour={time}
+          onClick={() => onClick()}
         >
-          <p style={{ display: isObjEmpty(appointment) ? 'none' : 'flex' }}>
+          <p style={{ display: isObjEmpty(appointment) ?  'flex':'none' }}>
             {!enabled ? 'zatvoreno' : 'rezerviši termin'}
           </p>
+
           <Appointment
-            display={isObjEmpty(appointment) ? 'flex' : 'none'}
-            height={`${isObjEmpty(appointment) ? 100 : 100}px`}
+            display={isObjEmpty(appointment) ? 'none':'flex'}
+            height={`150px`}
             className={classes.Appointment}
           >
-            <h5>{appointment.dateStart}</h5>
+            <h5>{getAppointmentTime()}</h5>
             <h5>{appointment.clientName}</h5>
-            <h5>{appointment.phone}</h5>
+            <h5>{appointment.clientPhone}</h5>
             <hr className={classes.HrLineAppointment} />
-            {/* <h5>{appointment?.services[0].serviceName}</h5>
-            <h5>{appointment?.services[0].price} rsd</h5> */}
+            {!isObjEmpty(appointment) && appointment.services.map(s => {
+              return (
+                <h5>{`${s.serviceName} (${s.price} din)`}</h5>
+              )
+            })}
           </Appointment>
         </td>
     </>

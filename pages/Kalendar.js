@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
 import { fetchJson } from '../api/fetchJson';
 import { auth } from '../helpers/auth';
-
 import Head from 'next/head';
 import Layout from '../Components/hoc/Layout/Layout';
 import Calendar from '../Components/Calendar/Calendar';
-
+import { getMondayForAPI } from '../helpers/universalFunctions';
 import classes from '../Components/Navigation/Navigation.module.scss';
+import { useRouter } from 'next/router';
 
 const kalendar = props => {
+	const router = useRouter();
 	const [selectedEmployee, setSelectedEmployee] = useState(props.employees[0].id);
 	const [clientFormBackdrop, setClientFormBackdrop] = useState('none');
 
@@ -24,6 +25,11 @@ const kalendar = props => {
 		console.log('workingHours', props.workingHours);
 		console.log('appointments', props.appointments);
 	},[])
+
+	const refreshData = () => {
+		console.log('refreshing data....')
+		router.replace(router.asPath);
+	}
 
 	return (
 		<>
@@ -56,6 +62,7 @@ const kalendar = props => {
 					selectedEmployee={selectedEmployee}
 					workingHours={props.workingHours}
 					appointments={props.appointments}
+					refreshData={refreshData}
 				/>
 			</Layout>
 		</>
@@ -72,9 +79,9 @@ export async function getServerSideProps(ctx) {
 	const resServices = await fetchJson(servicesUrl, 'get', token);
 	const guideStatusUrl = `users/getCompanyGuideStatus`;
 	const resGuideStatusUrl = await fetchJson(guideStatusUrl, 'get', token);
-	const workingHoursUrl = `settings/getWorkingHours?employeeId=A34DAEF4-615E-48BD-2B71-08D9A67C247C&dateOfMonday=2021-12-13`
+	const workingHoursUrl = `settings/getWorkingHours?dateOfMonday=${getMondayForAPI()}`
 	const workingHours = await fetchJson(workingHoursUrl, 'get', token).then(res => res.data);
-	const appointmentUrl = `appointments/getAppointments?employeeId=A34DAEF4-615E-48BD-2B71-08D9A67C247C&dateOfMonday=2021-12-13`
+	const appointmentUrl = `appointments/getAppointments?&dateOfMonday=${getMondayForAPI()}`
 	const appointments = await fetchJson(appointmentUrl, 'get', token).then(res => res.data);
 
 	const serviceProviders = resServiceProviders.data.map(name => {

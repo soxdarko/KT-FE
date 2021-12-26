@@ -193,6 +193,15 @@ export function getMonday( date ) {
     return date;
 }
 
+export function getMondayForAPI() {
+	const mondayDateTime = getMonday(new Date());
+	const year = mondayDateTime.getFullYear();
+	const month = ("0" + (mondayDateTime.getMonth() + 1)).slice(-2);
+	const day = ("0" + mondayDateTime.getDate()).slice(-2);
+	const mondayDate = `${year}-${month}-${day}`;
+	return mondayDate;
+}
+
 export function getDateFromDayOfWeek( date, day ) {
 	const monday = getMonday(date);
 	return moment(monday).add(day, 'days').startOf('day').format();
@@ -206,4 +215,10 @@ export function isObjEmpty(obj) {
 	}
   
 	return JSON.stringify(obj) === JSON.stringify({});
-  }
+}
+
+export function getTimeString(h, seconds=false) {
+	const hour = (`0${Math.floor(h/60)}`).slice(-2);
+	const minutes = (`0${(h % 60)}`).slice(-2);
+	return `${hour}:${minutes}${seconds?':00':''}`;
+}

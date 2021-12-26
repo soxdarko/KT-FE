@@ -1,15 +1,15 @@
 import CalBodyCol from './CalBodyCol';
 import { Fragment, useEffect } from 'react';
 
-const CalBodyRow = ({workHourAppointments, time}) => {
-  const clickedTimeHandler = (i) => {
-    const cell = props.minMaxWorkingHours;
-    for (const time of cell) {
-      if (time === cell[i]) {
-        return time;
-      }
-    }
-  };
+const CalBodyRow = ({workHourAppointments, time, clientPicker, setClickedCell}) => {
+  // const clickedTimeHandler = (i) => {
+  //   const cell = props.minMaxWorkingHours;
+  //   for (const time of cell) {
+  //     if (time === cell[i]) {
+  //       return time;
+  //     }
+  //   }
+  // };
 
 
   return (
@@ -24,6 +24,8 @@ const CalBodyRow = ({workHourAppointments, time}) => {
                           enabled={wha.enabled}
                           absence={wha.absence}
                           appointment={wha.appointment}
+                          clientPicker={clientPicker}
+                          setClickedCell={setClickedCell}
                       />
                   </Fragment>
                 )

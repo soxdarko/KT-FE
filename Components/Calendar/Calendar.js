@@ -1,8 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import moment from 'moment';
-import { useDeviceDetect } from '../../helpers/universalFunctions';
-import appointments from '../DataFromBE/appointments';
-import WorkingHours from './WorkingHours';
+import { useDeviceDetect, getTimeString } from '../../helpers/universalFunctions';
 import Days from './RightTable/CalHead/Days';
 import Time from './LeftTable/Time';
 import CalBodyRow from './RightTable/CalBody/CalBodyRow';
@@ -16,16 +14,24 @@ import Label from '../UI/Forms/Label';
 import classes from './Calendar.module.scss';
 import classesUI from '../UI/UI.module.scss';
 import { getDateFromDayOfWeek } from '../../helpers/universalFunctions';
+import { saveAppointment } from '../../api/saveAppointment';
+import { v4 as uuidv4 } from 'uuid';
+import ResponseModal from '../UI/Modal/ResponseModal';
 
 const Calendar = props => {
 	const { isMobile } = useDeviceDetect();
 	const isPageLoad = useRef(true);
-	const checkedServices = [];
+	const [checkedServices, setCheckedServices] = useState([]);
 	const [daysInWeek, setDaysInWeek] = useState([]);
 	const [minMaxWorkingHours, setMinMaxWorkingWours] = useState([]);
 	const [workHourAppointments, setWorkHourAppointments] = useState([]);
 	const days = ['Pon', 'Uto', 'Sre', 'Cet', 'Pet', 'Sub', 'Ned'];
+	const [chosenClient, setChosenClient] = useState('');
+	const [appointmentData, setAppointmentData] = useState(props.appointments);
 
+	useEffect(() => {
+		setAppointmentData(props.appointments)
+	}, [props.appointments]);
 
 	useEffect(() => {
 		prepDaysInWeek();
@@ -37,7 +43,7 @@ const Calendar = props => {
 
 	useEffect(() => {
 		minMaxWorkingHours.length > 0 && prepWorkingHoursForEveryDay();
-	},[minMaxWorkingHours])
+	},[minMaxWorkingHours, appointmentData])
 
 
 	const prepDaysInWeek = () => {
@@ -136,12 +142,11 @@ const Calendar = props => {
 					})
 			})		
 		})
-		console.log('prepWHA',prepWHA)
 		setWorkHourAppointments(prepWHA);
 	}
 
 	const getAppointments = (date, minMaxHour) => {
-		const appointment = props.appointments.map(a => {
+		const appointment = appointmentData?.map(a => {
 			let whDate = Date.parse(date.split('T')[0]);
 			let apDate = Date.parse(a.dateStart.split('T')[0]);
 
@@ -159,46 +164,21 @@ const Calendar = props => {
 				employeeName: a.employeeName,
 				idClient: a.idClient,
 				clientName: a.clientName,
+				clientPhone: a.clientPhone,
 				services: a.services
 			} : null 
 		}).filter(a => a);
 
-		console.log('appointment',appointment);
+		return appointment?.length > 0 ? appointment[0] : {};
+	}	
 
-
-		return appointment.length > 0 ? appointment[0] : {};
-	}
-
-
-	useEffect(() => {
-		console.log('workHourAppointments', workHourAppointments)
-	}, [workHourAppointments])
-	
-
-	const [appointment, setAppointment] = useState({
-		date: null,
-		time: null,
-		serviceId: null,
-		userId: null,
-		name: '',
-		phone: '',
-		email: '',
-		color: 'orange',
-	});
 	const [clickedCell, setClickedCell] = useState([
 		{
 			date: null,
 			time: null,
 		},
 	]);
-	const [chosenClient, setChosenClient] = useState([
-		{
-			userId: null,
-			name: '',
-			phone: '',
-			email: '',
-		},
-	]);
+
 
 	const [displayClientPicker, setDisplayClientPicker] = useState('none');
 	const [displayServicesPicker, setDisplayServicesPicker] = useState('none');
@@ -250,6 +230,70 @@ const Calendar = props => {
 	};
 	/// /////////////// Date menagemant end//////////////////
 
+	const minMaxHoursDisplay = () => minMaxWorkingHours.map(h => getTimeString(h));
+
+
+	const RegCodeClientHandler = () => {
+		alert('Uspesna registracija'), setDisplayRegCodeClient('none');
+	};
+
+	const BackdropSideDrawer = () => {
+		if (isMobile) {
+			return <Backdrop display={() => props.displaySideDrawerBackdrop} />;
+		}
+		null;
+	};
+
+	const pickServices = obj => {
+		setCheckedServices(services => {
+			const serviceCopy = [...services];
+			const index = serviceCopy.findIndex(service => service.id = obj.id);
+			if(index > -1){
+				serviceCopy.splice(index,1)
+			}else{
+				serviceCopy.push({
+					id: obj.id,
+					price: obj.price,
+					duration: obj.duration
+				})
+			}
+			return serviceCopy;
+		})
+	};
+
+	// useEffect(() => {
+	// 	if (isPageLoad.current) {
+	// 		isPageLoad.current = false;
+	// 		return;
+	// 	}
+	// 	// eslint-disable-next-line react-hooks/exhaustive-deps
+	// }, [appointment]);
+
+
+	const saveNewAppointment = () => {
+		const durationSum = checkedServices.map(s => s.duration).reduce((sum, a) => sum + a, 0);
+		const dateStart = clickedCell.date.replace('00:00:00', getTimeString(clickedCell.time, true));
+		const dateEnd = clickedCell.date.replace('00:00:00', getTimeString(clickedCell.time + durationSum, true));
+		const newAppointment = {
+			Id: uuidv4(),
+			DateStart: dateStart,
+			DateEnd: dateEnd,
+			IdEmployee: null,
+			IdClient: chosenClient,
+			Services: checkedServices.map(s => ({
+				IdService: s.id,
+				Price: s.price
+			})),
+			Deleted: false,
+			Updated: false
+		}
+		saveAppointment(newAppointment).then(res => {
+			props.refreshData();
+		});
+		
+	}
+
+
 	const ServiceProviderCalendar = (
 		<div
 			className={classes.Calendar}
@@ -265,9 +309,7 @@ const Calendar = props => {
 					</tr>
 				</thead>
 				<tbody ref={cloneScrollTop}>
-					{WorkingHours.map(obj => (
-						<Time minMaxWorkingHours={obj.minMaxWorkingHours} key={obj.minMaxWorkingHours} />
-					))}
+					<Time minMaxWorkingHours={minMaxHoursDisplay()} key={minMaxWorkingHours} />
 				</tbody>
 			</table>
 			{/* right tabel, fixed verticaly, scrollable horizontaly */}
@@ -290,7 +332,6 @@ const Calendar = props => {
 							time={time}
 							workHourAppointments={workHourAppointments}
 							setClickedCell={setClickedCell}
-							clickedCellState={clickedCell}
 							clientPicker={() => {
 								setDisplayClientPicker('block'), props.showBackdrop();
 							}}
@@ -302,38 +343,10 @@ const Calendar = props => {
 		</div>
 	);
 
-	const RegCodeClientHandler = () => {
-		alert('Uspesna registracija'), setDisplayRegCodeClient('none');
-	};
-
-	const BackdropSideDrawer = () => {
-		if (isMobile) {
-			return <Backdrop display={() => props.displaySideDrawerBackdrop} />;
-		}
-		null;
-	};
-
-	const pickServices = obj => {
-		if (checkedServices.includes(obj.serviceId)) {
-			checkedServices.splice(
-				checkedServices.findIndex(el => el === obj.serviceId),
-				1
-			);
-		} else {
-			checkedServices.push(obj.serviceId);
-		}
-	};
-
-	useEffect(() => {
-		if (isPageLoad.current) {
-			isPageLoad.current = false;
-			return;
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [appointment]);
 
 	return (
-		<>
+		<>			
+
 			<RegCodeClientForm
 				displayRegCodeClient={displayRegCodeClient}
 				RegCodeClientHandler={RegCodeClientHandler}
@@ -364,16 +377,7 @@ const Calendar = props => {
 					<tr
 						className={classesUI.Clients}
 						key={user.id}
-						onClick={() => {
-							setDisplayServicesPicker('block'),
-								setChosenClient({
-									...chosenClient,
-									userId: user.userId,
-									name: user.name,
-									phone: user.phone,
-									email: user.email,
-								});
-						}}>
+						onClick={() => { setDisplayServicesPicker('block'), setChosenClient(user.id)}}>
 						<td>{user.name}</td>
 						<td style={{ width: '180px', minWidth: '180px' }}>{user.phone}</td>
 						<td>{user.email}</td>
@@ -385,18 +389,7 @@ const Calendar = props => {
 				setDisplayServicesPicker={setDisplayServicesPicker}
 				setDisplayClientPicker={setDisplayClientPicker}
 				hideBackdrop={props.hideBackdrop}
-				setAppointment={() =>
-					setAppointment({
-						...appointment,
-						date: clickedCell.date,
-						time: clickedCell.time,
-						serviceId: checkedServices,
-						userId: chosenClient.userId,
-						name: chosenClient.name,
-						phone: chosenClient.phone,
-						email: chosenClient.email,
-					})
-				}
+				setAppointment={saveNewAppointment}
 				bodyDataMob={props.services.map(serv => (
 					<div className={classesUI.ServicesMob} key={serv.serviceId}>
 						<tr>
