@@ -53,7 +53,7 @@ const Layout = props => {
 				transform={sideDrawerMob}
 				sideDrawerClose={sideDrawerCloseHandler}
 				colorCalIcon={props.colorCalIcon}
-				colorClinetsIcon={props.colorClinetsIcon}
+				colorClientsIcon={props.colorClientsIcon}
 				colorServicesIcon={props.colorServicesIcon}
 				colorProfileIcon={props.colorProfileIcon}
 				classNameCal={props.classNameCal}

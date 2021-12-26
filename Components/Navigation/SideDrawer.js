@@ -44,17 +44,23 @@ const SideDrawer = props => {
 										<p>Kalendar</p>
 									</div>
 								</NavItem>
-								<NavItem display="block" className={classes.NavItemServiceProviderMob} link="/">
+								<NavItem
+									display="block"
+									className={classes.NavItemServiceProviderMob}
+									link="/klijenti">
 									<div>
 										<FontAwesomeIcon
 											icon={faAddressBook}
 											className={classes.sideDrawerIconMob}
-											style={{ color: props.colorClinetsIcon }}
+											style={{ color: props.colorClientsIcon }}
 										/>
 										<p>Lista klijenata</p>
 									</div>
 								</NavItem>
-								<NavItem display="block" className={classes.NavItemServiceProviderMob} link="/">
+								<NavItem
+									display="block"
+									className={classes.NavItemServiceProviderMob}
+									link="/usluge">
 									<div>
 										<FontAwesomeIcon
 											icon={faCut}
@@ -136,7 +142,7 @@ const SideDrawer = props => {
 							<FontAwesomeIcon
 								icon={faAddressBook}
 								className={classes.sideDrawerIconPC}
-								style={{ color: props.colorClinetsIcon }}
+								style={{ color: props.colorClientsIcon }}
 							/>
 							<NavItem display="block" className={classes.NavItemServiceProviderPC} link="/">
 								<Input

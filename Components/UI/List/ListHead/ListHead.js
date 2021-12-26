@@ -4,11 +4,15 @@ import { useDeviceDetect } from '../../../../helpers/universalFunctions';
 import Distancer from '../../Distancer';
 import ListHeadButton from './ListHeadButton';
 import Select from '../../Select';
+import Input from '../../../UI/Forms/Input';
 
 import classes from '../../UI.module.scss';
 
 const ListHead = props => {
 	const { isMobile } = useDeviceDetect();
+
+	const inputClassName = isMobile ? classes.InputTextMob : classes.InputText;
+
 	return (
 		<>
 			<div className={isMobile ? classes.ListHeadMob : classes.ListHead}>
@@ -38,9 +42,9 @@ const ListHead = props => {
 				</Select>
 				<ListHeadButton
 					className={classes.CopyWeek}
-					value={isMobile ? '' : 'Pretraga'}
 					faIcon={faSearch}
 					display={props.displaySearch}
+					onClick={props.onClickSearch}
 				/>
 				<ListHeadButton
 					className={classes.CopyWeek}
@@ -61,6 +65,24 @@ const ListHead = props => {
 					faIcon={faSave}
 					display={isMobile ? 'none' : props.displaySave}
 					onClick={props.onSave}
+				/>
+			</div>
+			<div
+				className={isMobile ? classes.SearchBarContainerMob : classes.SearchBarContainer}
+				style={{ display: props.dipslaySerachBar }}>
+				<Input
+					type="text"
+					name="searchBar"
+					value={props.searchInput}
+					className={isMobile ? inputClassName : [inputClassName, classes.SearchBar].join(' ')}
+					onChange={e => props.setSearchInput(e.target.value.toLowerCase())}></Input>
+				<Input
+					type="button"
+					name="stopSearch"
+					value="Poništi"
+					onClick={() => {
+						props.setDipslaySerachBar('none'), props.setSearchInput('');
+					}}
 				/>
 			</div>
 		</>

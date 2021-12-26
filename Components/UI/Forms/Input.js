@@ -24,6 +24,7 @@ const Input = props => {
 			value={props.value}
 			id={props.id}
 			className={!props.invalid ? inputClasses.valid : inputClasses.invalid}
+			ref={props.ref}
 			placeholder={props.placeholder}
 			onInput={element => maxLengthCheck(element)}
 			onChange={props.onChange}
@@ -48,6 +49,7 @@ const Input = props => {
 				float: props.float,
 				fontSize: props.fontSize,
 				color: props.color,
+				pointerEvents: props.pointerEvents,
 			}}
 		/>
 	);

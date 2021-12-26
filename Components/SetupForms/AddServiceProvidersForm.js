@@ -7,10 +7,8 @@ import {
 } from '../../helpers/universalFunctions';
 import { saveServiceProviders } from '../../api/saveServiceProviders';
 import { getAllServiceProviders } from '../../api/getAllServiceProviders';
-import initServiceProviderForm from './initServiceProviderForm';
 
 import Input from '../UI/Forms/Input';
-import Select from '../UI/Select';
 import ServiceProvidersList from './ServiceProvidersList';
 
 import classes from '../../Components/SetupForms/SetupForms.module.scss';
@@ -19,18 +17,13 @@ import TextArea from 'antd/lib/input/TextArea';
 
 const AddServiceProvidersForm = props => {
 	const { isMobile } = useDeviceDetect();
-	const isPageLoad = useRef(true);
-	const modalAnimation = isMobile ? classes.modalInMob : classes.modalInPC;
-	const [serviceProviderInfo, setServiceProviderInfo] = useState([]);
-	const [serviceProvidersList, setServiceProvidersList] = useState([]);
-	const [serviceProviderId, setServiceProviderId] = useState(null);
-	const [editMode, setEditMode] = useState(false);
+	const isComponentLoad = useRef(true);
 	const [displayToolBox, setDisplayToolBox] = useState('none');
 
-	const [formInput, setFormInput] = useState(initServiceProviderForm);
-
 	const resetForm = () => {
-		setServiceProviderId(null), setFormInput(initSaloonForm), setEditMode(false);
+		props.setServiceProviderId(null),
+			props.setServProvFormInput(props.initServiceProviderForm),
+			props.setEditMode(false);
 	};
 
 	const getAllServiceProvidersHandler = async () => {
@@ -44,95 +37,108 @@ const AddServiceProvidersForm = props => {
 			.catch(error => {
 				if (error.response) {
 					console.log(error.response);
+					error.response.data.map(err => {
+						props.errorMessage(err.errorMessage);
+					});
 				} else if (error.request) {
 					console.log(error.request);
+					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
 				} else {
 					console.log('nesto drugo');
+					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
 				}
 			});
 		return api;
 	};
 
 	const addServiceProviderHandler = () => {
-		const api = saveServiceProviders(serviceProviderInfo)
+		const api = saveServiceProviders(props.serviceProviderInfo)
 			.then(response => {
-				console.log(response),
-					props.setIsLoading(false),
-					getAllServiceProvidersHandler(),
-					setServiceProviderId(null),
-					setFormInput(initServiceProviderForm);
+				console.log(response);
+				getAllServiceProvidersHandler();
+				props.completenessMessage();
 			})
 			.catch(error => {
 				props.setIsLoading(false);
 				if (error.response) {
 					console.log(error.response);
-					/* error.response.data.map(err => {
-						const Input = err.type[0].toLowerCase() + err.type.slice(1);
-						responseHandler(props.setShowResponseModal, modalAnimation, err.errorMessage, 'red');
-						updateValidity(setFormInput, Input, formInput, '', false);
-						props.setShowBackdrop(classes.backdropIn);
-					}); */
+					error.response.data.map(err => {
+						props.errorMessage(err.errorMessage);
+					});
 				} else if (error.request) {
 					console.log(error.request);
+					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
 				} else {
-					console.log('nesto drugo');
+					console.log(error);
+					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
 				}
 			});
 		api;
 	};
 
 	useEffect(() => {
-		if (isPageLoad.current) {
-			isPageLoad.current = false;
+		if (isComponentLoad.current) {
+			isComponentLoad.current = false;
 			return;
 		}
 		addServiceProviderHandler();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [serviceProviderInfo]);
+	}, [props.serviceProviderInfo]);
 
 	const onSubmit = e => {
 		e.preventDefault();
 		const formData = [
 			{
-				Id: serviceProviderId,
-				Name: formInput.serviceProviderName.value.trim(),
-				City: formInput.city.value.trim(),
-				/* Informations: `Telefon: ${formInput.mobOperator.value}${formInput.phone.value.trim()}`, */
-				Informations: formInput.informations.value,
+				Id: props.serviceProviderId,
+				Name: props.servProvFormInput.serviceProviderName.value.trim(),
+				City: props.servProvFormInput.city.value.trim(),
+				/* Informations: `Telefon: ${props.servProvFormInput.mobOperator.value}${props.servProvFormInput.phone.value.trim()}`, */
+				Informations: props.servProvFormInput.informations.value,
 			},
 		];
 
 		/* const numericPattern = /^\d+$/; */
-		if (!formInput.serviceProviderName.value.trim()) {
-			updateValidity(setFormInput, 'serviceProviderName', formInput, '', false);
+		if (!props.servProvFormInput.serviceProviderName.value.trim()) {
+			updateValidity(
+				props.setServProvFormInput,
+				'serviceProviderName',
+				props.servProvFormInput,
+				'',
+				false
+			);
 			responseHandler(
 				props.setShowResponseModal,
-				modalAnimation,
+				props.modalAnimationIn,
 				'Morate uneti naziv salona!',
 				'red'
 			);
 			props.setShowBackdrop(classes.backdropIn);
-		} else if (!formInput.city.value.trim()) {
-			updateValidity(setFormInput, 'city', formInput, '', false);
-			responseHandler(props.setShowResponseModal, modalAnimation, 'Morate uneti grad!', 'red');
+		} else if (!props.servProvFormInput.city.value.trim()) {
+			updateValidity(props.setServProvFormInput, 'city', props.servProvFormInput, '', false);
+			responseHandler(
+				props.setShowResponseModal,
+				props.modalAnimationIn,
+				'Morate uneti grad!',
+				'red'
+			);
 			props.setShowBackdrop(classes.backdropIn);
 		} else {
-			setServiceProviderInfo(formData);
-			setServiceProvidersList([...serviceProvidersList, formData.name]);
+			props.setServiceProviderInfo(formData);
+			props.setServiceProvidersList([...props.serviceProvidersList, formData.name]);
 			props.setIsLoading(true);
 		}
 	};
 
-	/* Load data for edit in formInput state */
+	/* Load data for edit in props.servProvFormInput state */
 	useEffect(() => {
 		props.serviceProviderData.filter(item => {
-			if (item.id === serviceProviderId) {
+			if (item.id === props.serviceProviderId) {
 				/* const phoneNumber = item.informations.replace(/\D/g, ''); */
 				/* console.log(item.informations.replace(/\D/g, '')); */
 				/* const mobOperator = phoneNumber.substring(0, 3);
 				const phone = phoneNumber.substring(3, phoneNumber.length); */
-				return setFormInput({
-					...formInput,
+				return props.setServProvFormInput({
+					...props.servProvFormInput,
 					serviceProviderName: {
 						value: item.name,
 						touched: false,
@@ -149,39 +155,57 @@ const AddServiceProvidersForm = props => {
 				});
 			}
 		});
-	}, [serviceProviderId]);
+	}, [props.serviceProviderId]);
 
 	const inputClassName = isMobile ? classes.InputTextMob : classes.InputText;
 	const textAreaClassName = isMobile ? classes.InformationsInputMob : classes.InformationsInput;
 	return (
-		<div style={{ display: props.displayAddServiceProvidersForm }}>
+		<div
+			style={{ display: props.displayAddServiceProvidersForm }}
+			className={props.isSetupGuide ? '' : classes.AddForm}>
 			<h3>Unesite podatke salona</h3>
 			<Input
 				type="text"
 				name="serviceProviderName"
 				placeholder="Naziv salona"
 				className={inputClassName}
-				value={formInput.serviceProviderName.value}
-				onChange={e => inputChangedHandler(e, 'serviceProviderName', formInput, setFormInput)}
-				invalid={!formInput.serviceProviderName.valid}
+				value={props.servProvFormInput.serviceProviderName.value}
+				onChange={e =>
+					inputChangedHandler(
+						e,
+						'serviceProviderName',
+						props.servProvFormInput,
+						props.setServProvFormInput
+					)
+				}
+				invalid={!props.servProvFormInput.serviceProviderName.valid}
 			/>
 			<Input
 				type="text"
 				name="city"
 				placeholder="Grad"
 				className={inputClassName}
-				value={formInput.city.value}
-				onChange={e => inputChangedHandler(e, 'city', formInput, setFormInput)}
-				invalid={!formInput.city.valid}
+				value={props.servProvFormInput.city.value}
+				onChange={e =>
+					inputChangedHandler(e, 'city', props.servProvFormInput, props.setServProvFormInput)
+				}
+				invalid={!props.servProvFormInput.city.valid}
 			/>
 			<TextArea
 				name="informations"
 				placeholder="Unesite informacije (adresa, telefon, e-mail, dodatne informacije...)"
 				className={textAreaClassName}
-				value={formInput.informations.value}
+				value={props.servProvFormInput.informations.value}
 				/* minRows={4} */
 				maxLength="500"
-				onChange={e => inputChangedHandler(e, 'informations', formInput, setFormInput)}
+				onChange={e =>
+					inputChangedHandler(
+						e,
+						'informations',
+						props.servProvFormInput,
+						props.setServProvFormInput
+					)
+				}
 			/>
 			<Input
 				type="button"
@@ -192,12 +216,11 @@ const AddServiceProvidersForm = props => {
 			/>
 			<ServiceProvidersList
 				serviceProviderData={props.serviceProviderData}
-				addForSelectedClassName={classes.addForSelected}
 				displayToolBox={displayToolBox}
 				setDisplayToolBox={setDisplayToolBox}
-				id={serviceProviderId}
-				setId={setServiceProviderId}
-				setEditMode={setEditMode}
+				id={props.serviceProviderId}
+				setId={props.setServiceProviderId}
+				setEditMode={props.setEditMode}
 			/>
 			<Input
 				type="button"
@@ -217,7 +240,7 @@ const AddServiceProvidersForm = props => {
 				displayForward="inline-block"
 				displaySave="block"
 				displayAdd="none"
-				displayStopEdit={editMode ? 'block' : 'none'}
+				displayStopEdit={props.editMode ? 'block' : 'none'}
 				stopEdit={() => resetForm()}
 			/>
 		</div>

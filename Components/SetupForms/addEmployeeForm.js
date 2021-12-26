@@ -7,7 +7,6 @@ import {
 } from '../../helpers/universalFunctions';
 import { saveEmployees } from '../../api/saveEmployees';
 import { getAllEmployees } from '../../api/getAllEmployees';
-import initEmployeeForm from './initEmployeeForm';
 
 import Input from '../UI/Forms/Input';
 import Select from '../UI/Select';
@@ -18,21 +17,9 @@ import classes from '../../Components/SetupForms/SetupForms.module.scss';
 
 const addEmployeeForm = props => {
 	const { isMobile } = useDeviceDetect();
-	const isPageLoad = useRef(true);
-	const modalAnimation = isMobile ? classes.modalInMob : classes.modalInPC;
+	const isComponentLoad = useRef(true);
 	const [userData, setUserData] = useState({});
-	const [employeeId, setEmployeeId] = useState(null);
-	const [editMode, setEditMode] = useState(false);
 	const [displayToolBox, setDisplayToolBox] = useState('none');
-	const serviceProviderId = props.serviceProviderData.map(obj => {
-		return obj.id;
-	});
-
-	const [formInput, setFormInput] = useState(initEmployeeForm);
-
-	const resetForm = () => {
-		setEmployeeId(null), setFormInput(initEmployeeForm), setEditMode(false);
-	};
 
 	const serviceProvidersPreview = serviceProviders => {
 		const listItems = serviceProviders.map(serviceProvider => {
@@ -54,11 +41,17 @@ const addEmployeeForm = props => {
 				props.setEmployeeData(getEmployeesData);
 			})
 			.catch(error => {
-				props.setIsLoading(false);
 				if (error.response) {
 					console.log(error.response);
+					error.response.data.map(err => {
+						props.errorMessage(err.errorMessage);
+					});
 				} else if (error.request) {
 					console.log(error.request);
+					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+				} else {
+					console.log(error);
+					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
 				}
 			});
 		return api;
@@ -67,25 +60,34 @@ const addEmployeeForm = props => {
 	const addEmployeesHandler = () => {
 		const api = saveEmployees(userData)
 			.then(response => {
-				console.log(response), props.setIsLoading(false);
-				getAllEmployeesHandler(), resetForm();
+				console.log(response);
+				getAllEmployeesHandler();
+				props.resetForm();
+				props.completnessMessageHandler('Radnik uspešno sačuvan');
 			})
 			.catch(error => {
-				props.setIsLoading(false);
 				if (error.response) {
+					error.response.data.map(err => {
+						console.log(error.response);
+						error.response.data.map(err => {
+							props.errorMessage(err.errorMessage);
+						});
+					});
 					console.log(error.response);
 				} else if (error.request) {
 					console.log(error.request);
+					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
 				} else {
-					console.log('nesto drugo');
+					console.log(error);
+					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
 				}
 			});
 		api;
 	};
 
 	useEffect(() => {
-		if (isPageLoad.current) {
-			isPageLoad.current = false;
+		if (isComponentLoad.current) {
+			isComponentLoad.current = false;
 			return;
 		}
 		addEmployeesHandler();
@@ -97,94 +99,112 @@ const addEmployeeForm = props => {
 		e.preventDefault();
 		const formData = [
 			{
-				Id: employeeId,
-				Name: formInput.name.value.trim(),
-				Phone: formInput.mobOperator.value + formInput.phone.value.trim(),
-				Email: formInput.email.value.trim(),
-				UserName: formInput.userName.value.trim(),
-				Password: formInput.password.value.trim(),
-				serviceProviderId: formInput.serviceProviderId.value,
+				Id: props.employeeId,
+				Name: props.emplyeesFormInput.name.value.trim(),
+				Phone:
+					props.emplyeesFormInput.mobOperator.value + props.emplyeesFormInput.phone.value.trim(),
+				Email: props.emplyeesFormInput.email.value.trim(),
+				UserName: props.emplyeesFormInput.userName.value.trim(),
+				Password: props.emplyeesFormInput.password.value.trim(),
+				serviceProviderId: props.emplyeesFormInput.serviceProviderId.value,
 			},
 		];
 
 		const emailPattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
 		const numericPattern = /^\d+$/;
-		if (!formInput.name.value.trim()) {
-			updateValidity(setFormInput, 'name', formInput, '', false);
+		if (!props.emplyeesFormInput.name.value.trim()) {
+			updateValidity(props.setEmplyeesFormInput, 'name', props.emplyeesFormInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				modalAnimation,
+				props.modalAnimationIn,
 				'Morate uneti ime radnika!',
 				'red'
 			);
 			props.setShowBackdrop(classes.backdropIn);
-		} else if (!formInput.email.value.trim() || !emailPattern.test(formInput.email.value)) {
-			updateValidity(setFormInput, 'email', formInput, '', false);
+		} else if (
+			!props.emplyeesFormInput.email.value.trim() ||
+			!emailPattern.test(props.emplyeesFormInput.email.value)
+		) {
+			updateValidity(props.setEmplyeesFormInput, 'email', props.emplyeesFormInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				modalAnimation,
+				props.modalAnimationIn,
 				'Morate uneti validnu e-mail adresu!',
 				'red'
 			);
 			props.setShowBackdrop(classes.backdropIn);
-		} else if (!formInput.mobOperator.value) {
-			updateValidity(setFormInput, 'mobOperator', formInput, '', false);
+		} else if (!props.emplyeesFormInput.mobOperator.value) {
+			updateValidity(props.setEmplyeesFormInput, 'mobOperator', props.emplyeesFormInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				modalAnimation,
+				props.modalAnimationIn,
 				'Morate izabrati pozivni broj!',
 				'red'
 			);
 			props.setShowBackdrop(classes.backdropIn);
 		} else if (
-			!formInput.phone.value.trim() ||
-			!numericPattern.test(formInput.phone.value) ||
-			formInput.phone.value.length < 6
+			!props.emplyeesFormInput.phone.value.trim() ||
+			!numericPattern.test(props.emplyeesFormInput.phone.value) ||
+			props.emplyeesFormInput.phone.value.length < 6
 		) {
-			updateValidity(setFormInput, 'phone', formInput, '', false);
+			updateValidity(props.setEmplyeesFormInput, 'phone', props.emplyeesFormInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				modalAnimation,
+				props.modalAnimationIn,
 				'Morate uneti validan broj telefona!',
 				'red'
 			);
 			props.setShowBackdrop(classes.backdropIn);
-		} else if (!formInput.userName.value.trim()) {
-			updateValidity(setFormInput, 'userName', formInput, '', false);
+		} else if (!props.emplyeesFormInput.userName.value.trim()) {
+			updateValidity(props.setEmplyeesFormInput, 'userName', props.emplyeesFormInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				modalAnimation,
+				props.modalAnimationIn,
 				'Morate uneti korisničko ime!',
 				'red'
 			);
 			props.setShowBackdrop(classes.backdropIn);
-		} else if (!formInput.password.value.trim() && !editMode) {
-			updateValidity(setFormInput, 'password', formInput, '', false);
-			responseHandler(props.setShowResponseModal, modalAnimation, 'Morate uneti lozinku!', 'red');
-			props.setShowBackdrop(classes.backdropIn);
-		} else if (!formInput.passConfirm.value.trim() && !editMode) {
-			updateValidity(setFormInput, 'passConfirm', formInput, '', false);
+		} else if (!props.emplyeesFormInput.password.value.trim() && !props.editMode) {
+			updateValidity(props.setEmplyeesFormInput, 'password', props.emplyeesFormInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				modalAnimation,
+				props.modalAnimationIn,
+				'Morate uneti lozinku!',
+				'red'
+			);
+			props.setShowBackdrop(classes.backdropIn);
+		} else if (!props.emplyeesFormInput.passConfirm.value.trim() && !props.editMode) {
+			updateValidity(props.setEmplyeesFormInput, 'passConfirm', props.emplyeesFormInput, '', false);
+			responseHandler(
+				props.setShowResponseModal,
+				props.modalAnimationIn,
 				'Morate uneti potvrdu izabrane lozinke!',
 				'red'
 			);
 			props.setShowBackdrop(classes.backdropIn);
-		} else if (formInput.password.value.trim() !== formInput.passConfirm.value.trim()) {
-			updateValidity(setFormInput, 'password', formInput, '', false);
+		} else if (
+			props.emplyeesFormInput.password.value.trim() !==
+			props.emplyeesFormInput.passConfirm.value.trim()
+		) {
+			updateValidity(props.setEmplyeesFormInput, 'password', props.emplyeesFormInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				modalAnimation,
+				props.modalAnimationIn,
 				'Lozinka i potvrda moraju biti jednake!',
 				'red'
 			);
 			props.setShowBackdrop(classes.backdropIn);
-		} else if (formInput.serviceProviderId.value === '') {
-			updateValidity(setFormInput, 'serviceProviderId', formInput, '', false);
+		} else if (props.emplyeesFormInput.serviceProviderId.value === '') {
+			updateValidity(
+				props.setEmplyeesFormInput,
+				'serviceProviderId',
+				props.emplyeesFormInput,
+				'',
+				false
+			);
 			responseHandler(
 				props.setShowResponseModal,
-				modalAnimation,
+				props.modalAnimationIn,
 				'Morate izabrati salon za koji želite dodati radnika!',
 				'red'
 			);
@@ -195,14 +215,14 @@ const addEmployeeForm = props => {
 		}
 	};
 
-	/* Load data for edit in formInput state */
+	/* Load data for edit in props.emplyeesFormInput state */
 	useEffect(() => {
 		props.employeeData.filter(item => {
-			if (item.id === employeeId) {
+			if (item.id === props.employeeId) {
 				const mobOperator = item.phone.substring(0, 3);
 				const phone = item.phone.substring(3, item.phone.length);
-				return setFormInput({
-					...formInput,
+				return props.setEmplyeesFormInput({
+					...props.emplyeesFormInput,
 					name: {
 						value: item.name,
 						touched: false,
@@ -236,19 +256,28 @@ const addEmployeeForm = props => {
 				});
 			}
 		});
-	}, [employeeId]);
+	}, [props.employeeId]);
 
 	const inputClassName = isMobile ? classes.InputTextMob : classes.InputText;
 	const readOnlyClassName = isMobile ? classes.ReadOnlyMob : classes.ReadOnly;
 	return (
-		<div style={{ display: props.displayAddEmployeeForm }}>
+		<div
+			style={{ display: props.displayAddEmployeeForm }}
+			className={props.isSetupGuide ? '' : classes.AddForm}>
 			<h3>Unesite radnike</h3>
 			<Select
 				name="serviceProviderId"
 				className={classes.SelectInputText}
-				value={formInput.serviceProviderId.value}
-				invalid={!formInput.serviceProviderId.valid}
-				onChange={e => inputChangedHandler(e, 'serviceProviderId', formInput, setFormInput)}>
+				value={props.emplyeesFormInput.serviceProviderId.value}
+				invalid={!props.emplyeesFormInput.serviceProviderId.valid}
+				onChange={e =>
+					inputChangedHandler(
+						e,
+						'serviceProviderId',
+						props.emplyeesFormInput,
+						props.setEmplyeesFormInput
+					)
+				}>
 				<option value="" disabled selected hidden>
 					Izaberite salon
 				</option>
@@ -259,36 +288,44 @@ const addEmployeeForm = props => {
 				name="name"
 				placeholder="Unesite ime i prezime"
 				className={inputClassName}
-				value={formInput.name.value}
-				onChange={e => inputChangedHandler(e, 'name', formInput, setFormInput)}
-				invalid={!formInput.name.valid}
+				value={props.emplyeesFormInput.name.value}
+				onChange={e =>
+					inputChangedHandler(e, 'name', props.emplyeesFormInput, props.setEmplyeesFormInput)
+				}
+				invalid={!props.emplyeesFormInput.name.valid}
 			/>
 			<Input
 				type="text"
 				name="userName"
-				className={editMode ? readOnlyClassName : inputClassName}
+				className={props.editMode ? readOnlyClassName : inputClassName}
 				placeholder="Unesite korisničko ime"
-				value={formInput.userName.value}
+				value={props.emplyeesFormInput.userName.value}
 				maxLength="50"
-				onChange={e => inputChangedHandler(e, 'userName', formInput, setFormInput)}
-				invalid={!formInput.userName.valid}
+				onChange={e =>
+					inputChangedHandler(e, 'userName', props.emplyeesFormInput, props.setEmplyeesFormInput)
+				}
+				invalid={!props.emplyeesFormInput.userName.valid}
 			/>
 			<Input
 				type="text"
 				name="email"
 				placeholder="Unesite  e-mail adresu"
 				className={inputClassName}
-				value={formInput.email.value}
-				onChange={e => inputChangedHandler(e, 'email', formInput, setFormInput)}
-				invalid={!formInput.email.valid}
+				value={props.emplyeesFormInput.email.value}
+				onChange={e =>
+					inputChangedHandler(e, 'email', props.emplyeesFormInput, props.setEmplyeesFormInput)
+				}
+				invalid={!props.emplyeesFormInput.email.valid}
 			/>
 			<Select
 				name="mobOperator"
 				className={isMobile ? classes.MobileOperatorMob : classes.MobileOperator}
 				display="inline-block"
-				value={formInput.mobOperator.value}
-				onChange={e => inputChangedHandler(e, 'mobOperator', formInput, setFormInput)}
-				invalid={!formInput.mobOperator.valid}>
+				value={props.emplyeesFormInput.mobOperator.value}
+				onChange={e =>
+					inputChangedHandler(e, 'mobOperator', props.emplyeesFormInput, props.setEmplyeesFormInput)
+				}
+				invalid={!props.emplyeesFormInput.mobOperator.valid}>
 				<option value="" disabled selected>
 					06x
 				</option>
@@ -309,33 +346,39 @@ const addEmployeeForm = props => {
 				className={isMobile ? classes.PhoneNumberMob : classes.PhoneNumber}
 				placeholder="Unesite broj telefona"
 				maxLength="7"
-				value={formInput.phone.value}
-				onChange={e => inputChangedHandler(e, 'phone', formInput, setFormInput)}
-				invalid={!formInput.phone.valid}
+				value={props.emplyeesFormInput.phone.value}
+				onChange={e =>
+					inputChangedHandler(e, 'phone', props.emplyeesFormInput, props.setEmplyeesFormInput)
+				}
+				invalid={!props.emplyeesFormInput.phone.valid}
 			/>
 			<Input
 				type="password"
 				name="password"
 				className={inputClassName}
 				placeholder="Izaberite lozinku"
-				value={formInput.password.value}
+				value={props.emplyeesFormInput.password.value}
 				maxLength="50"
-				onChange={e => inputChangedHandler(e, 'password', formInput, setFormInput)}
-				invalid={!formInput.password.valid}
+				onChange={e =>
+					inputChangedHandler(e, 'password', props.emplyeesFormInput, props.setEmplyeesFormInput)
+				}
+				invalid={!props.emplyeesFormInput.password.valid}
 			/>
 			<Input
 				type="password"
 				name="passConfirm"
 				className={inputClassName}
 				placeholder="Ponovo unseite lozinku"
-				value={formInput.passConfirm.value}
+				value={props.emplyeesFormInput.passConfirm.value}
 				maxLength="50"
-				onChange={e => inputChangedHandler(e, 'passConfirm', formInput, setFormInput)}
-				invalid={!formInput.passConfirm.valid}
+				onChange={e =>
+					inputChangedHandler(e, 'passConfirm', props.emplyeesFormInput, props.setEmplyeesFormInput)
+				}
+				invalid={!props.emplyeesFormInput.passConfirm.valid}
 			/>
 			<Input
 				type="button"
-				value="dodaj"
+				value={props.editMode ? 'Sačuvaj' : 'Dodaj'}
 				display={isMobile ? 'none' : 'block'}
 				className={[classes.ChoiceButton, classes.Add].join(' ')}
 				onClick={onSubmit}
@@ -343,34 +386,45 @@ const addEmployeeForm = props => {
 			<EmployeesList
 				listOfEmployees={props.employeeData}
 				addForSelectedClassName={classes.addForSelected}
-				id={employeeId}
-				setId={setEmployeeId}
-				selectedServiceProvider={formInput.serviceProviderId.value}
-				setEditMode={setEditMode}
+				id={props.employeeId}
+				setId={props.setEmployeeId}
+				selectedServiceProvider={props.emplyeesFormInput.serviceProviderId.value}
+				setEditMode={props.setEditMode}
 				displayToolBox={displayToolBox}
 				setDisplayToolBox={setDisplayToolBox}
 				emptyListMessage={'Izaberite salon'}
 			/>
 			<Input
 				type="button"
-				value="nastavi >>>"
-				display={isMobile ? 'none' : 'inline-block'}
+				value="Nastavi >>>"
+				display={props.displayForward}
 				className={isMobile ? classes.ForwardMob : classes.Forward}
 				onClick={() => {
-					props.setDisplayAddEmployeeForm('none'), props.setDisplayAddServicesForm('block');
+					props.setDisplayAddEmployeeForm('none');
+					props.setDisplayAddServicesForm('block');
 				}}
+			/>
+			<Input
+				type="button"
+				value="Odustani"
+				display={props.displayStopEdit}
+				color="red"
+				className={isMobile ? classes.ForwardMob : classes.Forward}
+				onClick={() => props.resetForm()}
 			/>
 			<WrappedButtonsMob
 				forward={() => {
-					props.setDisplayAddEmployeeForm('none'), props.setDisplayAddServicesForm('block');
+					props.setDisplayAddEmployeeForm('none');
+					props.setDisplayAddServicesForm('block');
 				}}
 				save={onSubmit}
 				isMobile={isMobile}
-				displayForward="block"
+				displayForward={props.displayForwardMob}
 				displaySave="block"
 				displayAdd="none"
-				displayStopEdit={editMode ? 'block' : 'none'}
-				stopEdit={() => resetForm()}
+				displayStopEdit={props.displayStopEditMob}
+				stopEdit={() => props.resetForm()}
+				validation={true}
 			/>
 		</div>
 	);
