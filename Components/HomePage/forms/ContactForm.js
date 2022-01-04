@@ -3,9 +3,9 @@ import { useState, useRef, useEffect } from 'react';
 /* import axios from '../../../utils/Axios/axios-appointments'; */
 import {
 	useDeviceDetect,
-	updateObject,
-	checkValidity,
 	updateValidity,
+	inputChangedHandler,
+	responseHandler,
 } from '../../../helpers/universalFunctions';
 import initState from './initState';
 
@@ -15,33 +15,12 @@ import TextArea from '../../UI/Forms/TextArea';
 
 import classes from '../HomePage.scss';
 
-const ContactForm = () => {
+const ContactForm = props => {
 	const { isMobile } = useDeviceDetect();
 	const isPageLoad = useRef(true);
 	const [message, setMessage] = useState([]);
 
-	const [formInput, setFormInput] = useState({
-		name: {
-			value: '',
-			touched: false,
-			valid: true,
-		},
-		email: {
-			value: '',
-			touched: false,
-			valid: true,
-		},
-		phone: {
-			value: '',
-			touched: false,
-			valid: true,
-		},
-		message: {
-			value: '',
-			touched: false,
-			valid: true,
-		},
-	});
+	const [formInput, setFormInput] = useState(initState);
 
 	/* const regHandler = () => {
     const api = axios */
@@ -65,7 +44,7 @@ const ContactForm = () => {
 		/*  regHandler(); */
 	}, [message]);
 
-	const inputChangedHandler = (e, inputIdentifier) => {
+	/* const inputChangedHandler = (e, inputIdentifier) => {
 		const updatedFormElement = updateObject(formInput[inputIdentifier], {
 			value: e.target.value,
 			valid: checkValidity(e.target.value, formInput[inputIdentifier]),
@@ -77,7 +56,7 @@ const ContactForm = () => {
 				[inputIdentifier]: updatedFormElement,
 			})
 		);
-	};
+	}; */
 
 	// Function for limit maxLength for input type='number'
 	const maxLengthCheck = element => {
@@ -99,20 +78,40 @@ const ContactForm = () => {
 		const numericPattern = /^\d+$/;
 		if (!formInput.name.value.trim()) {
 			updateValidity(setFormInput, 'name', formInput, '', false);
-			alert('Morate uneti Ime i prezime');
+			responseHandler(
+				props.setShowResponseModal,
+				'Morate uneti Ime i prezime',
+				'red',
+				!props.triger
+			);
 		} else if (!formInput.email.value.trim() || !emailPattern.test(formInput.email.value)) {
 			updateValidity(setFormInput, 'email', formInput, '', false);
-			alert('Morate uneti validnu e-mail adresu');
+			responseHandler(
+				props.setShowResponseModal,
+				'Morate uneti validnu e-mail adresu',
+				'red',
+				!props.triger
+			);
 		} else if (
 			!formInput.phone.value.trim() ||
 			!numericPattern.test(formInput.phone.value) ||
 			formInput.phone.value.length < 9
 		) {
 			updateValidity(setFormInput, 'phone', formInput, '', false);
-			alert('Morate uneti validan broj telefona');
+			responseHandler(
+				props.setShowResponseModal,
+				'Morate uneti validan broj telefona',
+				'red',
+				!props.triger
+			);
 		} else if (!formInput.message.value.trim()) {
 			updateValidity(setFormInput, 'message', formInput, '', false);
-			alert('Morate uneti poruku');
+			responseHandler(
+				props.setShowResponseModal,
+				'Morate uneti tekst poruke',
+				'red',
+				!props.triger
+			);
 		} else {
 			setMessage(formData);
 		}
@@ -140,7 +139,7 @@ const ContactForm = () => {
 				maxLength="30"
 				placeholder="Unesite Ime i Prezime"
 				className={classes.Contact_Input}
-				onChange={e => inputChangedHandler(e, 'name')}
+				onChange={e => inputChangedHandler(e, 'name', formInput, setFormInput)}
 				invalid={!formInput.name.valid}
 			/>
 			<Input
@@ -149,7 +148,7 @@ const ContactForm = () => {
 				maxLength="50"
 				placeholder="Unesite E-mail adresu"
 				className={classes.Contact_Input}
-				onChange={e => inputChangedHandler(e, 'email')}
+				onChange={e => inputChangedHandler(e, 'email', formInput, setFormInput)}
 				invalid={!formInput.email.valid}
 			/>
 			<Input
@@ -158,7 +157,7 @@ const ContactForm = () => {
 				maxLength="10"
 				placeholder="Unesite broj telefona"
 				className={classes.Contact_Input}
-				onChange={e => inputChangedHandler(e, 'phone')}
+				onChange={e => inputChangedHandler(e, 'phone', formInput, setFormInput)}
 				invalid={!formInput.phone.valid}
 			/>
 			<TextArea
@@ -168,7 +167,7 @@ const ContactForm = () => {
 				minRows="5"
 				maxRows="40"
 				className={classes.Contact_Input}
-				onChange={e => inputChangedHandler(e, 'message')}
+				onChange={e => inputChangedHandler(e, 'message', formInput, setFormInput)}
 				invalid={!formInput.message.valid}
 			/>
 			<Input type="submit" className={classes.Submit} display="block" value="POŠALJI" />

@@ -946,7 +946,7 @@
 	bottom: 0;
 	margin-bottom: -100vh;
 	opacity: 0;
-	z-index: 999999;
+	z-index: 99999999 !important;
 	border: 3px dashed $base-orange-color;
 	p {
 		padding: 5px;
@@ -1205,11 +1205,14 @@
 		flex-direction: column;
 		box-sizing: border-box;
 		max-height: 80vh;
+		overflow-x: hidden;
 		overflow-y: overlay;
 		.TbodyRow {
+			@include flexBoxCenter;
 			display: flex;
 			flex-direction: row;
 			width: 100%;
+			border: 1px solid #764402;
 			div {
 				display: block;
 				box-sizing: border-box;
@@ -1218,7 +1221,9 @@
 				font-size: 1vw;
 				text-align: center;
 				word-wrap: break-word;
-				border: 1px solid #764402;
+				border: none;
+				border-right: 1px solid #764402;
+				border-left: 1px solid #764402;
 				color: $list-name-color;
 			}
 		}
@@ -1246,19 +1251,23 @@
 			width: 100%;
 			.NumMob {
 				@include flexBoxCenter;
+				width: 5vw !important;
 			}
 			.ListDataContainer {
 				display: inline-block;
-				width: 100%;
+				width: 100% !important;
 				margin: 0;
 				padding: 0;
 				div {
 					border: none;
 					padding: 2px 0;
+					width: 70vw !important;
 				}
 			}
 			.ListOptions {
 				@include flexBoxCenter;
+				width: 100%;
+				width: 5vw !important;
 			}
 			div {
 				display: block;

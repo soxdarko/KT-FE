@@ -65,10 +65,14 @@ const AddServicesForm = props => {
 				console.log(response);
 				props.getAllServicesHandler();
 				props.resetForm();
-				/* props.isSetupGuide ? props.setServicesFormInput(props.initServicesForm) : {}; */
-				/* setServiceId(null); */
-				props.completnessMessageHandler('Uspešno sačuvano');
+				props.isSetupGuide ? props.setServicesFormInput(props.initServicesForm) : {};
+				props.setMessageHandler(
+					props.editMode ? 'Izmene uspešno sačuvane' : 'Usluga uspešno dodata'
+				);
+				props.setShowInfoModal(!props.showInfoModal);
+				props.setShowBackdrop(classes.backdropOut);
 				props.setDisplayAddServicesForm(props.isSetupGuide ? 'block' : 'none');
+				props.setIsLoading(false);
 			})
 			.catch(error => {
 				if (error.response) {
@@ -78,10 +82,22 @@ const AddServicesForm = props => {
 					}); */
 				} else if (error.request) {
 					console.log(error.request);
-					props.errorMessage('Došlo je do greške, pokušajte ponovo');
+					responseHandler(
+						props.setShowResponseModal,
+						'Došlo je do greške, kontaktirajte nas putem kontakt forme!',
+						'red',
+						'block',
+						!props.triger
+					);
 				} else {
 					console.log(error);
-					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+					responseHandler(
+						props.setShowResponseModal,
+						'Došlo je do greške, kontaktirajte nas putem kontakt forme!',
+						'red',
+						'block',
+						!props.triger
+					);
 				}
 			});
 		api;
@@ -119,26 +135,29 @@ const AddServicesForm = props => {
 			updateValidity(props.setServicesFormInput, 'serviceName', props.servicesFormInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				props.modalAnimationIn,
 				'Morate uneti naziv usluge!',
-				'red'
+				'red',
+				'block',
+				!props.triger
 			);
 			props.setShowBackdrop(classes.backdropIn);
 		} else if (!props.servicesFormInput.duration.value) {
 			updateValidity(props.setServicesFormInput, 'duration', props.servicesFormInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				props.modalAnimationIn,
 				'Morate izabrati dužinu trajanja usluge!',
-				'red'
+				'red',
+				'block',
+				!props.triger
 			);
 			props.setShowBackdrop(classes.backdropIn);
 		} else if (props.checkedEmployees.length === 0) {
 			responseHandler(
 				props.setShowResponseModal,
-				props.modalAnimationIn,
 				'Morate izabrati minimum jednog radnika!',
-				'red'
+				'red',
+				'block',
+				!props.triger
 			);
 			props.setShowBackdrop(classes.backdropIn);
 		} else {
@@ -327,7 +346,7 @@ const AddServicesForm = props => {
 					display={props.displayCancel}
 					color="red"
 					className={isMobile ? classes.ForwardMob : classes.Forward}
-					onClick={() => props.abortAddService()}
+					onClick={() => props.cancelAddService()}
 				/>
 				{/* <Select
 				displaySelect="block"
@@ -362,6 +381,7 @@ const AddServicesForm = props => {
 					props.setDisplayAddServicesForm('none');
 					isMobile ? {} : props.setServicesFormInput(props.initServicesForm);
 					props.setShowBackdrop(classes.backdropOut);
+					props.setCheckedEmployees([]);
 				}}
 				save={onSubmit}
 				isMobile={isMobile && props.displayAddServicesForm === 'block' ? true : false}

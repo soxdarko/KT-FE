@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import nextCookie from 'next-cookies';
 import Link from 'next/link';
 import Head from 'next/head';
-import { useDeviceDetect } from '../helpers/universalFunctions';
+import { useDeviceDetect, infoMessageHandler } from '../helpers/universalFunctions';
 
 import Layout from '../Components/hoc/Layout/Layout';
 import Backdrop from '../Components/UI/Backdrop';
@@ -30,9 +30,6 @@ const Index = () => {
 	const isPageLoad = useRef(true);
 	const [regColor, setRegColor] = useState('orange');
 	const [loginColor, setLoginColor] = useState('white');
-	const modalAnimationOut = isMobile ? classes.modalOutMob : classes.modalOutPC;
-	const modalAnimationIn = isMobile ? classes.modalInMob : classes.modalInPC;
-	const [completnessMessage, setCompletnessMessage] = useState('Uspešno sačuvano!');
 	const [isLoading, setIsLoading] = useState(false);
 	const [userStatus, setUserStatus] = useState('');
 	const [showBackdrop, setShowBackdrop] = useState('');
@@ -42,64 +39,63 @@ const Index = () => {
 	const [displayRegServProv, setDisplayRegServProv] = useState('none');
 	const [displayClientVerify, setDisplayClientVerify] = useState('none');
 	const [displayPassRecovery, setDisplayPassRecovery] = useState('none');
-	const [loginInputId, setLoginInputId] = useState(null);
-	const [showInfoModal, setShowInfoModal] = useState('');
+	/* const [loginInputId, setLoginInputId] = useState(null); */
+	const [showInfoModal, setShowInfoModal] = useState({
+		triger: false,
+		message: null,
+	});
 	const [showResponseModal, setShowResponseModal] = useState({
-		animation: '',
+		triger: false,
 		message: null,
 		border: '',
-		showButton: 'block',
 	});
 
 	const regTabHandler = () => {
-		setRegColor('orange'),
-			setLoginColor('white'),
-			setDisplayRegServProv('block'),
-			setDisplayLogin('none');
+		setRegColor('orange');
+		setLoginColor('white');
+		setDisplayRegServProv('block');
+		setDisplayLogin('none');
 	};
 
 	const loginTabHandler = () => {
-		setRegColor('white'),
-			setLoginColor('orange'),
-			setDisplayRegServProv('none'),
-			setDisplayLogin('block');
+		setRegColor('white');
+		setLoginColor('orange');
+		setDisplayRegServProv('none');
+		setDisplayLogin('block');
 	};
 
-	const completnessMessageHandler = message => {
-		setShowInfoModal(modalAnimationIn);
-		setIsLoading(false);
-		setCompletnessMessage(message);
-	};
+	function loginFormHandler() {
+		setDisplayTabContainer('block');
+		setDisplayTabButtons('block');
+		setDisplayLogin('block');
+		setDisplayRegServProv('none');
+		setShowBackdrop(classes.backdropIn);
+		setRegColor('white');
+		setLoginColor('orange');
+	}
+
+	function regServProvFormHandler() {
+		setDisplayTabContainer('block');
+		setDisplayRegServProv('block');
+		setDisplayLogin('none');
+		setShowBackdrop(classes.backdropIn);
+		setRegColor('orange');
+		setLoginColor('white');
+	}
 
 	useEffect(() => {
 		if (isPageLoad.current) {
 			isPageLoad.current = false;
 			return;
 		}
-		const autoModalDisplay = () => {
-			setShowInfoModal(modalAnimationOut);
-		};
-
-		const timer = setTimeout(() => {
-			autoModalDisplay();
-		}, 2000);
-
-		return () => clearTimeout(timer);
-	}, [showInfoModal]);
-
-	useEffect(() => {
-		if (isPageLoad.current) {
-			isPageLoad.current = false;
-			return;
-		}
-		const loginInput = document.getElementById('login1stInput');
-		setLoginInputId(loginInput);
+		/* const loginInput = document.getElementById('login1stInput'); */
+		/* setLoginInputId(loginInput); */
 	}, []);
 
-	const focusInputHandler = element => {
+	/* const focusInputHandler = element => {
 		element.focus();
 		console.log(element);
-	};
+	}; */
 
 	const Navigation = (
 		<NavItems display={isMobile ? 'none' : 'inherit'}>
@@ -111,14 +107,7 @@ const Index = () => {
 				className={classes.IndexToolbarNavBtn}
 				displayLoginBtn="block"
 				marginLeft="10px"
-				onClick={() => {
-					setDisplayTabContainer('block');
-					setDisplayLogin('block');
-					setDisplayRegServProv('none');
-					setShowBackdrop(classes.backdropIn);
-					setRegColor('white');
-					setLoginColor('orange');
-				}}>
+				onClick={() => loginFormHandler()}>
 				<a>Prijava</a>
 			</NavItem>
 			<NavItem
@@ -127,12 +116,8 @@ const Index = () => {
 				displayRegBtn="block"
 				marginLeft="85px"
 				onClick={() => {
-					setDisplayTabContainer('block');
-					setDisplayRegServProv('block');
-					setDisplayLogin('none');
-					setShowBackdrop(classes.backdropIn);
-					setRegColor('orange');
-					setLoginColor('white');
+					regServProvFormHandler();
+					/* focusInputHandler(loginInputId); */
 				}}>
 				<a>Registracija</a>
 			</NavItem>
@@ -153,22 +138,16 @@ const Index = () => {
 	const Authentifiacion = (
 		<>
 			<Backdrop backdropAnimation={showBackdrop} />
-			<InfoModal message={completnessMessage} modalAnimation={showInfoModal} borderColor="green" />
+			<InfoModal
+				message={showInfoModal.message}
+				showInfoModal={showInfoModal}
+				borderColor="green"
+			/>
 			<ResponseModal
-				message={showResponseModal.message}
-				modalAnimation={showResponseModal.animation}
-				displayLinkButton="none"
-				displayFormButton="block"
-				borderColor={showResponseModal.border}
-				showButton={showResponseModal.showButton}
-				link="/"
-				onClick={() => {
-					setShowResponseModal({
-						...showResponseModal,
-						animation: modalAnimationOut,
-						border: null,
-					});
-				}}
+				showResponseModal={showResponseModal}
+				setShowBackdrop={setShowBackdrop}
+				holdBackdrop={true}
+				setIsLoading={setIsLoading}
 			/>
 			<div
 				className={isMobile ? classes.TabContainerMob : classes.TabContainer}
@@ -185,35 +164,36 @@ const Index = () => {
 						style={{ color: loginColor, display: displayTabButtons }}
 						onClick={() => {
 							loginTabHandler();
-							focusInputHandler(loginInputId);
+							/* focusInputHandler(loginInputId); */
 						}}>
 						Login
 					</button>
 				</div>
 				<Login
 					displayLogin={displayLogin}
-					modalAnimationIn={modalAnimationIn}
 					setDisplayLogin={setDisplayLogin}
 					setDisplayPassRecovery={setDisplayPassRecovery}
 					setDisplayRegServProv={setDisplayRegServProv}
 					setShowBackdrop={setShowBackdrop}
+					showResponseModal={showResponseModal}
 					setShowResponseModal={setShowResponseModal}
+					infoMessageHandler={infoMessageHandler}
+					setShowInfoModal={setShowInfoModal}
+					triger={showResponseModal.triger}
 					setIsLoading={setIsLoading}
 					setUserStatus={setUserStatus}
 					setDisplayTabContainer={setDisplayTabContainer}
-					setDisplayTabButtons={setDisplayTabButtons}
-					completnessMessageHandler={completnessMessageHandler}
 					inputId={'login1stInput'}
 				/>
 				<RegServProv
 					displayRegServProv={displayRegServProv}
-					modalAnimationIn={modalAnimationIn}
 					setDisplayRegServProv={setDisplayRegServProv}
 					setIsLoading={setIsLoading}
 					setShowBackdrop={setShowBackdrop}
+					showResponseModal={showResponseModal}
 					setShowResponseModal={setShowResponseModal}
+					triger={showResponseModal.triger}
 					setDisplayTabContainer={setDisplayTabContainer}
-					setDisplayTabButtons={setDisplayTabButtons}
 				/>
 				<PassRecovery
 					displayPassRecovery={displayPassRecovery}
@@ -278,25 +258,19 @@ const Index = () => {
 				<Slider />
 				<OurServices />
 				<hr style={{ marginTop: isMobile ? '10px' : '40px' }} />
-				<ContactForm />
+				<ContactForm
+					setIsLoading={setIsLoading}
+					setShowBackdrop={setShowBackdrop}
+					showResponseModal={showResponseModal}
+					setShowResponseModal={setShowResponseModal}
+					triger={showResponseModal.triger}
+				/>
 				<AuthButton
 					onClickLogin={() => {
-						setDisplayTabContainer('block');
-						setDisplayTabButtons('block');
-						setDisplayLogin('block');
-						setDisplayRegServProv('none');
-						setShowBackdrop(classes.backdropIn);
-						setRegColor('white');
-						setLoginColor('orange');
-						focusInputHandler(loginInputId);
+						loginFormHandler();
 					}}
 					onClickReg={() => {
-						setDisplayTabContainer('block');
-						setDisplayTabButtons('block');
-						setDisplayRegServProv('block');
-						setDisplayLogin('none');
-						setShowBackdrop(classes.backdropIn);
-						setRegColor('orange');
+						regServProvFormHandler();
 						setLoginColor('white');
 					}}
 					diplayBackdrop={

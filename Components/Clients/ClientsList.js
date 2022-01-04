@@ -185,12 +185,10 @@ const ClientsList = props => {
 										style={{ width: removeWidth }}
 										onClick={() => {
 											props.setClientId(client.id);
-											props.setShowConfirmModal(props.modalAnimationIn);
-											props.responseHandler(
+											props.confirmHandler(
 												props.setShowConfirmModal,
-												props.modalAnimationIn,
 												'Da li ste sigurni da želite ukloniti klijenta sa liste?',
-												'#FDFD96' //pastel yellow
+												!props.triger
 											);
 											props.setShowBackdrop(classes.backdropIn);
 										}}>

@@ -19,23 +19,13 @@ const PassRecovery = props => {
 	const modalAnimation = isMobile ? classes.modalInMob : classes.modalInPC;
 	const [userData, setUserData] = useState([]);
 
-	const [formInput, setFormInput] = useState({
-		mobOperator: {
-			value: '',
-			valid: true,
-			touched: false,
-		},
-		phone: {
-			value: '',
-			valid: true,
-			touched: false,
-		},
-		email: {
-			value: '',
-			valid: true,
-			touched: false,
-		},
-	});
+	const [formInput, setFormInput] = useState(initState);
+
+	function closeForm() {
+		props.setDisplayPassRecovery('none');
+		props.setDisplayLogin('block');
+		setFormInput(initState);
+	}
 
 	/* const passRecoveryHandler = () => {
 		const api = axios
@@ -166,11 +156,7 @@ const PassRecovery = props => {
 				margin="20px auto 5px auto"
 				color="orangered"
 				className={isMobile ? classes.FormButtonCloseMob : classes.FormButton}
-				onClick={() => {
-					props.setDisplayPassRecovery('none'),
-						props.setDisplayLogin('block'),
-						setFormInput(initState);
-				}}
+				onClick={() => closeForm()}
 			/>
 		</form>
 	);

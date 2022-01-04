@@ -14,20 +14,22 @@ import classes from '../../UI/UI.module.scss';
 
 const Login = props => {
 	const { isMobile } = useDeviceDetect();
-	const isPageLoad = useRef(true);
+	const isComponentLoad = useRef(true);
 	const [loginUser, setLoginUser] = useState([]);
-	const [formInput, setFormInput] = useState({
-		userName: {
-			value: '',
-			touched: false,
-			valid: true,
-		},
-		password: {
-			value: '',
-			touched: false,
-			valid: true,
-		},
-	});
+	const [formInput, setFormInput] = useState(initState);
+
+	function closeForm() {
+		props.setDisplayLogin('none');
+		props.setDisplayTabContainer('none');
+		setFormInput(initState);
+		props.setShowBackdrop(classes.backdropOut);
+	}
+
+	function passRecoveryFormHandler() {
+		props.setDisplayLogin('none');
+		props.setDisplayPassRecovery('block');
+		setFormInput(initState);
+	}
 
 	const getGuideStatus = async () => {
 		const api = await getCompanyGuideStatus()
@@ -36,30 +38,29 @@ const Login = props => {
 				props.setUserStatus(getGuideStatusData);
 			})
 			.catch(error => {
-				props.setIsLoading(false);
 				if (error.response) {
 					console.log(error.response);
 					responseHandler(
 						props.setShowResponseModal,
-						props.modalAnimationIn,
 						'Došlo je do greške, obratite nam se putem kontakt forme!',
-						'red'
+						'red',
+						!props.triger
 					);
 				} else if (error.request) {
 					console.log(error.request);
 					responseHandler(
 						props.setShowResponseModal,
-						props.modalAnimationIn,
 						'Došlo je do greške, obratite nam se putem kontakt forme!',
-						'red'
+						'red',
+						!props.triger
 					);
 				} else {
 					console.log(error);
 					responseHandler(
 						props.setShowResponseModal,
-						props.modalAnimationIn,
 						'Došlo je do greške, obratite nam se putem kontakt forme!',
-						'red'
+						'red',
+						!props.triger
 					);
 				}
 			});
@@ -72,10 +73,15 @@ const Login = props => {
 	};
 
 	const loginHandler = () => {
+		props.setIsLoading(false);
 		const api = userLogin(userData)
 			.then(response => {
 				console.log(response);
-				props.completnessMessageHandler('Uspešno ste se prijavili!');
+				props.infoMessageHandler(
+					props.setShowInfoModal,
+					'Uspešno ste se prijavili!',
+					!props.triger
+				);
 				getGuideStatus();
 				setFormInput(initState);
 			})
@@ -84,25 +90,25 @@ const Login = props => {
 					console.log(error.response);
 					responseHandler(
 						props.setShowResponseModal,
-						props.modalAnimationIn,
 						'Uneli ste pogrešno korisničko ime ili lozinku!',
-						'red'
+						'red',
+						!props.triger
 					);
 				} else if (error.request) {
 					console.log(error.request);
 					responseHandler(
 						props.setShowResponseModal,
-						props.modalAnimationIn,
 						'Došlo je do greške, obratite nam se putem kontakt forme!',
-						'red'
+						'red',
+						!props.triger
 					);
 				} else {
 					console.log(error);
 					responseHandler(
 						props.setShowResponseModal,
-						props.modalAnimationIn,
 						'Došlo je do greške, obratite nam se putem kontakt forme!',
-						'red'
+						'red',
+						!props.triger
 					);
 				}
 			});
@@ -110,8 +116,8 @@ const Login = props => {
 	};
 
 	useEffect(() => {
-		if (isPageLoad.current) {
-			isPageLoad.current = false;
+		if (isComponentLoad.current) {
+			isComponentLoad.current = false;
 			return;
 		}
 		loginHandler();
@@ -130,6 +136,7 @@ const Login = props => {
 				placeholder="Uneti lozinku"
 				margin={isMobile ? '30px auto 5px auto' : null}
 				className={buttonClassName(classes.SubmitButtonMob, classes.SubmitButton)}
+				onClick={() => props.setIsLoading(true)}
 			/>
 			<Input
 				type="button"
@@ -137,11 +144,7 @@ const Login = props => {
 				value="ZABORAVLJENA LOZINKA"
 				placeholder="Uneti lozinku"
 				className={buttonClassName(classes.FormButtonMob, classes.FormButton)}
-				onClick={() => {
-					props.setDisplayLogin('none');
-					props.setDisplayPassRecovery('block');
-					setFormInput(initState);
-				}}
+				onClick={() => passRecoveryFormHandler()}
 			/>
 			<Input
 				type="button"
@@ -151,12 +154,7 @@ const Login = props => {
 				className={buttonClassName(classes.FormButtonMob, classes.FormButton)}
 				color="orangered"
 				display={props.clientAuth === 1 ? 'none !important' : 'block'}
-				onClick={() => {
-					props.setDisplayLogin('none');
-					props.setDisplayTabContainer('none');
-					setFormInput(initState);
-					props.setShowBackdrop(classes.backdropOut);
-				}}
+				onClick={() => closeForm()}
 			/>
 		</>
 	);
@@ -177,9 +175,9 @@ const Login = props => {
 			});
 			responseHandler(
 				props.setShowResponseModal,
-				props.modalAnimationIn,
 				'Morate uneti korisničko ime!',
-				'red'
+				'red',
+				!props.triger
 			);
 		} else if (!formInput.password.value.trim()) {
 			setFormInput({
@@ -189,12 +187,7 @@ const Login = props => {
 					valid: false,
 				},
 			});
-			responseHandler(
-				props.setShowResponseModal,
-				props.modalAnimationIn,
-				'Morate uneti lozinku!',
-				'red'
-			);
+			responseHandler(props.setShowResponseModal, 'Morate uneti lozinku!', 'red', !props.triger);
 		} else {
 			setLoginUser(formData);
 		}

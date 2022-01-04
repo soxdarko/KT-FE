@@ -1,3 +1,4 @@
+import { useDeviceDetect } from '../helpers/../../helpers/universalFunctions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt, faFolderOpen, faEdit, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
@@ -5,6 +6,8 @@ import classes from './UI.module.scss';
 import classesAlt from '../Navigation/Navigation.module.scss';
 
 const WrappedTools = props => {
+	const { isMobile } = useDeviceDetect();
+	const modalAnimationIn = isMobile ? classes.modalInMob : classes.modalInPC;
 	const resetForm = () => {
 		if (props.descriptionEdit) {
 			return;
@@ -12,6 +15,7 @@ const WrappedTools = props => {
 			props.setDataId(null);
 			props.setFormInput(props.initForm);
 			props.setEditMode(false);
+			props.isEmployeesArray ? props.setCheckedEmployees([]) : {};
 		}
 	};
 
@@ -45,13 +49,7 @@ const WrappedTools = props => {
 				<div className={classesAlt.ButtonsPair}>
 					<div
 						onClick={() => {
-							props.setShowConfirmModal(props.modalAnimationIn);
-							props.responseHandler(
-								props.setShowConfirmModal,
-								props.modalAnimationIn,
-								'Da li ste sigurni da želite ukloniti klijenta sa liste?',
-								'#FDFD96' //pastel yellow
-							);
+							props.setShowConfirmModal(modalAnimationIn);
 							props.setShowBackdrop(classes.backdropIn);
 						}}>
 						<FontAwesomeIcon

@@ -15,10 +15,17 @@ import classes from '../../UI/UI.module.scss';
 
 const RegServProv = props => {
 	const { isMobile } = useDeviceDetect();
-	const isPageLoad = useRef(true);
+	const isComponentLoad = useRef(true);
 	const [companyData, setCompanyData] = useState({});
 
 	const [formInput, setFormInput] = useState(initState);
+
+	function closeForm() {
+		props.setDisplayRegServProv('none');
+		props.setDisplayTabContainer('none');
+		setFormInput(initState);
+		props.setShowBackdrop(classes.backdropOut);
+	}
 
 	const regHandler = () => {
 		const api = newCompany(companyData)
@@ -26,41 +33,34 @@ const RegServProv = props => {
 				console.log(response),
 					responseHandler(
 						props.setShowResponseModal,
-						props.modalAnimationIn,
 						'Poslali smo Vam verifikacioni e-mail i sms. Klikom na link u e-mail-u i sms-u registracija će biti završena.',
-						'green'
+						'green',
+						!props.triger
 					);
-				props.setIsLoading(false);
 				props.setDisplayRegServProv('none');
 			})
 			.catch(error => {
-				props.setIsLoading(false);
 				if (error.response) {
 					error.response.data.map(err => {
 						const Input = err.type[0].toLowerCase() + err.type.slice(1);
-						responseHandler(
-							props.setShowResponseModal,
-							props.modalAnimationIn,
-							err.errorMessage,
-							'red'
-						);
+						responseHandler(props.setShowResponseModal, err.errorMessage, 'red', !props.triger);
 						updateValidity(setFormInput, Input, formInput, '', false);
 					});
 				} else if (error.request) {
 					console.log(error.request);
 					responseHandler(
 						props.setShowResponseModal,
-						props.modalAnimationIn,
 						'Došlo je do greške, obratite nam se putem kontakt forme!',
-						'red'
+						'red',
+						!props.triger
 					);
 				} else {
 					console.log(error);
 					responseHandler(
 						props.setShowResponseModal,
-						props.modalAnimationIn,
 						'Došlo je do greške, obratite nam se putem kontakt forme!',
-						'red'
+						'red',
+						!props.triger
 					);
 				}
 			});
@@ -69,8 +69,8 @@ const RegServProv = props => {
 	};
 
 	useEffect(() => {
-		if (isPageLoad.current) {
-			isPageLoad.current = false;
+		if (isComponentLoad.current) {
+			isComponentLoad.current = false;
 			return;
 		}
 		regHandler();
@@ -97,41 +97,36 @@ const RegServProv = props => {
 			updateValidity(setFormInput, 'name', formInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				props.modalAnimationIn,
 				'Morate uneti Ime i prezime!',
-				'red'
+				'red',
+				!props.triger
 			);
 		} else if (!formInput.userName.value.trim()) {
 			updateValidity(setFormInput, 'userName', formInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				props.modalAnimationIn,
 				'Morate uneti korisničko ime!',
-				'red'
+				'red',
+				!props.triger
 			);
 		} else if (!formInput.companyName.value.trim()) {
 			updateValidity(setFormInput, 'companyName', formInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				props.modalAnimationIn,
 				'Morate uneti naziv firme!',
-				'red'
+				'red',
+				!props.triger
 			);
 		} else if (!formInput.city.value.trim()) {
 			updateValidity(setFormInput, 'city', formInput, '', false);
-			responseHandler(
-				props.setShowResponseModal,
-				props.modalAnimationIn,
-				'Morate uneti grad!',
-				'red'
-			);
+			responseHandler(props.setShowResponseModal, 'Morate uneti grad!', 'red', !props.triger);
 		} else if (!formInput.mobOperator.value) {
 			updateValidity(setFormInput, 'mobOperator', formInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				props.modalAnimationIn,
 				'Morate izabrati pozivni broj!',
-				'red'
+				'red',
+				!props.triger
 			);
 		} else if (
 			!formInput.phone.value.trim() ||
@@ -141,33 +136,28 @@ const RegServProv = props => {
 			updateValidity(setFormInput, 'phone', formInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				props.modalAnimationIn,
 				'Morate uneti validan broj telefona!',
-				'red'
+				'red',
+				!props.triger
 			);
 		} else if (!formInput.email.value.trim() || !emailPattern.test(formInput.email.value)) {
 			updateValidity(setFormInput, 'email', formInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				props.modalAnimationIn,
 				'Morate uneti validnu e-mail adresu!',
-				'red'
+				'red',
+				!props.triger
 			);
 		} else if (!formInput.password.value.trim()) {
 			updateValidity(setFormInput, 'password', formInput, '', false);
-			responseHandler(
-				props.setShowResponseModal,
-				props.modalAnimationIn,
-				'Morate uneti lozinku!',
-				'red'
-			);
+			responseHandler(props.setShowResponseModal, 'Morate uneti lozinku!', 'red', !props.triger);
 		} else if (!formInput.passConfirm.value.trim()) {
 			updateValidity(setFormInput, 'passConfirm', formInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				props.modalAnimationIn,
 				'Morate uneti potvrdu izabrane lozinke!',
-				'red'
+				'red',
+				!props.triger
 			);
 		} else if (formInput.password.value.trim() !== formInput.passConfirm.value.trim()) {
 			setFormInput({
@@ -183,9 +173,9 @@ const RegServProv = props => {
 			});
 			responseHandler(
 				props.setShowResponseModal,
-				props.modalAnimationIn,
 				'Lozinka i potvrda moraju biti jednake!',
-				'red'
+				'red',
+				!props.triger
 			);
 		} else {
 			setCompanyData(formData);
@@ -321,6 +311,7 @@ const RegServProv = props => {
 				float={isMobile ? 'left' : 'inherit'}
 				margin={isMobile ? '20px auto 5px auto' : '40px auto 5px auto'}
 				className={isMobile ? classes.SubmitButtonMob : classes.SubmitButton}
+				onClick={() => props.setIsLoading(true)}
 			/>
 			<Input
 				type="button"
@@ -331,12 +322,7 @@ const RegServProv = props => {
 				margin="20px auto 5px auto"
 				color="orangered"
 				className={isMobile ? classes.FormButtonCloseMob : classes.FormButton}
-				onClick={() => {
-					props.setDisplayRegServProv('none'),
-						props.setDisplayTabContainer('none'),
-						setFormInput(initState),
-						props.setShowBackdrop(classes.backdropOut);
-				}}
+				onClick={() => closeForm()}
 			/>
 		</form>
 	);
