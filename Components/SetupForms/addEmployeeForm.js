@@ -4,6 +4,7 @@ import {
 	inputChangedHandler,
 	updateValidity,
 	responseHandler,
+	infoMessageHandler,
 } from '../../helpers/universalFunctions';
 import { saveEmployees } from '../../api/saveEmployees';
 import { getAllEmployees } from '../../api/getAllEmployees';
@@ -63,7 +64,7 @@ const addEmployeeForm = props => {
 				console.log(response);
 				getAllEmployeesHandler();
 				props.resetForm();
-				props.completnessMessageHandler('Radnik uspešno sačuvan');
+				infoMessageHandler(props.setShowInfoModal, 'Uspešno sačuvano', !props.triger);
 			})
 			.catch(error => {
 				if (error.response) {
@@ -116,9 +117,9 @@ const addEmployeeForm = props => {
 			updateValidity(props.setEmplyeesFormInput, 'name', props.emplyeesFormInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				props.modalAnimationIn,
 				'Morate uneti ime radnika!',
-				'red'
+				'red',
+				!props.triger
 			);
 			props.setShowBackdrop(classes.backdropIn);
 		} else if (
@@ -128,18 +129,18 @@ const addEmployeeForm = props => {
 			updateValidity(props.setEmplyeesFormInput, 'email', props.emplyeesFormInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				props.modalAnimationIn,
 				'Morate uneti validnu e-mail adresu!',
-				'red'
+				'red',
+				!props.triger
 			);
 			props.setShowBackdrop(classes.backdropIn);
 		} else if (!props.emplyeesFormInput.mobOperator.value) {
 			updateValidity(props.setEmplyeesFormInput, 'mobOperator', props.emplyeesFormInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				props.modalAnimationIn,
 				'Morate izabrati pozivni broj!',
-				'red'
+				'red',
+				!props.triger
 			);
 			props.setShowBackdrop(classes.backdropIn);
 		} else if (
@@ -150,36 +151,31 @@ const addEmployeeForm = props => {
 			updateValidity(props.setEmplyeesFormInput, 'phone', props.emplyeesFormInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				props.modalAnimationIn,
 				'Morate uneti validan broj telefona!',
-				'red'
+				'red',
+				!props.triger
 			);
 			props.setShowBackdrop(classes.backdropIn);
 		} else if (!props.emplyeesFormInput.userName.value.trim()) {
 			updateValidity(props.setEmplyeesFormInput, 'userName', props.emplyeesFormInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				props.modalAnimationIn,
 				'Morate uneti korisničko ime!',
-				'red'
+				'red',
+				!props.triger
 			);
 			props.setShowBackdrop(classes.backdropIn);
 		} else if (!props.emplyeesFormInput.password.value.trim() && !props.editMode) {
 			updateValidity(props.setEmplyeesFormInput, 'password', props.emplyeesFormInput, '', false);
-			responseHandler(
-				props.setShowResponseModal,
-				props.modalAnimationIn,
-				'Morate uneti lozinku!',
-				'red'
-			);
+			responseHandler(props.setShowResponseModal, 'Morate uneti lozinku!', 'red', !props.triger);
 			props.setShowBackdrop(classes.backdropIn);
 		} else if (!props.emplyeesFormInput.passConfirm.value.trim() && !props.editMode) {
 			updateValidity(props.setEmplyeesFormInput, 'passConfirm', props.emplyeesFormInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				props.modalAnimationIn,
 				'Morate uneti potvrdu izabrane lozinke!',
-				'red'
+				'red',
+				!props.triger
 			);
 			props.setShowBackdrop(classes.backdropIn);
 		} else if (
@@ -189,9 +185,9 @@ const addEmployeeForm = props => {
 			updateValidity(props.setEmplyeesFormInput, 'password', props.emplyeesFormInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				props.modalAnimationIn,
 				'Lozinka i potvrda moraju biti jednake!',
-				'red'
+				'red',
+				!props.triger
 			);
 			props.setShowBackdrop(classes.backdropIn);
 		} else if (props.emplyeesFormInput.serviceProviderId.value === '') {
@@ -204,9 +200,9 @@ const addEmployeeForm = props => {
 			);
 			responseHandler(
 				props.setShowResponseModal,
-				props.modalAnimationIn,
 				'Morate izabrati salon za koji želite dodati radnika!',
-				'red'
+				'red',
+				!props.triger
 			);
 			props.setShowBackdrop(classes.backdropIn);
 		} else {
@@ -257,6 +253,11 @@ const addEmployeeForm = props => {
 			}
 		});
 	}, [props.employeeId]);
+
+	function forward() {
+		props.setDisplayAddEmployeeForm('none');
+		props.setDisplayAddServicesForm('block');
+	}
 
 	const inputClassName = isMobile ? classes.InputTextMob : classes.InputText;
 	const readOnlyClassName = isMobile ? classes.ReadOnlyMob : classes.ReadOnly;
@@ -399,10 +400,7 @@ const addEmployeeForm = props => {
 				value="Nastavi >>>"
 				display={props.displayForward}
 				className={isMobile ? classes.ForwardMob : classes.Forward}
-				onClick={() => {
-					props.setDisplayAddEmployeeForm('none');
-					props.setDisplayAddServicesForm('block');
-				}}
+				onClick={() => forward()}
 			/>
 			<Input
 				type="button"
@@ -413,10 +411,7 @@ const addEmployeeForm = props => {
 				onClick={() => props.resetForm()}
 			/>
 			<WrappedButtonsMob
-				forward={() => {
-					props.setDisplayAddEmployeeForm('none');
-					props.setDisplayAddServicesForm('block');
-				}}
+				forward={() => forward()}
 				save={onSubmit}
 				isMobile={isMobile}
 				displayForward={props.displayForwardMob}

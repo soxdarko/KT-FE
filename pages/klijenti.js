@@ -47,7 +47,6 @@ const Clients = props => {
 	const [showBackdrop, setShowBackdrop] = useState('');
 	const [dipslaySerachBar, setDipslaySerachBar] = useState('none');
 	const [searchInput, setSearchInput] = useState('');
-	const [messageHandler, setMessageHandler] = useState('Uspešno sačuvano!');
 	const [showInfoModal, setShowInfoModal] = useState({
 		triger: false,
 		message: null,
@@ -96,14 +95,14 @@ const Clients = props => {
 				if (error.response) {
 					console.log(error.response);
 					error.response.data.map(err => {
-						props.errorMessage(err.errorMessage);
+						errorMessage(err.errorMessage);
 					});
 				} else if (error.request) {
 					console.log(error.request);
-					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+					errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
 				} else {
 					console.log(error);
-					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+					errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
 				}
 			});
 		return api;
@@ -253,12 +252,11 @@ const Clients = props => {
 					setEditMode={setEditMode}
 					displayAddClientForm={displayAddClientForm}
 					setDisplayAddClientForm={setDisplayAddClientForm}
+					setShowBackdrop={setShowBackdrop}
 					setShowResponseModal={setShowResponseModal}
 					showInfoModal={showInfoModal}
 					setShowInfoModal={setShowInfoModal}
-					setShowBackdrop={setShowBackdrop}
 					setDisplayDescription={setDisplayDescription}
-					infoMessageHandler={infoMessageHandler}
 					displayWrappedButtonsMob={displayWrappedButtonsMob}
 					resetForm={resetForm}
 					errorMessage={errorMessage}
@@ -305,7 +303,6 @@ const Clients = props => {
 						showConfirmModal={showConfirmModal}
 						confirmHandler={confirmHandler}
 						setShowConfirmModal={setShowConfirmModal}
-						responseHandler={responseHandler}
 						triger={showConfirmModal.triger}
 					/>
 				</ListBody>

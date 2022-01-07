@@ -70,6 +70,11 @@ const ServiceProviderQuestionForm = props => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [singleServiceProvider]);
 
+	function onSubmit() {
+		props.setDisplayServiceProviderQuestionForm('none');
+		props.setDisplayAddServiceProvidersForm('block');
+	}
+
 	const singleCompanyHandler = e => {
 		e.preventDefault();
 		setSingleServiceProvider(true);
@@ -80,13 +85,8 @@ const ServiceProviderQuestionForm = props => {
 		<QuestionForm
 			title="Da li imate više salona?"
 			displayQuestionForm={props.displayServiceProviderQuestionForm}
-			onSubmit={() => {
-				props.setDisplayServiceProviderQuestionForm('none'),
-					props.setDisplayAddServiceProvidersForm('block');
-			}}
-			onDecline={e => {
-				singleCompanyHandler(e);
-			}}
+			onSubmit={() => onSubmit()}
+			onDecline={e => singleCompanyHandler(e)}
 		/>
 	);
 };

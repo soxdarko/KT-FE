@@ -48,6 +48,11 @@ const EmployeeQuestionForm = props => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [props.singleEmployee]);
 
+	function onDecline() {
+		props.setDisplayEmployeeQuestionForm('none');
+		props.setDisplayAddEmployeeForm('block');
+	}
+
 	const displayForm = () => {
 		if (props.userGuideStatus === 'ServiceProviders') {
 			props.setDisplayGreeting('none');
@@ -71,12 +76,8 @@ const EmployeeQuestionForm = props => {
 		<QuestionForm
 			title="Da li ste Vi jedini zaposleni?"
 			displayQuestionForm={props.displayEmployeeQuestionForm}
-			onSubmit={e => {
-				singleEmployeeHandler(e);
-			}}
-			onDecline={() => {
-				props.setDisplayEmployeeQuestionForm('none'), props.setDisplayAddEmployeeForm('block');
-			}}
+			onSubmit={e => singleEmployeeHandler(e)}
+			onDecline={() => onDecline()}
 		/>
 	);
 };

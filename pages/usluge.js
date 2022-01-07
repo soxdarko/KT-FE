@@ -200,14 +200,6 @@ const Services = props => {
 		setShowBackdrop(classes.backdropIn);
 		setFormInput(initServicesForm);
 	}
-	function cancelAddServiceHandler() {
-		setServiceId(null);
-		setCheckedEmployees([]);
-		setFormInput(initServicesForm);
-		setDisplayAddServicesForm('none');
-		setEditMode(false);
-		setShowBackdrop(classes.backdropOut);
-	}
 	function editServiceHandler() {
 		setDisplayAddServicesForm('block');
 		setEditMode(true);
@@ -312,6 +304,7 @@ const Services = props => {
 				setIsLoading={setIsLoading}
 			/>
 			<AddServicesForm
+				setFormInput={setFormInput}
 				displayAddServicesForm={displayAddServicesForm}
 				setDisplayAddServicesForm={setDisplayAddServicesForm}
 				serviceProviderData={props.serviceProviders}

@@ -4,6 +4,7 @@ import {
 	inputChangedHandler,
 	updateValidity,
 	responseHandler,
+	infoMessageHandler,
 } from '../../helpers/universalFunctions';
 import { addOrUpdateNewClient } from '../../api/addOrUpdateNewClient';
 
@@ -34,7 +35,7 @@ const addClientForm = props => {
 				props.setDisplayAddClientForm('none');
 				props.setDisplayDescription('none');
 				props.setShowBackdrop(classes.backdropOut);
-				props.infoMessageHandler(
+				infoMessageHandler(
 					props.setShowInfoModal,
 					props.editMode ? 'Izmene uspešno sačuvane' : 'Klijent uspešno dodat',
 					!props.triger

@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { auth } from '../helpers/auth';
+import { fetchJson } from '../api/fetchJson';
 import nextCookie from 'next-cookies';
 import { useDeviceDetect } from '../helpers/universalFunctions';
 import Head from 'next/head';
@@ -12,11 +14,13 @@ import ResponseModal from '../Components/UI/Modal/ResponseModal';
 import ChangePass from '../Components/Auth/ChangePass';
 import PassRecovery from '../Components/Auth/PassRecovery/PassRecovery';
 import InviteClient from '../Components/AddToList/InviteClient';
+import Loader from '../Components/UI/Loader';
 
 import classes from '../Components/Navigation/Navigation.module.scss';
 
 const profil = () => {
 	const { isMobile } = useDeviceDetect();
+	const [isLoading, setIsLoading] = useState(false);
 	const modalAnimationIn = isMobile ? classes.modalInMob : classes.modalInPC;
 	const modalAnimationOut = isMobile ? classes.modalOutMob : classes.modalOutPC;
 	const [displayInviteClient, setDisplayInviteClient] = useState('none');
@@ -25,9 +29,16 @@ const profil = () => {
 	const [displayPassRecovery, setDisplayPassRecovery] = useState('none');
 	const [showInviteClient, setShowInviteClient] = useState('');
 	const [showBackdrop, setShowBackdrop] = useState('');
-	const [showConfirmModal, setShowConfirmModal] = useState('');
+	const [showInfoModal, setShowInfoModal] = useState({
+		triger: false,
+		message: null,
+	});
+	const [showConfirmModal, setShowConfirmModal] = useState({
+		message: null,
+		triger: false,
+	});
 	const [showResponseModal, setShowResponseModal] = useState({
-		animation: '',
+		triger: false,
 		message: null,
 		border: '',
 	});
@@ -62,23 +73,12 @@ const profil = () => {
 						setShowInviteClient(classes.slideOutLeft);
 				}}
 			/>
+			<Loader loading={isLoading} />
 			<ResponseModal
-				modalAnimation={showResponseModal.animation}
-				message={showResponseModal.message}
-				displayLinkButton="none"
-				displayFormButton="block"
-				borderColor={showResponseModal.border}
-				link="/"
-				onClick={() =>
-					setShowResponseModal(
-						{
-							...showResponseModal,
-							animation: modalAnimationOut,
-							border: null,
-						},
-						setShowBackdrop(classes.backdropOut)
-					)
-				}
+				showResponseModal={showResponseModal}
+				setShowBackdrop={setShowBackdrop}
+				holdBackdrop={false}
+				setIsLoading={setIsLoading}
 			/>
 			<ConfirmModal
 				display={displayConfirmModal}
@@ -127,5 +127,48 @@ const profil = () => {
 		</>
 	);
 };
+
+export async function getServerSideProps(ctx) {
+	const token = await auth(ctx);
+	const serviceProvidersUrl = `users/getAllServiceProviders`;
+	const resServiceProviders = await fetchJson(serviceProvidersUrl, 'get', token);
+	const employeesUrl = `users/getAllEmployees`;
+	const resEmployees = await fetchJson(employeesUrl, 'get', token);
+	const servicesUrl = `appointments/getAllServices`;
+	const resServices = await fetchJson(servicesUrl, 'get', token);
+	const clientsUrl = `users/getClients?deleted=${false}`;
+	const resClients = await fetchJson(clientsUrl, 'get', token);
+	const guideStatusUrl = `users/getCompanyGuideStatus`;
+	const resGuideStatusUrl = await fetchJson(guideStatusUrl, 'get', token);
+
+	const serviceProviders = resServiceProviders.data.map(name => {
+		return name;
+	});
+
+	const employees = resEmployees.data.map(name => {
+		return name;
+	});
+
+	const services = resServices.data.map(name => {
+		return name;
+	});
+
+	const clients = resClients.data.map(name => {
+		return name;
+	});
+
+	const userStatus = resGuideStatusUrl.data;
+
+	return {
+		props: {
+			token,
+			serviceProviders,
+			employees,
+			services,
+			clients,
+			userStatus,
+		},
+	};
+}
 
 export default profil;
