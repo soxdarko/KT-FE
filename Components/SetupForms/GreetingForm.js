@@ -14,16 +14,17 @@ const GreetingForm = props => {
 		props.setDisplayServiceProviderQuestionForm('block');
 	};
 
+	const initialSetupMessage =
+		'Čestitamo na odluci koja će unaprediti Vaše poslovanje. Naš vodič će Vam pomoći da završite nophodna podešavanja';
+	const restartSetupMessage =
+		'Naš smart vodič će Vam pomoći da prilagodite KlikTermin svojim potrebama';
+
 	return (
 		<div style={{ display: props.displayGreeting }}>
 			<form className={isMobile ? classes.GuideFormMob : classes.GuideForm}>
 				<h3>Dobrodošli!</h3>
 				<DescriptionLabel
-					text={
-						props.isServiceProvider
-							? 'Naš smart vodič će Vam pomoći da prilagodite KlikTermin svojim potrebama'
-							: 'Čestitamo na odluci koja će unaprediti Vaše poslovanje. Napisati tekst koji će navesti usera da isprati vodič do kraja'
-					}
+					text={props.isAnyServiceProvider ? restartSetupMessage : initialSetupMessage}
 					className={classes.DesciptionLabel}
 					margin="20px 0 50px 0"
 					color="orange"

@@ -88,12 +88,33 @@ export function checkValidity(value, rules) {
 	return isValid;
 }
 
-export function responseHandler(setState, animation, message, border, showButton = 'block') {
+export function responseHandler(setState, message, border, triger) {
 	setState({
-		animation: animation,
 		message: message,
 		border: border,
-		showButton: showButton,
+		triger: triger,
+	});
+}
+
+export function confirmHandler(setState, message, triger) {
+	setState({
+		message: message,
+		triger: triger,
+	});
+}
+
+export function infoMessageHandler(setState, message, triger) {
+	setState({
+		triger: triger,
+		message: message,
+	});
+}
+
+export function verifyHandler(setState, message, border, triger) {
+	setState({
+		message: message,
+		border: border,
+		triger: triger,
 	});
 }
 

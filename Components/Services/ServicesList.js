@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useDeviceDetect } from '../../helpers/universalFunctions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBan, faEdit, faWrench } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faEdit, faWrench } from '@fortawesome/free-solid-svg-icons';
 
 import classes from '../UI/UI.module.scss';
 
@@ -181,11 +181,14 @@ const ServicesList = props => {
 										style={{ width: removeWidth }}
 										onClick={() => {
 											props.setServiceId(service.id);
-											props.setShowConfirmModal(props.modalAnimationIn);
+											props.setShowConfirmModal({
+												...props.showConfirmModal,
+												triger: !props.showConfirmModal.triger,
+											});
 											props.setShowBackdrop(classes.backdropIn);
 										}}>
 										<FontAwesomeIcon
-											icon={faBan}
+											icon={faTrash}
 											className={[classes.Icon, props.IconClassName].join(' ')}
 											style={{ color: 'red' }}
 										/>

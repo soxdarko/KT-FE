@@ -4,6 +4,7 @@ import {
 	inputChangedHandler,
 	updateValidity,
 	responseHandler,
+	infoMessageHandler,
 } from '../../helpers/universalFunctions';
 import { saveServiceProviders } from '../../api/saveServiceProviders';
 import { getAllServiceProviders } from '../../api/getAllServiceProviders';
@@ -21,9 +22,9 @@ const AddServiceProvidersForm = props => {
 	const [displayToolBox, setDisplayToolBox] = useState('none');
 
 	const resetForm = () => {
-		props.setServiceProviderId(null),
-			props.setServProvFormInput(props.initServiceProviderForm),
-			props.setEditMode(false);
+		props.setServiceProviderId(null);
+		props.setServProvFormInput(props.initServiceProviderForm);
+		props.setEditMode(false);
 	};
 
 	const getAllServiceProvidersHandler = async () => {
@@ -56,7 +57,7 @@ const AddServiceProvidersForm = props => {
 			.then(response => {
 				console.log(response);
 				getAllServiceProvidersHandler();
-				props.completenessMessage();
+				infoMessageHandler(props.setShowInfoModal, 'Uspešno sačuvano', !props.triger);
 			})
 			.catch(error => {
 				props.setIsLoading(false);
@@ -108,19 +109,14 @@ const AddServiceProvidersForm = props => {
 			);
 			responseHandler(
 				props.setShowResponseModal,
-				props.modalAnimationIn,
 				'Morate uneti naziv salona!',
-				'red'
+				'red',
+				!props.triger
 			);
 			props.setShowBackdrop(classes.backdropIn);
 		} else if (!props.servProvFormInput.city.value.trim()) {
 			updateValidity(props.setServProvFormInput, 'city', props.servProvFormInput, '', false);
-			responseHandler(
-				props.setShowResponseModal,
-				props.modalAnimationIn,
-				'Morate uneti grad!',
-				'red'
-			);
+			responseHandler(props.setShowResponseModal, 'Morate uneti grad!', 'red', !props.triger);
 			props.setShowBackdrop(classes.backdropIn);
 		} else {
 			props.setServiceProviderInfo(formData);
@@ -156,6 +152,11 @@ const AddServiceProvidersForm = props => {
 			}
 		});
 	}, [props.serviceProviderId]);
+
+	function forward() {
+		props.setDisplayAddServiceProvidersForm('none');
+		props.setDisplayAddEmployeeForm('block');
+	}
 
 	const inputClassName = isMobile ? classes.InputTextMob : classes.InputText;
 	const textAreaClassName = isMobile ? classes.InformationsInputMob : classes.InformationsInput;
@@ -227,14 +228,10 @@ const AddServiceProvidersForm = props => {
 				value="nastavi >>>"
 				display={isMobile ? 'none' : 'inline-block'}
 				className={isMobile ? classes.ForwardMob : classes.Forward}
-				onClick={() => {
-					props.setDisplayAddServiceProvidersForm('none'), props.setDisplayAddEmployeeForm('block');
-				}}
+				onClick={() => forward()}
 			/>
 			<WrappedButtonsMob
-				forward={() => {
-					props.setDisplayAddServiceProvidersForm('none'), props.setDisplayAddEmployeeForm('block');
-				}}
+				forward={() => forward()}
 				save={onSubmit}
 				isMobile={isMobile}
 				displayForward="inline-block"

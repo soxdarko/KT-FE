@@ -1,16 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
+import Link from 'next/link';
 import moment from 'moment';
 import TimeField from 'react-simple-timefield';
 import { FaCopy, FaPaste } from 'react-icons/fa';
 import {
 	useDeviceDetect,
-	/* inputChangedHandler, */
 	inputChangedHandlerArray,
 	inputChangedHandlerCheckBox,
 	absenceHoursResetHandler,
 	updateValidity,
-	responseHandler,
-	/* currDayFormat, */
+	infoMessageHandler,
 } from '../../helpers/universalFunctions';
 import { saveWorkingHoursToMany } from '../../api/saveWorkingHoursToMany';
 import { getWorkingHours } from '../../api/getWorkingHours';
@@ -25,9 +24,6 @@ import classes from './SetupForms.module.scss';
 const WorkingTimeForm = props => {
 	const { isMobile } = useDeviceDetect();
 	const isComponentLoad = useRef(true);
-	/* const [serviceProviderId, setServiceProviderId] = useState(null); */
-	/* const [indexOfDay, setIndexOfDay] = useState(0); */
-	/* const [weekIndex, setWeekIndex] = useState(0); */
 
 	const d_Start = new Date(),
 		d_End = new Date(),
@@ -48,20 +44,10 @@ const WorkingTimeForm = props => {
 		d_Start.setDate(d_Start.getDate() + 1);
 	}
 
-	/* const startMonday = d_Start.setDate(1) + 2 * 86400000; */
-
 	const currMondayMs = currMonday(new Date()).getTime();
-	/* const [datePicker, setDatePicker] = useState(moment(currMonday()).format('YYYY-MM-DD')); */
-	/* const currSundayMs = parseInt(currMondayMs) + 1000 * 60 * 60 * 24 * 6;
-	const currMondayISO = new Date(currMondayMs + 7 * 86400000); */
 	const [selectedMonday, setSelectedMonday] = useState(currMondayMs);
 	const selectedMondayFormated = moment(selectedMonday).format('YYYY-MM-DD');
-
 	const [workingHoursOnChangeEmployee, setWorkingHoursOnChangeEmployee] = useState([]);
-	/* const [hoursFromGet, setHoursFromGet] = useState([]); */
-	/* const [minutesFromGet, setMinutesFromGet] = useState([]); */
-
-	// Get all the other Mondays in the month
 
 	while (d_Start.getFullYear() < parseInt(year) + 2) {
 		let pushMondays = new Date(d_Start);
@@ -89,18 +75,6 @@ const WorkingTimeForm = props => {
 		d_End.setDate(d_End.getDate() + 7);
 		mondaysISO.push(pushMondays);
 	}
-
-	const fullTime = props.workingTimeFormInput[0]?.firstStartHour;
-	/* const numHour = Math.floor(fullTime / 60);
-	const numMinutes = fullTime % 60; */
-
-	/* const getTimeHandler = (setState, time) => {
-		if (time < 10) {
-			return setState('0' + time.toString());
-		} else {
-			return setState(time.toString());
-		}
-	}; */
 
 	const initialTimeFormHandler = () => {
 		const defaultForm = [];
@@ -158,7 +132,7 @@ const WorkingTimeForm = props => {
 		const api = saveWorkingHoursToMany(props.workingHoursData)
 			.then(response => {
 				console.log(response);
-				props.completnessMessageHandler('Uspešno sačuvano');
+				infoMessageHandler(props.setShowInfoModal, 'Uspešno sačuvano', !props.triger);
 			})
 			.catch(error => {
 				if (error.response) {
@@ -351,8 +325,6 @@ const WorkingTimeForm = props => {
 			isComponentLoad.current = false;
 			return;
 		}
-		/* getTimeHandler(setHoursFromGet, numHour); */
-		/* getTimeHandler(setMinutesFromGet, numMinutes); */
 	}, [props.workingTimeFormInput]);
 
 	useEffect(() => {
@@ -450,7 +422,13 @@ const WorkingTimeForm = props => {
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-	console.log(props.workingTimeFormInput);
+
+	const weekSelectHandler = e => {
+		setSelectedMonday(new Date(e.target.value).getTime());
+		props.setEmployeeId('');
+		props.setServiceProviderId('');
+		initialTimeFormHandler();
+	};
 
 	const displayOverlay = !props.employeeId ? 'block' : 'none';
 
@@ -466,7 +444,6 @@ const WorkingTimeForm = props => {
 					<Select
 						name="monday"
 						onChange={e => {
-							/* setDatePicker(moment(e.target.value).format('YYYY-MM-DD')), */
 							setSelectedMonday(new Date(e.target.value).getTime());
 						}}>
 						{mondays.map((monday, i) => {
@@ -751,15 +728,7 @@ const WorkingTimeForm = props => {
 				<h3>Unesite radno vreme</h3>
 				<div className={classes.WorkingTimeHeader}>
 					<Input type="button" value="Kopiraj" />
-					<Select
-						name="monday"
-						onChange={e => {
-							/* setDatePicker(moment(e.target.value).format('YYYY-MM-DD')), */
-							setSelectedMonday(new Date(e.target.value).getTime()),
-								props.setEmployeeId(''),
-								props.setServiceProviderId(''),
-								initialTimeFormHandler();
-						}}>
+					<Select name="monday" onChange={e => weekSelectHandler(e)}>
 						{mondays.map((monday, i) => {
 							return (
 								<option key={monday} name="monday" value={mondaysISO[i]}>
@@ -817,7 +786,7 @@ const WorkingTimeForm = props => {
 						<div className={classes.WorkingTimeBlock}>
 							{weekDays.map((day, i) => {
 								return (
-									<div className={classes.WorkingTimePairsContainer} key={i}>
+									<div className={classes.WorkingTimePairsContainer} key={day.id}>
 										<TimeField
 											value={props.workingTimeFormInput[i]?.firstStartHour} // {String}   required, format '00:00' or '00:00:00'
 											className={classes.WorkingTimePairs}
@@ -854,7 +823,7 @@ const WorkingTimeForm = props => {
 						<div className={classes.WorkingTimeBlock}>
 							{weekDays.map((day, i) => {
 								return (
-									<div className={classes.WorkingTimePairsContainer} key={i}>
+									<div className={classes.WorkingTimePairsContainer} key={day.id}>
 										<TimeField
 											value={props.workingTimeFormInput[i]?.secondStartHour}
 											className={classes.WorkingTimePairs}
@@ -892,7 +861,7 @@ const WorkingTimeForm = props => {
 							{weekDays.map((day, i) => {
 								const isId = props.workingTimeFormInput[i]?.id;
 								return (
-									<div className={classes.AbsencePairsContainer} key={i}>
+									<div className={classes.AbsencePairsContainer} key={day.id}>
 										<div className={classes.AbsenceRadioContainer}>
 											<div className={classes.Radio_p_Container}>
 												<AbsenceRadio
@@ -1042,12 +1011,14 @@ const WorkingTimeForm = props => {
 					color={props.employeeId ? 'orange' : 'gray'}
 					onClick={onSubmit}
 				/>
-				<Input
-					type="button"
-					value="nastavi >>>"
-					className={classes.Forward}
-					onClick={() => props.setDisplayWorkingTimeForm('none')}
-				/>
+				<Link href="/kalendar">
+					<Input
+						type="button"
+						value="nastavi >>>"
+						className={classes.Forward}
+						onClick={() => props.setDisplayWorkingTimeForm('none')}
+					/>
+				</Link>
 			</div>
 		);
 	}

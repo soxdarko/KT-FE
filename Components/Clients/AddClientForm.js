@@ -1,9 +1,10 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import {
 	useDeviceDetect,
 	inputChangedHandler,
 	updateValidity,
 	responseHandler,
+	infoMessageHandler,
 } from '../../helpers/universalFunctions';
 import { addOrUpdateNewClient } from '../../api/addOrUpdateNewClient';
 
@@ -17,7 +18,15 @@ const addClientForm = props => {
 	const { isMobile } = useDeviceDetect();
 	const isComponentLoad = useRef(true);
 
+	function stopEdit() {
+		props.setDisplayAddClientForm('none');
+		props.setShowBackdrop(classes.backdropOut);
+		props.setEditMode(false);
+		props.resetForm();
+	}
+
 	const addClientHandler = () => {
+		props.setIsLoading(false);
 		const api = addOrUpdateNewClient(props.userData)
 			.then(response => {
 				console.log(response);
@@ -26,20 +35,35 @@ const addClientForm = props => {
 				props.setDisplayAddClientForm('none');
 				props.setDisplayDescription('none');
 				props.setShowBackdrop(classes.backdropOut);
-				props.completnessMessageHandler('Uspešno sačuvano');
+				infoMessageHandler(
+					props.setShowInfoModal,
+					props.editMode ? 'Izmene uspešno sačuvane' : 'Klijent uspešno dodat',
+					!props.triger
+				);
 			})
 			.catch(error => {
 				if (error.response) {
 					console.log(error.response);
 					error.response.data.map(err => {
-						props.errorMessage(err.errorMessage);
+						responseHandler(props.setShowResponseModal, err.errorMessage, 'red', !props.triger);
 					});
 				} else if (error.request) {
 					console.log(error.request);
-					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+					responseHandler(
+						props.setShowResponseModal,
+						'Došlo je do greške, kontaktirajte nas putem kontakt forme',
+						'red',
+						!props.triger
+					);
 				} else {
 					console.log(error);
-					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+					responseHandler(
+						props.setShowResponseModal,
+						'Došlo je do greške, kontaktirajte nas putem kontakt forme',
+						'red',
+						'block',
+						!props.triger
+					);
 				}
 			});
 		api;
@@ -70,9 +94,9 @@ const addClientForm = props => {
 			updateValidity(props.setFormInput, 'name', props.formInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				props.modalAnimationIn,
 				'Morate uneti ime klijenta!',
-				'red'
+				'red',
+				!props.triger
 			);
 			props.setShowBackdrop(classes.backdropIn);
 		} else if (
@@ -82,18 +106,18 @@ const addClientForm = props => {
 			updateValidity(props.setFormInput, 'email', props.formInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				props.modalAnimationIn,
 				'Morate uneti validnu e-mail adresu!',
-				'red'
+				'red',
+				!props.triger
 			);
 			props.setShowBackdrop(classes.backdropIn);
 		} else if (!props.formInput.mobOperator.value) {
 			updateValidity(props.setFormInput, 'mobOperator', props.formInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				props.modalAnimationIn,
 				'Morate izabrati pozivni broj!',
-				'red'
+				'red',
+				!props.triger
 			);
 			props.setShowBackdrop(classes.backdropIn);
 		} else if (
@@ -104,9 +128,9 @@ const addClientForm = props => {
 			updateValidity(props.setFormInput, 'phone', props.formInput, '', false);
 			responseHandler(
 				props.setShowResponseModal,
-				props.modalAnimationIn,
 				'Morate uneti validan broj telefona!',
-				'red'
+				'red',
+				!props.triger
 			);
 			props.setShowBackdrop(classes.backdropIn);
 		} else {
@@ -234,7 +258,7 @@ const addClientForm = props => {
 				/>
 				<Input
 					type="button"
-					value="dodaj"
+					value={props.editMode ? 'Sačuvaj' : 'Dodaj'}
 					display={isMobile ? 'none' : 'block'}
 					className={[classes.ChoiceButton, classes.Add].join(' ')}
 					onClick={onSubmit}
@@ -245,11 +269,7 @@ const addClientForm = props => {
 					display={isMobile ? 'none' : 'inline-block'}
 					color="red"
 					className={isMobile ? classes.ForwardMob : classes.Forward}
-					onClick={() => {
-						props.setDisplayAddClientForm('none');
-						props.setShowBackdrop(classes.backdropOut);
-						props.resetForm();
-					}}
+					onClick={() => stopEdit()}
 				/>
 			</div>
 			<WrappedButtonsMob
@@ -261,12 +281,7 @@ const addClientForm = props => {
 				displayAdd="none"
 				displayStopEdit="block"
 				validation={true}
-				stopEdit={() => {
-					props.setDisplayAddClientForm('none');
-					props.setShowBackdrop(classes.backdropOut);
-					props.setEditMode(false);
-					props.resetForm();
-				}}
+				stopEdit={stopEdit}
 			/>
 		</>
 	);

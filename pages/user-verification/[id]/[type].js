@@ -10,7 +10,7 @@ import classes from '../../../Components/UI/UI.module.scss';
 const userVerificationPage = props => {
 	const { isMobile } = useDeviceDetect();
 	const modalAnimationIn = isMobile ? classes.modalInMob : classes.modalInPC;
-	const [showResponseModal, setShowResponseModal] = useState('');
+	const [showResponseModal, setShowResponseModal] = useState(true);
 
 	const id = props.id;
 	const type = props.type;
@@ -23,7 +23,7 @@ const userVerificationPage = props => {
 		const api = userVerification(userData)
 			.then(response => {
 				console.log(response);
-				setShowResponseModal(modalAnimationIn);
+				setShowResponseModal(!showResponseModal);
 			})
 			.catch(error => {
 				if (error.response) {
@@ -50,7 +50,7 @@ const userVerificationPage = props => {
 				display="block"
 				borderColor="green"
 				link="/"
-				modalAnimation={showResponseModal}
+				modalTriger={showResponseModal}
 			/>
 		</>
 	);
