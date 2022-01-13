@@ -15,17 +15,17 @@ export const fetchJson = (url, method, token, body) => {
 };
 
 function checkStatus(response) {
-	if (response.status >= 200 && response.status < 400) {
-		return response;
-	}
+	// if (response.status >= 200 && response.status < 400) {
+	// 	return response;
+	// }
+	return response;
+	// const error = new Error(response.statusText);
+	// error.response = response;
+	// if (response.status === 403 || response.status === 401 || response.status === 400) {
+	// 	error.status = response.status;
+	// }
 
-	const error = new Error(response.statusText);
-	error.response = response;
-	if (response.status === 403 || response.status === 401) {
-		error.status = response.status;
-	}
-
-	throw error;
+	// throw error;
 }
 
 export function handleError(error) {

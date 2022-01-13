@@ -3,7 +3,7 @@ import classes from '../../Calendar.module.scss';
 import { useEffect } from 'react';
 import { isObjEmpty, getTimeString } from '../../../../helpers/universalFunctions';
 
-const CalBodyCol = ({date, time, enabled, absence, appointment, clientPicker, setClickedCell}) => {
+const CalBodyCol = ({date, time, enabled, absence, appointment, clientPicker, setClickedCell, showMessage}) => {
    //useEffect(()=> console.log('props.cellDate',new Date(props.cellDate)), [])
 
     // const appointments = () => {
@@ -43,6 +43,8 @@ const CalBodyCol = ({date, time, enabled, absence, appointment, clientPicker, se
         } else {
           null;
         }
+      else
+        showMessage('Nije moguće zakazati termin u vreme koje je prošlo!');
     };
 
     const getAppointmentTime = () => {

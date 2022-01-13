@@ -6,15 +6,21 @@ export default async (req, res) => {
 	const token = cookie.substring(cookie.indexOf('=') + 1);
 	const url = `appointments/saveAppointment`;
 
-	const saveAppointmentResponse = await fetchJson(url, 'post', token, obj)
-		.then(response => {
-			return response;
-		})
-		.catch(err => {
-			console.log(err);
-		});
-	saveAppointmentResponse;
-	
-	res.statusCode = 200;
-	res.json({ success: true });
+	async function saveAppointmentResponse() {
+		const api = await fetchJson(url, 'post', token, obj)
+			.then(res => {
+				return res.data;
+			})
+			.catch(err => {
+
+				return err.response.data
+			});
+
+		return api;
+	}
+
+	const response = await saveAppointmentResponse();
+
+	res.statusCode = 400;
+	res.json(response);
 };

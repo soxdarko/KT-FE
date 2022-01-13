@@ -21,13 +21,7 @@ const kalendar = props => {
 		setClientFormBackdrop('none');
 	};
 
-	useEffect(() => {
-		console.log('workingHours', props.workingHours);
-		console.log('appointments', props.appointments);
-	},[])
-
 	const refreshData = () => {
-		console.log('refreshing data....')
 		router.replace(router.asPath);
 	}
 

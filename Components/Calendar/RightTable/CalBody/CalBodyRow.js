@@ -1,7 +1,7 @@
 import CalBodyCol from './CalBodyCol';
 import { Fragment, useEffect } from 'react';
 
-const CalBodyRow = ({workHourAppointments, time, clientPicker, setClickedCell}) => {
+const CalBodyRow = ({workHourAppointments, time, clientPicker, setClickedCell, showMessage}) => {
   // const clickedTimeHandler = (i) => {
   //   const cell = props.minMaxWorkingHours;
   //   for (const time of cell) {
@@ -26,6 +26,7 @@ const CalBodyRow = ({workHourAppointments, time, clientPicker, setClickedCell}) 
                           appointment={wha.appointment}
                           clientPicker={clientPicker}
                           setClickedCell={setClickedCell}
+                          showMessage={showMessage}
                       />
                   </Fragment>
                 )

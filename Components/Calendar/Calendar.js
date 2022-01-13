@@ -16,11 +16,12 @@ import classesUI from '../UI/UI.module.scss';
 import { getDateFromDayOfWeek } from '../../helpers/universalFunctions';
 import { saveAppointment } from '../../api/saveAppointment';
 import { v4 as uuidv4 } from 'uuid';
-import ResponseModal from '../UI/Modal/ResponseModal';
+import InfoModal from '../UI/Modal/InfoModal';
 
 const Calendar = props => {
 	const { isMobile } = useDeviceDetect();
 	const isPageLoad = useRef(true);
+	const modalAnimationIn = isMobile ? classes.modalInMob : classes.modalInPC;
 	const [checkedServices, setCheckedServices] = useState([]);
 	const [daysInWeek, setDaysInWeek] = useState([]);
 	const [minMaxWorkingHours, setMinMaxWorkingWours] = useState([]);
@@ -28,6 +29,8 @@ const Calendar = props => {
 	const days = ['Pon', 'Uto', 'Sre', 'Cet', 'Pet', 'Sub', 'Ned'];
 	const [chosenClient, setChosenClient] = useState('');
 	const [appointmentData, setAppointmentData] = useState(props.appointments);
+	const [showInfoModal, setShowInfoModal] = useState('');
+	const [infoMessage, setInfoMessage] = useState('');
 
 	useEffect(() => {
 		setAppointmentData(props.appointments)
@@ -269,11 +272,20 @@ const Calendar = props => {
 	// 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	// }, [appointment]);
 
+	const showMessage = (eventMessage) => {
+		setShowInfoModal(modalAnimationIn);
+		setInfoMessage(eventMessage)
+		setTimeout(() => {
+			setShowInfoModal('');
+			setInfoMessage('');
+		}, 3000);
+	}
+
 
 	const saveNewAppointment = () => {
 		const durationSum = checkedServices.map(s => s.duration).reduce((sum, a) => sum + a, 0);
 		const dateStart = clickedCell.date.replace('00:00:00', getTimeString(clickedCell.time, true));
-		const dateEnd = clickedCell.date.replace('00:00:00', getTimeString(clickedCell.time + durationSum, true));
+		const dateEnd = clickedCell.date.replace('00:00:00', getTimeString((clickedCell.time + durationSum) * 2, true));
 		const newAppointment = {
 			Id: uuidv4(),
 			DateStart: dateStart,
@@ -287,9 +299,12 @@ const Calendar = props => {
 			Deleted: false,
 			Updated: false
 		}
-		saveAppointment(newAppointment).then(res => {
-			props.refreshData();
-		});
+		saveAppointment(newAppointment)
+			.then(res => props.refreshData())
+			.catch(err => {
+				const errMessages = err.response.data.map(d => d.errorMessage).join('...');
+				showMessage(errMessages)
+			});
 		
 	}
 
@@ -332,6 +347,7 @@ const Calendar = props => {
 							time={time}
 							workHourAppointments={workHourAppointments}
 							setClickedCell={setClickedCell}
+							showMessage={showMessage}
 							clientPicker={() => {
 								setDisplayClientPicker('block'), props.showBackdrop();
 							}}
@@ -346,7 +362,11 @@ const Calendar = props => {
 
 	return (
 		<>			
-
+			<InfoModal
+				message={infoMessage}
+				modalAnimation={showInfoModal}
+				borderColor="green"
+			/>
 			<RegCodeClientForm
 				displayRegCodeClient={displayRegCodeClient}
 				RegCodeClientHandler={RegCodeClientHandler}
