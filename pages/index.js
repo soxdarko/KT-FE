@@ -25,6 +25,7 @@ import Loader from '../Components/UI/Loader';
 import classes from '../Components/Navigation/Navigation.module.scss';
 
 const Index = () => {
+	console.log('Jove');
 	const { isMobile } = useDeviceDetect();
 	const router = useRouter();
 	const isPageLoad = useRef(true);
