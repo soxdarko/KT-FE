@@ -7,7 +7,7 @@ import Input from '../UI/Forms/Input';
 import classes from '../SetupForms/SetupForms.module.scss';
 
 const TeamStatusForm = props => {
-	const isPageLoad = useRef(true);
+	const isComponentLoad = useRef(true);
 	const [question, setQuestion] = useState({
 		message: 'Da li imate više salona?',
 		displaySaloon: 'block',
@@ -66,8 +66,8 @@ const TeamStatusForm = props => {
 	};
 
 	useEffect(() => {
-		if (isPageLoad.current) {
-			isPageLoad.current = false;
+		if (isComponentLoad.current) {
+			isComponentLoad.current = false;
 			return;
 		}
 		addNewServiceProviderHandler();
@@ -85,17 +85,23 @@ const TeamStatusForm = props => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [singleEmployee]);
 
-	const singleCompanyHandler = e => {
+	const singularityHandler = (e, object) => {
 		e.preventDefault();
-		setSingleCompany(true);
+		object(true);
 		props.setIsLoading(true);
 	};
 
-	const singleEmployeeHandler = e => {
-		e.preventDefault();
-		setSingleEmployee(true);
-		props.setIsLoading(true);
-	};
+	function positiveAnswerHandler() {
+		props.setDisplayteamStatusForm('none');
+		props.setDisplayAddSaloonForm('block');
+		props.nextStep();
+	}
+
+	function negativeAnswerHandler() {
+		props.setDisplayteamStatusForm('none');
+		props.setDisplayAddEmployeeForm('block');
+		props.nextStep();
+	}
 
 	return (
 		<form style={{ display: props.displayteamStatusForm }} className={classes.GuideForm}>
@@ -105,17 +111,13 @@ const TeamStatusForm = props => {
 					type="button"
 					value="DA"
 					className={[classes.ChoiceButton, classes.Confirm].join(' ')}
-					onClick={() => {
-						props.setDisplayteamStatusForm('none'),
-							props.setDisplayAddSaloonForm('block'),
-							props.nextStep();
-					}}
+					onClick={() => positiveAnswerHandler()}
 				/>
 				<Input
 					type="button"
 					value="NE"
 					className={[classes.ChoiceButton, classes.Deny].join(' ')}
-					onClick={e => singleCompanyHandler(e)}
+					onClick={e => singularityHandler(e, setSingleCompany)}
 				/>
 			</div>
 			<div className={classes.ChoiceButtonCountainer} style={{ display: question.displayEmployee }}>
@@ -123,17 +125,13 @@ const TeamStatusForm = props => {
 					type="button"
 					value="DA" //Unos radnika u bazu na osnovu registracionih podataka
 					className={[classes.ChoiceButton, classes.Confirm].join(' ')}
-					onClick={e => singleEmployeeHandler(e)}
+					onClick={e => singularityHandler(e, setSingleEmployee)}
 				/>
 				<Input
 					type="button"
 					value="NE"
 					className={[classes.ChoiceButton, classes.Deny].join(' ')}
-					onClick={() => {
-						props.setDisplayteamStatusForm('none'),
-							props.setDisplayAddEmployeeForm('block'),
-							props.nextStep();
-					}}
+					onClick={() => negativeAnswerHandler()}
 				/>
 			</div>
 		</form>

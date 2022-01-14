@@ -1,12 +1,10 @@
 import { useState } from 'react';
-import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { auth } from '../helpers/auth';
 import { fetchJson } from '../api/fetchJson';
 import {
 	useDeviceDetect,
 	responseHandler,
 	infoMessageHandler,
-	confirmHandler,
 } from '../helpers/universalFunctions';
 import { banClient } from '../api/banClient';
 import { getClients } from '../api/getClients';
@@ -16,10 +14,8 @@ import Head from 'next/head';
 import Layout from '../Components/hoc/Layout/Layout';
 import Backdrop from '../Components/UI/Backdrop';
 import ResponseModal from '../Components/UI/Modal/ResponseModal';
-import InfoModal from '../Components/UI/Modal/InfoModal';
 import ConfirmModal from '../Components/UI/Modal/ConfirmModal';
-import ListBody from '../Components/UI/List/ListBody/ListBody';
-import ListHead from '../Components/UI/List/ListHead/ListHead';
+import InfoModal from '../Components/UI/Modal/InfoModal';
 import ClientsList from '../Components/Clients/ClientsList';
 import AddClientForm from '../Components/Clients/AddClientForm';
 import InviteClient from '../Components/AddToList/InviteClient';
@@ -45,8 +41,6 @@ const Clients = props => {
 	const [displayWrappedTools, setDisplayWrappedTools] = useState('none');
 	const [displayDescription, setDisplayDescription] = useState('none');
 	const [showBackdrop, setShowBackdrop] = useState('');
-	const [dipslaySerachBar, setDipslaySerachBar] = useState('none');
-	const [searchInput, setSearchInput] = useState('');
 	const [showInfoModal, setShowInfoModal] = useState({
 		triger: false,
 		message: null,
@@ -142,10 +136,7 @@ const Clients = props => {
 		banClientHandler(clientId);
 		setShowBackdrop(classes.backdropOut);
 		setDisplayWrappedTools('none');
-	}
-	function confirmModalCancelHandler() {
-		setClientId(null);
-		setShowBackdrop(classes.backdropOut);
+		isMobile ? setDisplayWrappedTools('none') : {};
 	}
 	function newClientHandler() {
 		setDisplayAddClientForm('block');
@@ -204,8 +195,8 @@ const Clients = props => {
 					message={showConfirmModal.message}
 					submitValue="Da"
 					setShowBackdrop={setShowBackdrop}
+					itemId={setClientId}
 					onSubmit={() => confirmModalSubmitHandler()}
-					onCancel={() => confirmModalCancelHandler()}
 				/>
 				<WrappedTools
 					displayWrappedTools={displayWrappedTools}
@@ -214,6 +205,7 @@ const Clients = props => {
 					setDescriptionEdit={setDescriptionEdit}
 					setShowBackdrop={setShowBackdrop}
 					setShowConfirmModal={setShowConfirmModal}
+					triger={showConfirmModal.triger}
 					setFormInput={setFormInput}
 					setEditMode={setEditMode}
 					isEmployeesArray={false}
@@ -270,42 +262,19 @@ const Clients = props => {
 					setShowBackdrop={setShowBackdrop}
 					setShowInviteClient={setShowInviteClient}
 				/>
-				<ListHead
-					title="Lista klijenata"
-					displayCopy="none"
-					displayPaste="none"
-					displaySelectWeek="none"
-					displaySave="none"
-					displayLink="none"
-					add="klijenta"
-					addNew={faUserPlus}
-					onAdd={() => newClientHandler()}
-					onClickSearch={() => setDipslaySerachBar('flex')}
-					dipslaySerachBar={dipslaySerachBar}
-					setDipslaySerachBar={setDipslaySerachBar}
-					searchInput={searchInput}
-					setSearchInput={setSearchInput}
+				<ClientsList
+					setDisplayWrappedTools={setDisplayWrappedTools}
+					setShowBackdrop={setShowBackdrop}
+					setDisplayAddClientForm={setDisplayAddClientForm}
+					setDisplayDescription={setDisplayDescription}
+					setDescriptionEdit={setDescriptionEdit}
+					clientsData={clientsData}
+					setClientId={setClientId}
+					setEditMode={setEditMode}
+					setShowConfirmModal={setShowConfirmModal}
+					newClientHandler={newClientHandler}
+					triger={showConfirmModal.triger}
 				/>
-				<ListBody>
-					<ClientsList
-						setDisplayWrappedTools={setDisplayWrappedTools}
-						setShowBackdrop={setShowBackdrop}
-						setDisplayAddClientForm={setDisplayAddClientForm}
-						setDisplayDescription={setDisplayDescription}
-						setDescriptionEdit={setDescriptionEdit}
-						/* clientsData={searchInput === null ? clientsData : filterData()} */
-						clientsData={clientsData}
-						clientId={clientId}
-						setClientId={setClientId}
-						searchInput={searchInput}
-						editMode={editMode}
-						setEditMode={setEditMode}
-						showConfirmModal={showConfirmModal}
-						confirmHandler={confirmHandler}
-						setShowConfirmModal={setShowConfirmModal}
-						triger={showConfirmModal.triger}
-					/>
-				</ListBody>
 				<AddClientButton onClick={() => clientInvitationHandler()} />
 			</Layout>
 		</>

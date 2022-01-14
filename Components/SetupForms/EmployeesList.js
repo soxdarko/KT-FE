@@ -12,6 +12,17 @@ const EmployeesList = props => {
 	const { isMobile } = useDeviceDetect();
 	const [userForEdit, setUserForEdit] = useState('');
 
+	function editHandler(filteredEmployee) {
+		props.setId(filteredEmployee.id);
+		props.setDisplayToolBox('flex');
+		setUserForEdit(filteredEmployee.name);
+	}
+
+	function editFormHandler() {
+		props.setEditMode(true);
+		props.setDisplayToolBox('none');
+	}
+
 	const listItems = props.listOfEmployees
 		.filter(user => user.serviceProviderId.includes(props.selectedServiceProvider))
 		.map(filteredEmployee => {
@@ -22,15 +33,9 @@ const EmployeesList = props => {
 						style={{ display: filteredEmployee === 0 ? 'none' : 'flex' }}>
 						<td>{filteredEmployee.name}</td>
 
-						<td
-							className={classes.ToolBoxButton}
-							onClick={() => {
-								props.setId(filteredEmployee.id),
-									props.setDisplayToolBox('flex'),
-									setUserForEdit(filteredEmployee.name);
-							}}>
+						{/* <td className={classes.ToolBoxButton} onClick={() => editHandler(filteredEmployee)}>
 							<ToolOutlined />
-						</td>
+						</td> */}
 					</tr>
 				);
 				{
@@ -63,13 +68,14 @@ const EmployeesList = props => {
 						{/* <td style={{ display: user.serviceProviderName ? 'block' : 'none' }}>
 							{user.serviceProviderName}
 						</td> */}
-						<td className={classes.IconTd}>
+						{/* <td className={classes.IconTd}>
 							<FontAwesomeIcon
 								icon={faPencilAlt}
 								className={classes.SetupGuidIcon}
 								style={{ display: props.displayEdit }}
 								onClick={() => {
-									props.setEditMode(true), props.setId(filteredEmployee.id);
+									props.setEditMode(true);
+									props.setId(filteredEmployee.id);
 								}}
 							/>
 						</td>
@@ -78,9 +84,9 @@ const EmployeesList = props => {
 								icon={faTrashAlt}
 								className={classes.SetupGuidIcon}
 								style={{ display: props.displayDelete, color: 'red' }}
-								/* onClick={props.onDelete} */
+								onClick={props.onDelete}
 							/>
-						</td>
+						</td> */}
 					</tr>
 				);
 			}
@@ -93,9 +99,7 @@ const EmployeesList = props => {
 					displayToolBox={props.displayToolBox}
 					setDisplayToolBox={props.setDisplayToolBox}
 					userForEdit={userForEdit}
-					onEdit={() => {
-						props.setEditMode(true), props.setDisplayToolBox('none');
-					}}
+					onEdit={() => editFormHandler()}
 				/>
 				<div className={classes.ReviewMob}>
 					<h4>Lista radnika</h4>
@@ -125,15 +129,17 @@ const EmployeesList = props => {
 				<table className={classes.SetupGuideListContainer}>
 					<tbody>
 						<tr style={{ display: props.listOfEmployees.length === 0 ? 'none' : 'block' }}>
-							<th
-								style={{
-									display: props.employeesPreview,
-									width: '100% !important',
-									maxWidth: '400px !important',
+							{/* <th
+							 style={
+									{
+										width: '100% !important',
+										 maxWidth: '400px !important',
 									minWidth: '220px !important',
-								}}>
+									}
+								}
+							>
 								Ime radnika
-							</th>
+							</th> */}
 							{/* <th
 								style={{
 									display: props.employeesPreview,
@@ -143,8 +149,9 @@ const EmployeesList = props => {
 								}}>
 								Naziv Salona
 							</th> */}
-							<th className={classes.IconTdHead}>Izmeni</th>
-							<th className={classes.IconTdHead}>Obriši</th>
+							{/* <th className={classes.IconTdHead}>Izmeni</th>
+							<th className={classes.IconTdHead}>Obriši</th> */}
+							Ime radnika
 						</tr>
 						{listItems}
 					</tbody>

@@ -409,6 +409,7 @@ const Profile = props => {
 					displayCopy="none"
 					displayPaste="none"
 					displaySearch="none"
+					dipslaySerachBar="none"
 					displayAdd="none"
 					displayLink="none"
 					displaySelectWeek="none"

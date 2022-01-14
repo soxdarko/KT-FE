@@ -27,6 +27,21 @@ const AddServiceProvidersForm = props => {
 		props.setEditMode(false);
 	};
 
+	const inputValidityHandler = (object, message) => {
+		updateValidity(props.setServProvFormInput, object, props.servProvFormInput, '', false);
+		responseHandler(props.setShowResponseModal, message, 'red', !props.triger);
+		props.setShowBackdrop(classes.backdropIn);
+	};
+
+	const onChange = (e, object) => {
+		inputChangedHandler(e, object, props.servProvFormInput, props.setServProvFormInput);
+	};
+
+	const apiErrorHandler = error => {
+		console.log(error);
+		props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+	};
+
 	const getAllServiceProvidersHandler = async () => {
 		const api = await getAllServiceProviders()
 			.then(response => {
@@ -42,11 +57,9 @@ const AddServiceProvidersForm = props => {
 						props.errorMessage(err.errorMessage);
 					});
 				} else if (error.request) {
-					console.log(error.request);
-					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+					apiErrorHandler(error.request);
 				} else {
-					console.log('nesto drugo');
-					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+					apiErrorHandler(error);
 				}
 			});
 		return api;
@@ -58,20 +71,18 @@ const AddServiceProvidersForm = props => {
 				console.log(response);
 				getAllServiceProvidersHandler();
 				infoMessageHandler(props.setShowInfoModal, 'Uspešno sačuvano', !props.triger);
+				props.setIsLoading(true);
 			})
 			.catch(error => {
-				props.setIsLoading(false);
 				if (error.response) {
 					console.log(error.response);
 					error.response.data.map(err => {
 						props.errorMessage(err.errorMessage);
 					});
 				} else if (error.request) {
-					console.log(error.request);
-					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+					apiErrorHandler(error.request);
 				} else {
-					console.log(error);
-					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+					apiErrorHandler(error);
 				}
 			});
 		api;
@@ -100,28 +111,12 @@ const AddServiceProvidersForm = props => {
 
 		/* const numericPattern = /^\d+$/; */
 		if (!props.servProvFormInput.serviceProviderName.value.trim()) {
-			updateValidity(
-				props.setServProvFormInput,
-				'serviceProviderName',
-				props.servProvFormInput,
-				'',
-				false
-			);
-			responseHandler(
-				props.setShowResponseModal,
-				'Morate uneti naziv salona!',
-				'red',
-				!props.triger
-			);
-			props.setShowBackdrop(classes.backdropIn);
+			inputValidityHandler('serviceProviderName', 'Morate uneti naziv salona!');
 		} else if (!props.servProvFormInput.city.value.trim()) {
-			updateValidity(props.setServProvFormInput, 'city', props.servProvFormInput, '', false);
-			responseHandler(props.setShowResponseModal, 'Morate uneti grad!', 'red', !props.triger);
-			props.setShowBackdrop(classes.backdropIn);
+			inputValidityHandler('city', 'Morate uneti grad!');
 		} else {
 			props.setServiceProviderInfo(formData);
 			props.setServiceProvidersList([...props.serviceProvidersList, formData.name]);
-			props.setIsLoading(true);
 		}
 	};
 
@@ -171,14 +166,7 @@ const AddServiceProvidersForm = props => {
 				placeholder="Naziv salona"
 				className={inputClassName}
 				value={props.servProvFormInput.serviceProviderName.value}
-				onChange={e =>
-					inputChangedHandler(
-						e,
-						'serviceProviderName',
-						props.servProvFormInput,
-						props.setServProvFormInput
-					)
-				}
+				onChange={e => onChange(e, 'serviceProviderName')}
 				invalid={!props.servProvFormInput.serviceProviderName.valid}
 			/>
 			<Input
@@ -187,9 +175,7 @@ const AddServiceProvidersForm = props => {
 				placeholder="Grad"
 				className={inputClassName}
 				value={props.servProvFormInput.city.value}
-				onChange={e =>
-					inputChangedHandler(e, 'city', props.servProvFormInput, props.setServProvFormInput)
-				}
+				onChange={e => onChange(e, 'city')}
 				invalid={!props.servProvFormInput.city.valid}
 			/>
 			<TextArea
@@ -199,14 +185,7 @@ const AddServiceProvidersForm = props => {
 				value={props.servProvFormInput.informations.value}
 				/* minRows={4} */
 				maxLength="500"
-				onChange={e =>
-					inputChangedHandler(
-						e,
-						'informations',
-						props.servProvFormInput,
-						props.setServProvFormInput
-					)
-				}
+				onChange={e => onChange(e, 'informations')}
 			/>
 			<Input
 				type="button"

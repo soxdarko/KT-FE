@@ -22,7 +22,7 @@ const addClientForm = props => {
 		props.setDisplayAddClientForm('none');
 		props.setShowBackdrop(classes.backdropOut);
 		props.setEditMode(false);
-		props.resetForm();
+		isMobile ? {} : props.resetForm();
 	}
 
 	const addClientHandler = () => {
@@ -61,7 +61,6 @@ const addClientForm = props => {
 						props.setShowResponseModal,
 						'Došlo je do greške, kontaktirajte nas putem kontakt forme',
 						'red',
-						'block',
 						!props.triger
 					);
 				}
@@ -79,6 +78,12 @@ const addClientForm = props => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [props.userData]);
 
+	const inputValidityHandler = (object, message) => {
+		updateValidity(props.setFormInput, object, props.formInput, '', false);
+		responseHandler(props.setShowResponseModal, message, 'red', !props.triger);
+		props.setShowBackdrop(classes.backdropIn);
+	};
+
 	const onSubmit = e => {
 		e.preventDefault();
 		const formData = {
@@ -91,48 +96,20 @@ const addClientForm = props => {
 		const emailPattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
 		const numericPattern = /^\d+$/;
 		if (!props.formInput.name.value.trim()) {
-			updateValidity(props.setFormInput, 'name', props.formInput, '', false);
-			responseHandler(
-				props.setShowResponseModal,
-				'Morate uneti ime klijenta!',
-				'red',
-				!props.triger
-			);
-			props.setShowBackdrop(classes.backdropIn);
+			inputValidityHandler('name', 'Morate uneti ime klijenta!');
 		} else if (
 			!props.formInput.email.value.trim() ||
 			!emailPattern.test(props.formInput.email.value)
 		) {
-			updateValidity(props.setFormInput, 'email', props.formInput, '', false);
-			responseHandler(
-				props.setShowResponseModal,
-				'Morate uneti validnu e-mail adresu!',
-				'red',
-				!props.triger
-			);
-			props.setShowBackdrop(classes.backdropIn);
+			inputValidityHandler('email', 'Morate uneti validnu e-mail adresu!');
 		} else if (!props.formInput.mobOperator.value) {
-			updateValidity(props.setFormInput, 'mobOperator', props.formInput, '', false);
-			responseHandler(
-				props.setShowResponseModal,
-				'Morate izabrati pozivni broj!',
-				'red',
-				!props.triger
-			);
-			props.setShowBackdrop(classes.backdropIn);
+			inputValidityHandler('mobOperator', 'Morate izabrati pozivni broj!');
 		} else if (
 			!props.formInput.phone.value.trim() ||
 			!numericPattern.test(props.formInput.phone.value) ||
 			props.formInput.phone.value.length < 6
 		) {
-			updateValidity(props.setFormInput, 'phone', props.formInput, '', false);
-			responseHandler(
-				props.setShowResponseModal,
-				'Morate uneti validan broj telefona!',
-				'red',
-				!props.triger
-			);
-			props.setShowBackdrop(classes.backdropIn);
+			inputValidityHandler('phone', 'Morate uneti validan broj telefona!');
 		} else {
 			props.setUserData(formData);
 			props.setIsLoading(true);

@@ -1,4 +1,4 @@
-import { useDeviceDetect } from '../helpers/../../helpers/universalFunctions';
+import { confirmHandler } from '../helpers/../../helpers/universalFunctions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt, faFolderOpen, faEdit, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
@@ -6,9 +6,7 @@ import classes from './UI.module.scss';
 import classesAlt from '../Navigation/Navigation.module.scss';
 
 const WrappedTools = props => {
-	const { isMobile } = useDeviceDetect();
-	const modalAnimationIn = isMobile ? classes.modalInMob : classes.modalInPC;
-	const resetForm = () => {
+	function resetForm() {
 		if (props.descriptionEdit) {
 			return;
 		} else {
@@ -17,7 +15,28 @@ const WrappedTools = props => {
 			props.setEditMode(false);
 			props.isEmployeesArray ? props.setCheckedEmployees([]) : {};
 		}
-	};
+	}
+
+	function deleteItemHandler() {
+		confirmHandler(
+			props.setShowConfirmModal,
+			'Da li ste sigurni da želite ukloniti uslugu sa liste?',
+			!props.triger
+		);
+		props.setShowBackdrop(classes.backdropIn);
+	}
+
+	function descriptionFormHandler() {
+		props.setDisplayDescription('block');
+		props.setShowBackdrop(classes.backdropIn);
+		props.setDescriptionEdit(true);
+	}
+
+	function returnHandler() {
+		props.setDisplayWrappedTools('none');
+		props.setDataId(null);
+		resetForm();
+	}
 
 	return (
 		<div style={{ display: props.displayWrappedTools }}>
@@ -28,12 +47,7 @@ const WrappedTools = props => {
 			</div>
 			<div style={{ display: props.displayWrappedTools }} className={props.className}>
 				<div className={classesAlt.ButtonsPair}>
-					<div
-						onClick={() => {
-							props.setDisplayDescription('block');
-							props.setShowBackdrop(classes.backdropIn);
-							props.setDescriptionEdit(true);
-						}}>
+					<div onClick={() => descriptionFormHandler()}>
 						<FontAwesomeIcon
 							icon={faFolderOpen}
 							className={[classes.Icon, props.IconClassName].join(' ')}
@@ -47,21 +61,14 @@ const WrappedTools = props => {
 					</div>
 				</div>
 				<div className={classesAlt.ButtonsPair}>
-					<div
-						onClick={() => {
-							props.setShowConfirmModal(modalAnimationIn);
-							props.setShowBackdrop(classes.backdropIn);
-						}}>
+					<div onClick={() => deleteItemHandler()}>
 						<FontAwesomeIcon
 							icon={faTrashAlt}
 							className={[classes.Icon, props.IconClassName].join(' ')}
 							style={{ color: 'red' }}
 						/>
 					</div>
-					<div
-						onClick={() => {
-							props.setDisplayWrappedTools('none'), props.setDataId(null), resetForm();
-						}}>
+					<div onClick={() => returnHandler()}>
 						<FontAwesomeIcon
 							icon={faArrowLeft}
 							className={[classes.Icon, props.IconClassName].join(' ')}

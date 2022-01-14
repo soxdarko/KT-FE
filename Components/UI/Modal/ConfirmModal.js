@@ -21,9 +21,15 @@ const ConfirmModal = props => {
 		setAnimation(modalAnimationIn);
 	}, [props.modalTriger]);
 
+	function submitHandler() {
+		props.onSubmit();
+		setAnimation(modalAnimationOut);
+	}
+
 	function removeModalHandler() {
 		setAnimation(modalAnimationOut);
 		props.holdBackdrop ? {} : props.setShowBackdrop(classes.backdropOut);
+		isMobile ? {} : props.itemId(null);
 	}
 
 	return (
@@ -34,19 +40,13 @@ const ConfirmModal = props => {
 			<Input
 				type="button"
 				value={props.submitValue}
-				onClick={() => {
-					props.onSubmit();
-					setAnimation(modalAnimationOut);
-				}}
+				onClick={() => submitHandler()}
 				className={classes.Confirm}
 			/>
 			<Input
 				type="button"
 				value="ODUSTANI"
-				onClick={() => {
-					removeModalHandler();
-					props.onCancel();
-				}}
+				onClick={() => removeModalHandler()}
 				className={classes.Decline}
 			/>
 		</div>

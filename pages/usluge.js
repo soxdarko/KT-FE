@@ -1,8 +1,11 @@
 import { useState } from 'react';
-import { useDeviceDetect, responseHandler } from '../helpers/universalFunctions';
+import {
+	useDeviceDetect,
+	responseHandler,
+	infoMessageHandler,
+} from '../helpers/universalFunctions';
 import Head from 'next/head';
 import Layout from '../Components/hoc/Layout/Layout';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { auth } from '../helpers/auth';
 import { fetchJson } from '../api/fetchJson';
 import { getAllServices } from '../api/getAllServices';
@@ -14,8 +17,6 @@ import ConfirmModal from '../Components/UI/Modal/ConfirmModal';
 import InfoModal from '../Components/UI/Modal/InfoModal';
 import initServicesForm from '../Components/SetupForms/initServicesForm';
 import Backdrop from '../Components/UI/Backdrop';
-import ListBody from '../Components/UI/List/ListBody/ListBody';
-import ListHead from '../Components/UI/List/ListHead/ListHead';
 import ServicesList from '../Components/Services/ServicesList';
 import AddServicesForm from '../Components/SetupForms/AddServicesForm';
 import WrappedTools from '../Components/UI/WrappedTools';
@@ -28,7 +29,6 @@ import classes from '../Components/Navigation/Navigation.module.scss';
 
 const Services = props => {
 	const { isMobile } = useDeviceDetect();
-	const modalAnimationIn = isMobile ? classes.modalInMob : classes.modalInPC;
 	const [displayAddServicesForm, setDisplayAddServicesForm] = useState('none');
 	const [displayWrappedTools, setDisplayWrappedTools] = useState('none');
 	const [isLoading, setIsLoading] = useState(false);
@@ -43,20 +43,19 @@ const Services = props => {
 	const [descriptionEdit, setDescriptionEdit] = useState(false);
 	const [editMode, setEditMode] = useState(false);
 	const [showBackdrop, setShowBackdrop] = useState('');
-	const [dipslaySerachBar, setDipslaySerachBar] = useState('none');
 	const [displayServiceSettings, setDisplayServiceSettings] = useState('none');
-	const [searchInput, setSearchInput] = useState('');
-	const [messageHandler, setMessageHandler] = useState('Uspešno sačuvano!');
-	const [showInfoModal, setShowInfoModal] = useState('');
+	const [showInfoModal, setShowInfoModal] = useState({
+		triger: false,
+		message: null,
+	});
 	const [showConfirmModal, setShowConfirmModal] = useState({
 		triger: false,
-		message: 'Da li ste sigurni da želite ukloniti uslugu sa liste?',
+		message: null,
 	});
 	const [showResponseModal, setShowResponseModal] = useState({
 		triger: false,
 		message: null,
 		border: '',
-		triger: false,
 	});
 	const [holdBackdrop, setHoldBackdrop] = useState(true);
 
@@ -76,7 +75,7 @@ const Services = props => {
 	};
 
 	const errorMessage = message => {
-		responseHandler(setShowResponseModal, modalAnimationIn, message, 'red');
+		responseHandler(setShowResponseModal, message, 'red');
 		setShowBackdrop(classes.backdropIn);
 	};
 
@@ -85,7 +84,7 @@ const Services = props => {
 			.then(response => {
 				console.log(response);
 				setDisplayServiceSettings('none');
-				completnessMessageHandler('Uspešno sačuvano');
+				infoMessageHandler(setShowInfoModal, 'Uspešno sačuvano', !showInfoModal.triger);
 				getServiceSettingsHandler();
 			})
 			.catch(error => {
@@ -113,7 +112,7 @@ const Services = props => {
 				getAllServicesHandler();
 				setDisplayWrappedTools('none');
 				resetForm();
-				setShowInfoModal(!showInfoModal);
+				infoMessageHandler(setShowInfoModal, 'Usluga uspešno obrisana!', !showInfoModal.triger);
 			})
 			.catch(error => {
 				!holdBackdrop ? setHoldBackdrop(true) : {};
@@ -191,10 +190,6 @@ const Services = props => {
 		setShowBackdrop(classes.backdropOut);
 		setDisplayWrappedTools('none');
 	}
-	function confirmModalCancelHandler() {
-		setServiceId(null);
-		setShowBackdrop(classes.backdropOut);
-	}
 	function newServiceHandler() {
 		setDisplayAddServicesForm('block');
 		setShowBackdrop(classes.backdropIn);
@@ -230,13 +225,18 @@ const Services = props => {
 			/>
 			<Loader loading={isLoading} />
 			<Backdrop backdropAnimation={showBackdrop} />
-			<InfoModal message={messageHandler} showInfoModal={showInfoModal} borderColor="green" />
+			<InfoModal
+				message={showInfoModal.message}
+				showInfoModal={showInfoModal}
+				borderColor="green"
+			/>
 			<ConfirmModal
-				message="Da li ste sigurni da želite obrisati uslugu?"
-				submitValue="Obriši"
-				borderColor="yellow"
+				modalTriger={showConfirmModal.triger}
+				message={showConfirmModal.message}
+				submitValue="Da"
+				setShowBackdrop={setShowBackdrop}
+				itemId={setServiceId}
 				onSubmit={() => confirmModalSubmitHandler()}
-				onCancel={() => confirmModalCancelHandler()}
 			/>
 			<ResponseModal
 				showResponseModal={showResponseModal}
@@ -255,13 +255,14 @@ const Services = props => {
 				descriptionEdit={descriptionEdit}
 				setDescriptionEdit={setDescriptionEdit}
 				setShowConfirmModal={setShowConfirmModal}
+				triger={showConfirmModal.triger}
 				setFormInput={setFormInput}
 				setDataId={setServiceId}
 				isEmployeesArray={true}
 				setCheckedEmployees={setCheckedEmployees}
-				initForm={initServicesForm}
 				setEditMode={setEditMode}
 				onClickEdit={() => editServiceHandler()}
+				initForm={initServicesForm}
 				className={[classes.WrappedToolsContainer, classes.WrappedToolsWithChkBox].join(' ')}
 				displayWrappedToolsChkBox="flex">
 				<ServiceSettingsForm
@@ -290,6 +291,8 @@ const Services = props => {
 				setDisplayDescription={setDisplayDescription}
 				displayWrappedButtonsMob={displayWrappedButtonsMob}
 				getAllServicesHandler={getAllServicesHandler}
+				setShowInfoModal={setShowInfoModal}
+				triger={showInfoModal.triger}
 				formInput={formInput}
 				setFormInput={setFormInput}
 				setServicesData={setServicesData}
@@ -326,7 +329,6 @@ const Services = props => {
 				displayForward="none"
 				displayForwardMob="none"
 				setShowResponseModal={setShowResponseModal}
-				setMessageHandler={setMessageHandler}
 				setShowInfoModal={setShowInfoModal}
 				errorMessage={errorMessage}
 				validation={true}
@@ -338,43 +340,22 @@ const Services = props => {
 				resetForm={resetForm}
 				triger={showResponseModal.triger}
 			/>
-			<ListHead
-				title="Lista usluga"
-				displayCopy="none"
-				displayPaste="none"
-				displaySelectWeek="none"
-				displaySave="none"
-				displayLink="none"
-				add="uslugu"
-				addNew={faPlus}
-				onAdd={() => newServiceHandler()}
-				onClickSearch={() => setDipslaySerachBar('flex')}
-				dipslaySerachBar={dipslaySerachBar}
-				setDipslaySerachBar={setDipslaySerachBar}
-				searchInput={searchInput}
-				setSearchInput={setSearchInput}
+			<ServicesList
+				servicesData={servicesData}
+				setDisplayAddServicesForm={setDisplayAddServicesForm}
+				setShowBackdrop={setShowBackdrop}
+				setDisplayWrappedTools={setDisplayWrappedTools}
+				setDisplayServiceSettings={setDisplayServiceSettings}
+				newServiceHandler={newServiceHandler}
+				setServiceId={setServiceId}
+				setEditMode={setEditMode}
+				serviceSettings={serviceSettings}
+				setServiceSettings={setServiceSettings}
+				setServiceSettingsData={setServiceSettingsData}
+				showConfirmModal={showConfirmModal}
+				setShowConfirmModal={setShowConfirmModal}
+				triger={showConfirmModal.triger}
 			/>
-			<ListBody>
-				<ServicesList
-					servicesData={servicesData}
-					setDisplayAddServicesForm={setDisplayAddServicesForm}
-					setShowBackdrop={setShowBackdrop}
-					setDisplayWrappedTools={setDisplayWrappedTools}
-					setDisplayServiceSettings={setDisplayServiceSettings}
-					serviceId={serviceId}
-					setServiceId={setServiceId}
-					services={props.services}
-					searchInput={searchInput}
-					formInput={formInput}
-					setFormInput={setFormInput}
-					setEditMode={setEditMode}
-					serviceSettings={serviceSettings}
-					setServiceSettingsData={setServiceSettingsData}
-					deleteServiceHandler={deleteServiceHandler}
-					showConfirmModal={showConfirmModal}
-					setShowConfirmModal={setShowConfirmModal}
-				/>
-			</ListBody>
 		</>
 	);
 };

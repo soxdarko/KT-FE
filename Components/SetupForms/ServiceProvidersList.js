@@ -1,40 +1,41 @@
 import { useState } from 'react';
 import { useDeviceDetect } from '../../helpers/universalFunctions';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPencilAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import { ToolOutlined } from '@ant-design/icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // bice potrebno za unapredjenja
+import { faPencilAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons'; // bice potrebno za unapredjenja
+import { ToolOutlined } from '@ant-design/icons'; // bice potrebno za unapredjenja
 
 import classes from './SetupForms.module.scss';
-import ToolBox from '../UI/ToolBox';
+import ToolBox from '../UI/ToolBox'; // bice potrebno za unapredjenja
 
 const ServiceProvidersList = props => {
-	const { isMobile } = useDeviceDetect();
-	const [userForEdit, setUserForEdit] = useState('');
+	const { isMobile } = useDeviceDetect(); // bice potrebno za unapredjenja
+	/* const [userForEdit, setUserForEdit] = useState(''); */ const listItems = props.serviceProviderData.map(
+		user => {
+			if (isMobile) {
+				return (
+					<tr
+						key={user.id}
+						style={{ display: props.serviceProviderData.length === 0 ? 'none' : 'flex' }}>
+						<td>{user.name}</td>
 
-	const listItems = props.serviceProviderData.map(user => {
-		if (isMobile) {
-			return (
-				<tr
-					key={user.id}
-					style={{ display: props.serviceProviderData.length === 0 ? 'none' : 'flex' }}>
-					<td>{user.name}</td>
-
-					<td
+						{/* <td
 						className={classes.ToolBoxButton}
 						onClick={() => {
-							props.setId(user.id), props.setDisplayToolBox('flex'), setUserForEdit(user.name);
+							props.setId(user.id), props.setDisplayToolBox('flex'), setUserForEdit(user.name); // bice potrebno za unapredjenja
 						}}>
 						<ToolOutlined />
-					</td>
-				</tr>
-			);
-		} else {
-			return (
-				<tr
-					key={user.id}
-					style={{ display: props.serviceProviderData.length === 0 ? 'none' : 'flex' }}>
-					<td className={classes.tdLeftAlign}>{user.name}</td>
-					<td
+					</td> */}
+					</tr>
+				);
+			} else {
+				return (
+					<tr
+						key={user.id}
+						style={{ display: props.serviceProviderData.length === 0 ? 'none' : 'flex' }}>
+						<td className={classes.tdLeftAlign} style={{ textAlign: 'center' }}>
+							{user.name}
+						</td>
+						{/* <td
 						className={classes.IconTd}
 						onClick={() => {
 							props.setId(user.id);
@@ -42,33 +43,34 @@ const ServiceProvidersList = props => {
 						<FontAwesomeIcon
 							icon={faPencilAlt}
 							className={classes.SetupGuidIcon}
-							style={{ display: props.displayEdit }}
+							style={{ display: props.displayEdit }} // bice potrebno za unapredjenja
 						/>
 					</td>
 					<td className={classes.IconTd}>
 						<FontAwesomeIcon
 							icon={faTrashAlt}
 							className={classes.SetupGuidIcon}
-							style={{ display: props.displayDelete, color: 'red' }}
-							/* onClick={props.onDelete} */
+							style={{ display: props.displayDelete, color: 'red' }} // bice potrebno za unapredjenja
+							onClick={props.onDelete}
 						/>
-					</td>
-				</tr>
-			);
+					</td> */}
+					</tr>
+				);
+			}
 		}
-	});
+	);
 
 	if (isMobile) {
 		return (
 			<>
-				<ToolBox
+				{/* <ToolBox
 					displayToolBox={props.displayToolBox}
-					setDisplayToolBox={props.setDisplayToolBox}
+					setDisplayToolBox={props.setDisplayToolBox} // bice potrebno za unapredjenja
 					userForEdit={userForEdit}
 					onEdit={() => {
 						props.setEditMode(true), props.setDisplayToolBox('none');
 					}}
-				/>
+				/> */}
 				<div className={classes.ReviewMob}>
 					<h4>Lista salona</h4>
 					<div style={{ display: listItems.length === 0 ? 'block' : 'none' }}>
@@ -97,9 +99,10 @@ const ServiceProvidersList = props => {
 				<table className={classes.SetupGuideListContainer}>
 					<tbody>
 						<tr style={{ display: props.serviceProviderData.length === 0 ? 'none' : 'block' }}>
-							<th>Naziv Salona</th>
-							<th className={classes.IconTdHead}>Izmeni</th>
-							<th className={classes.IconTdHead}>Obriši</th>
+							Naziv Salona
+							{/* <th>Naziv Salona</th> */}
+							{/* <th className={classes.IconTdHead}>Izmeni</th> // bice potrebno za unapredjenja
+							<th className={classes.IconTdHead}>Obriši</th> */}
 						</tr>
 						{listItems}
 					</tbody>

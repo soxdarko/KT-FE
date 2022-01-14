@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
-import { useDeviceDetect } from '../../../helpers/universalFunctions';
+import { useEffect, useRef } from 'react';
+import { useDeviceDetect, infoMessageHandler } from '../../../helpers/universalFunctions';
 import { saveServicesToManyEmployees } from '../../../api/saveServicesToManyEmployees';
 import TextArea from './TextArea';
 import Input from './Input';
@@ -12,11 +12,12 @@ const ServiceDescription = props => {
 	const isComponentLoad = useRef(true);
 
 	const saveDescription = () => {
+		props.setIsLoading(false);
 		const api = saveServicesToManyEmployees(props.serviceDescriptionData)
 			.then(response => {
 				console.log(response);
 				props.getAllServicesHandler();
-				props.completnessMessageHandler('Uspešno sačuvano');
+				infoMessageHandler(props.setShowInfoModal, 'Uspešno sačuvano', !props.triger);
 			})
 			.catch(error => {
 				if (error.response) {
@@ -66,6 +67,13 @@ const ServiceDescription = props => {
 		props.setIsLoading(true);
 	};
 
+	function stopEditHandler() {
+		props.setDisplayDescription('none');
+		props.setShowBackdrop(classes.backdropOut);
+		props.setDescriptionEdit(false);
+		props.resetForm();
+	}
+
 	return (
 		<div
 			style={{ display: props.displayDescription }}
@@ -92,12 +100,7 @@ const ServiceDescription = props => {
 				displaySave="block"
 				displayAdd="none"
 				displayStopEdit="block"
-				stopEdit={() => {
-					props.setDisplayDescription('none');
-					props.setShowBackdrop(classes.backdropOut);
-					props.setDescriptionEdit(false);
-					props.resetForm();
-				}}
+				stopEdit={() => stopEditHandler()}
 				validation={true}
 			/>
 		</div>

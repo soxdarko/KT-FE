@@ -119,7 +119,7 @@ input[type='time']::-webkit-calendar-picker-indicator {
 			width: 100% !important;
 			color: $base-orange-color;
 			th {
-				width: 100% !important;
+				flex: 1 !important;
 				font-size: 0.9em;
 				border: 1.9px ridge black;
 				background-color: $form-even-row-color;

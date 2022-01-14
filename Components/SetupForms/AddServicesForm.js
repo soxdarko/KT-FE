@@ -46,27 +46,13 @@ const AddServicesForm = props => {
 			.catch(error => {
 				if (error.response) {
 					console.log(error);
-					/* error.response.data.map(err => {
+					error.response.data.map(err => {
 						props.errorMessage(err.errorMessage);
-					}); */
+					});
 				} else if (error.request) {
-					console.log(error.request);
-					responseHandler(
-						props.setShowResponseModal,
-						'Došlo je do greške, kontaktirajte nas putem kontakt forme!',
-						'red',
-						'block',
-						!props.triger
-					);
+					apiErrorHandler(error.request);
 				} else {
-					console.log(error);
-					responseHandler(
-						props.setShowResponseModal,
-						'Došlo je do greške, kontaktirajte nas putem kontakt forme!',
-						'red',
-						'block',
-						!props.triger
-					);
+					apiErrorHandler(error);
 				}
 			});
 		api;
@@ -101,34 +87,11 @@ const AddServicesForm = props => {
 		];
 
 		if (!props.servicesFormInput.serviceName.value.trim()) {
-			updateValidity(props.setServicesFormInput, 'serviceName', props.servicesFormInput, '', false);
-			responseHandler(
-				props.setShowResponseModal,
-				'Morate uneti naziv usluge!',
-				'red',
-				'block',
-				!props.triger
-			);
-			props.setShowBackdrop(classes.backdropIn);
+			inputValidityHandler('serviceName', 'Morate uneti naziv usluge!');
 		} else if (!props.servicesFormInput.duration.value) {
-			updateValidity(props.setServicesFormInput, 'duration', props.servicesFormInput, '', false);
-			responseHandler(
-				props.setShowResponseModal,
-				'Morate izabrati dužinu trajanja usluge!',
-				'red',
-				'block',
-				!props.triger
-			);
-			props.setShowBackdrop(classes.backdropIn);
+			inputValidityHandler('duration', 'Morate izabrati dužinu trajanja usluge!');
 		} else if (props.checkedEmployees.length === 0) {
-			responseHandler(
-				props.setShowResponseModal,
-				'Morate izabrati minimum jednog radnika!',
-				'red',
-				'block',
-				!props.triger
-			);
-			props.setShowBackdrop(classes.backdropIn);
+			inputValidityHandler('', 'Morate izabrati minimum jednog radnika!');
 		} else {
 			setServiceData(formData);
 			props.setIsLoading(true);
@@ -204,6 +167,21 @@ const AddServicesForm = props => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	const inputValidityHandler = (object, message) => {
+		updateValidity(props.setServicesFormInput, object, props.servicesFormInput, '', false);
+		responseHandler(props.setShowResponseModal, message, 'red', !props.triger);
+		props.setShowBackdrop(classes.backdropIn);
+	};
+
+	const onChange = (e, object) => {
+		inputChangedHandler(e, object, props.servicesFormInput, props.setServicesFormInput);
+	};
+
+	const apiErrorHandler = error => {
+		console.log(error);
+		props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+	};
+
 	function cancelAddServicePcHandler() {
 		props.setServiceId(null);
 		props.setCheckedEmployees([]);
@@ -237,15 +215,7 @@ const AddServicesForm = props => {
 					name="serviceProviderId"
 					className={classes.SelectInputText}
 					value={props.servicesFormInput.serviceProviderId.value}
-					onChange={e => {
-						inputChangedHandler(
-							e,
-							'serviceProviderId',
-							props.servicesFormInput,
-							props.setServicesFormInput
-						);
-						props.setEditMode(false);
-					}}>
+					onChange={e => onChange(e, 'serviceProviderId')}>
 					<option value="" disabled selected hidden>
 						Izaberite salon
 					</option>
@@ -257,14 +227,7 @@ const AddServicesForm = props => {
 					placeholder="Unesite naziv usluge"
 					className={inputClassName}
 					value={props.servicesFormInput.serviceName.value}
-					onChange={e =>
-						inputChangedHandler(
-							e,
-							'serviceName',
-							props.servicesFormInput,
-							props.setServicesFormInput
-						)
-					}
+					onChange={e => onChange(e, 'serviceName')}
 					invalid={!props.servicesFormInput.serviceName.valid}
 				/>
 				<Input
@@ -273,23 +236,14 @@ const AddServicesForm = props => {
 					placeholder="Unesite opis usluge"
 					className={inputClassName}
 					value={props.servicesFormInput.description.value}
-					onChange={e =>
-						inputChangedHandler(
-							e,
-							'description',
-							props.servicesFormInput,
-							props.setServicesFormInput
-						)
-					}
+					onChange={e => onChange(e, 'description')}
 				/>
 				<Select
 					displaySelect="block"
 					className={classes.SelectInputText}
 					value={props.servicesFormInput.duration.value}
 					name={'duration'}
-					onChange={e =>
-						inputChangedHandler(e, 'duration', props.servicesFormInput, props.setServicesFormInput)
-					}>
+					onChange={e => onChange(e, 'duration')}>
 					<option value="trajanje usluge" disabled selected hidden>
 						trajanje usluge
 					</option>
@@ -302,9 +256,7 @@ const AddServicesForm = props => {
 					maxLength="10"
 					className={inputClassName}
 					value={props.servicesFormInput.price.value}
-					onChange={e =>
-						inputChangedHandler(e, 'price', props.servicesFormInput, props.setServicesFormInput)
-					}
+					onChange={e => onChange(e, 'price')}
 				/>
 				<EmployeesPicker
 					title="Radnici u izabranom salonu"

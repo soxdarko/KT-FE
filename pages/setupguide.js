@@ -49,13 +49,14 @@ const setupguide = props => {
 	const [displayAddEmployeeForm, setDisplayAddEmployeeForm] = useState('none');
 	const [displayAddServicesForm, setDisplayAddServicesForm] = useState('none');
 	const [displayWorkingTimeForm, setDisplayWorkingTimeForm] = useState('none');
-	const serviceProviderDatails = serviceProviderData.map(data => {
+	/* const serviceProviderDatails = serviceProviderData.map(data => {
 		return {
 			id: data.id,
 			name: data.name,
 		};
-	});
-	const userGuideStatus = props.userStatus;
+	}); */
+	/* const userGuideStatus = props.userStatus; */
+	const userGuideStatus = 'employees';
 	const [editMode, setEditMode] = useState(false);
 	const [checkedEmployees, setCheckedEmployees] = useState([]);
 	const [servProvFormInput, setServProvFormInput] = useState(initServiceProviderForm);
@@ -68,9 +69,12 @@ const setupguide = props => {
 	const [workingTimeFormInput, setWorkingTimeFormInput] = useState([]);
 	const [workingHoursData, setWorkingHoursData] = useState({});
 
+	/* console.log(props.userStatus.guideStatus); */
+
 	const errorMessage = message => {
 		responseHandler(setShowResponseModal, message, 'red');
 		setShowBackdrop(classes.backdropIn);
+		setIsLoading(false);
 	};
 
 	/* const completnessMessageHandler = message => {
@@ -192,6 +196,7 @@ const setupguide = props => {
 						setDisplayAddServiceProvidersForm={setDisplayAddServiceProvidersForm}
 						setDisplayAddEmployeeForm={setDisplayAddEmployeeForm}
 						setShowResponseModal={setShowResponseModal}
+						setShowInfoModal={setShowInfoModal}
 						setShowBackdrop={setShowBackdrop}
 						initServiceProviderForm={initServiceProviderForm}
 						servProvFormInput={servProvFormInput}
