@@ -7,7 +7,7 @@ import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import Slides from './Slides';
 import Radio from '../UI/Radio';
 
-import classes from './HomePage.scss';
+import classes from './HomePage.module.scss';
 
 const Slider = () => {
 	const { isMobile } = useDeviceDetect();
