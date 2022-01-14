@@ -1,37 +1,40 @@
 import CalBodyCol from './CalBodyCol';
+import { Fragment, useEffect } from 'react';
 
-const CalBodyRow = (props) => (
-  <>
-    {props.minMaxWorkingHours.map((time, i) => {
-      const clickedTimeHandler = () => {
-        const cell = props.minMaxWorkingHours;
-        // eslint-disable-next-line no-shadow
-        for (const time of cell) {
-          if (time === cell[i]) {
-            return time;
-          }
-        }
-      };
+const CalBodyRow = ({workHourAppointments, time, clientPicker, setClickedCell, showMessage}) => {
+  // const clickedTimeHandler = (i) => {
+  //   const cell = props.minMaxWorkingHours;
+  //   for (const time of cell) {
+  //     if (time === cell[i]) {
+  //       return time;
+  //     }
+  //   }
+  // };
 
-      return (
-        // eslint-disable-next-line no-shadow
-        <tr key={i} onClick={(i) => clickedTimeHandler(i)}>
-          <CalBodyCol
-            daysInWeek={props.daysInWeek}
-            workingHoursInWeek={props.workingHoursInWeek}
-            isEnabled={props.isEnabled}
-            timeIndex={i}
-            time={clickedTimeHandler(i)}
-            setClickedCell={props.setClickedCell}
-            clickedCellState={props.clickedCell}
-            Appointments={props.Appointments}
-            onClick={props.onClick}
-            clientPicker={props.clientPicker}
-          />
-        </tr>
-      );
-    })}
-  </>
-);
+
+  return (
+      <tr>
+        {workHourAppointments && workHourAppointments.map((day, i) => 
+            day.wha.map(wha => wha.hours == time &&
+                (
+                  <Fragment key={'CalBodyCol' + i}>
+                      <CalBodyCol 
+                          date={day.date} 
+                          time={time}
+                          enabled={wha.enabled}
+                          absence={wha.absence}
+                          appointment={wha.appointment}
+                          clientPicker={clientPicker}
+                          setClickedCell={setClickedCell}
+                          showMessage={showMessage}
+                      />
+                  </Fragment>
+                )
+            )
+        )}
+      </tr> 
+  )
+}
+
 
 export default CalBodyRow;

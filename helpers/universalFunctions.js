@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import Router from 'next/router';
+import moment from 'moment';
 
 export function useDeviceDetect() {
 	const [isMobile, setMobile] = useState(false);
@@ -204,4 +205,41 @@ export function useWindowSize() {
 		}
 	}, []); // Empty array ensures that effect is only run on mount
 	return windowSize;
+}
+
+export function getMonday( date ) {
+    var day = date.getDay() || 7;  
+    if( day !== 1 ) 
+        date.setHours(-24 * (day - 1)); 
+    return date;
+}
+
+export function getMondayForAPI() {
+	const mondayDateTime = getMonday(new Date());
+	const year = mondayDateTime.getFullYear();
+	const month = ("0" + (mondayDateTime.getMonth() + 1)).slice(-2);
+	const day = ("0" + mondayDateTime.getDate()).slice(-2);
+	const mondayDate = `${year}-${month}-${day}`;
+	return mondayDate;
+}
+
+export function getDateFromDayOfWeek( date, day ) {
+	const monday = getMonday(date);
+	return moment(monday).add(day, 'days').startOf('day').format();
+}
+
+export function isObjEmpty(obj) {
+	for(var prop in obj) {
+	  if(Object.prototype.hasOwnProperty.call(obj, prop)) {
+		return false;
+	  }
+	}
+  
+	return JSON.stringify(obj) === JSON.stringify({});
+}
+
+export function getTimeString(h, seconds=false) {
+	const hour = (`0${Math.floor(h/60)}`).slice(-2);
+	const minutes = (`0${(h % 60)}`).slice(-2);
+	return `${hour}:${minutes}${seconds?':00':''}`;
 }

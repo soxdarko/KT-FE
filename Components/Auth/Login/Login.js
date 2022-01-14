@@ -34,6 +34,7 @@ const Login = props => {
 	const getGuideStatus = async () => {
 		const api = await getCompanyGuideStatus()
 			.then(response => {
+				console.log(response.data)
 				const getGuideStatusData = response.data;
 				props.setUserStatus(getGuideStatusData);
 			})
@@ -87,7 +88,7 @@ const Login = props => {
 			})
 			.catch(error => {
 				if (error.response) {
-					console.log(error.response);
+					console.log('error',error.response);
 					responseHandler(
 						props.setShowResponseModal,
 						'Uneli ste pogrešno korisničko ime ili lozinku!',

@@ -3,10 +3,10 @@ import { fetchJson } from '../../api/fetchJson';
 export default async (req, res) => {
 	const cookie = req.headers.cookie;
 	const token = cookie.substring(cookie.indexOf('=') + 1);
-	const employeeId = req.body.employeeId;
-	const selectedMondayFormated = req.body.selectedMondayFormated;
-	const url = `settings/getWorkingHours?employeeId=${employeeId}&dateOfMonday=${selectedMondayFormated}`;
-	async function getWorkingHours() {
+    const dateOfMonday = req.body.dateOfMonday;
+	const url = `appointments/getAppointments?dateOfMonday=${dateOfMonday}`;
+
+	async function getAppointments() {
 		const api = await fetchJson(url, 'get', token)
 			.then(res => {
 				return res.data;
@@ -17,7 +17,8 @@ export default async (req, res) => {
 
 		return api;
 	}
-	const data = getWorkingHours();
+
+	const data = getAppointments();
 
 	res.statusCode = 200;
 	res.json(await data);

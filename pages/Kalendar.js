@@ -1,20 +1,17 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { fetchJson } from '../api/fetchJson';
 import { auth } from '../helpers/auth';
-
 import Head from 'next/head';
 import Layout from '../Components/hoc/Layout/Layout';
 import Calendar from '../Components/Calendar/Calendar';
-
+import { getMondayForAPI } from '../helpers/universalFunctions';
 import classes from '../Components/Navigation/Navigation.module.scss';
+import { useRouter } from 'next/router';
 
 const kalendar = props => {
+	const router = useRouter();
 	const [selectedEmployee, setSelectedEmployee] = useState(props.employees[0].id);
 	const [clientFormBackdrop, setClientFormBackdrop] = useState('none');
-	const [displayAddServiceProvidersForm, setDisplayAddServiceProvidersForm] = useState('none');
-	const [displayAddEmployeeForm, setDisplayAddEmployeeForm] = useState('none');
-	const [displayAddServicesForm, setDisplayAddServicesForm] = useState('none');
-	const [displayWorkingTimeForm, setDisplayWorkingTimeForm] = useState('none');
 
 	const clientFormBackdropShow = () => {
 		setClientFormBackdrop('block');
@@ -23,6 +20,10 @@ const kalendar = props => {
 	const clientFormBackdropHide = () => {
 		setClientFormBackdrop('none');
 	};
+
+	const refreshData = () => {
+		router.replace(router.asPath);
+	}
 
 	return (
 		<>
@@ -53,6 +54,9 @@ const kalendar = props => {
 					employees={props.employees}
 					services={props.services}
 					selectedEmployee={selectedEmployee}
+					workingHours={props.workingHours}
+					appointments={props.appointments}
+					refreshData={refreshData}
 				/>
 			</Layout>
 		</>
@@ -69,6 +73,10 @@ export async function getServerSideProps(ctx) {
 	const resServices = await fetchJson(servicesUrl, 'get', token);
 	const guideStatusUrl = `users/getCompanyGuideStatus`;
 	const resGuideStatusUrl = await fetchJson(guideStatusUrl, 'get', token);
+	const workingHoursUrl = `settings/getWorkingHours?dateOfMonday=${getMondayForAPI()}`
+	const workingHours = await fetchJson(workingHoursUrl, 'get', token).then(res => res.data);
+	const appointmentUrl = `appointments/getAppointments?&dateOfMonday=${getMondayForAPI()}`
+	const appointments = await fetchJson(appointmentUrl, 'get', token).then(res => res.data);
 
 	const serviceProviders = resServiceProviders.data.map(name => {
 		return name;
@@ -91,6 +99,8 @@ export async function getServerSideProps(ctx) {
 			employees,
 			services,
 			userStatus,
+			workingHours,
+			appointments
 		},
 	};
 }
