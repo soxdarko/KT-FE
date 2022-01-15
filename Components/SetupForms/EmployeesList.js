@@ -38,8 +38,8 @@ const EmployeesList = props => {
 						</td> */}
 					</tr>
 				);
-				{
-					/* <td className={classes.IconTd}>
+				/*{
+					 <td className={classes.IconTd}>
 							<FontAwesomeIcon
 								icon={faPencilAlt}
 								className={classes.SetupGuidIcon}
@@ -57,8 +57,8 @@ const EmployeesList = props => {
 								style={{ display: props.displayDelete, color: 'red' }}
 								onClick={props.onDelete} 
 								/>
-								</td> */
-				}
+								</td>
+				} */
 			} else {
 				return (
 					<tr

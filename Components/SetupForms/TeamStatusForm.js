@@ -76,8 +76,8 @@ const TeamStatusForm = props => {
 	}, [singleCompany]);
 
 	useEffect(() => {
-		if (isPageLoad.current) {
-			isPageLoad.current = false;
+		if (props.isPageLoad.current) {
+			props.isPageLoad.current = false;
 			return;
 		}
 		addNewEmployeeHandler();

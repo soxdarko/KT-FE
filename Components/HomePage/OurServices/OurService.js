@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useDeviceDetect } from '../../../helpers/universalFunctions';
 
-import classes from '../HomePage.scss';
+import classes from '../HomePage.module.scss';
 
 const OurService = props => {
 	const { isMobile } = useDeviceDetect();

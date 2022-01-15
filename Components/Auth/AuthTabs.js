@@ -54,7 +54,6 @@ const AuthTabs = props => {
 				setDisplayPassRecovery={props.setDisplayPassRecovery}
 				setShowResponseModal={props.setShowResponseModal}
 				setShowBackdrop={props.setShowBackdrop}
-				setIsLoading={props.setIsLoading}
 				setUserStatus={props.setUserStatus}
 				clientAuth={1}
 			/>

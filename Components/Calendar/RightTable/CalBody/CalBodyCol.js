@@ -77,7 +77,7 @@ const CalBodyCol = ({date, time, enabled, absence, appointment, clientPicker, se
             <hr className={classes.HrLineAppointment} />
             {!isObjEmpty(appointment) && appointment.services.map(s => {
               return (
-                <h5>{`${s.serviceName} (${s.price} din)`}</h5>
+                <h5 key={s.serviceName}>{`${s.serviceName} (${s.price} din)`}</h5>
               )
             })}
           </Appointment>

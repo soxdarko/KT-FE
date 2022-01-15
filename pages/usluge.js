@@ -333,10 +333,10 @@ const Services = props => {
 				errorMessage={errorMessage}
 				validation={true}
 				isSetupGuide={false}
-				cancelAddService={() => cancelAddServiceHandler()}
+				cancelAddService={() => alert('missing cancelAddServiceHandler')//cancelAddServiceHandler()
+				}
 				displayCancel={isMobile ? 'none' : 'inline-block'}
 				getAllServicesHandler={getAllServicesHandler}
-				isSetupGuide={false}
 				resetForm={resetForm}
 				triger={showResponseModal.triger}
 			/>

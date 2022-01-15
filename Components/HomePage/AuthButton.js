@@ -4,7 +4,7 @@ import { useDeviceDetect } from '../../helpers/universalFunctions';
 import Input from '../UI/Forms/Input';
 import Backdrop from '../UI/Backdrop';
 
-import classes from './HomePage.scss';
+import classes from './HomePage.module.scss';
 
 const AuthButton = props => {
 	const { isMobile } = useDeviceDetect();

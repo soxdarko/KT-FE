@@ -1,11 +1,9 @@
 import { useState } from 'react';
 import { auth } from '../helpers/auth';
 import { fetchJson } from '../api/fetchJson';
-import nextCookie from 'next-cookies';
 import { useDeviceDetect } from '../helpers/universalFunctions';
 import Head from 'next/head';
 import ServiceProvidersEmployees from '../Components/DataFromBE/Clients';
-
 import Layout from '../Components/hoc/Layout/Layout';
 import Profile from '../Components/Profile/Profile';
 import Backdrop from '../Components/UI/Backdrop';
@@ -15,7 +13,6 @@ import ChangePass from '../Components/Auth/ChangePass';
 import PassRecovery from '../Components/Auth/PassRecovery/PassRecovery';
 import InviteClient from '../Components/AddToList/InviteClient';
 import Loader from '../Components/UI/Loader';
-
 import classes from '../Components/Navigation/Navigation.module.scss';
 
 const profil = () => {

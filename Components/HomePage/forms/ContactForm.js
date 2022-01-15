@@ -13,7 +13,7 @@ import Input from '../../UI/Forms/Input';
 import Title from '../Title';
 import TextArea from '../../UI/Forms/TextArea';
 
-import classes from '../HomePage.scss';
+import classes from '../HomePage.module.scss';
 
 const ContactForm = props => {
 	const { isMobile } = useDeviceDetect();
