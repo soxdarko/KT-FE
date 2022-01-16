@@ -57,11 +57,6 @@ const Profile = props => {
 			touched: false,
 			valid: true,
 		},
-		city: {
-			value: 'Subotica',
-			touched: false,
-			valid: true,
-		},
 		activity: {
 			value: 'Frizer',
 			touched: false,
@@ -91,7 +86,7 @@ const Profile = props => {
 				console.log(response),
 					responseHandler(
 						props.setShowResponseModal,
-						modalAnimationIn,
+						props.modalAnimationIn,
 						'Uspešno ste se prijavili',
 						'green',
 						classes.backdropIn
@@ -114,14 +109,14 @@ const Profile = props => {
 		const formData = {
 			userName: formInput.name.value.trim(),
 			password: formInput.userName.value.trim(),
-			password: formInput.company.value.trim(),
-			password: formInput.email.value.trim(),
-			password: formInput.phone.value.trim(),
-			password: formInput.city.value.trim(),
-			password: formInput.address.value.trim(),
-			password: formInput.activity.value.trim(),
-			password: formInput.timePerField.value.trim(),
-			password: formInput.resLimit.value.trim(),
+			company: formInput.company.value.trim(),
+			email: formInput.email.value.trim(),
+			phone: formInput.phone.value.trim(),
+			city: formInput.city.value.trim(),
+			address: formInput.address.value.trim(),
+			activity: formInput.activity.value.trim(),
+			timePer: formInput.timePerField.value.trim(),
+			resLimit: formInput.resLimit.value.trim(),
 		};
 		if (!formInput.name.value.trim()) {
 			setFormInput({

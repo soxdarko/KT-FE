@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 const NavItem = props => (
-	// eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
+	// eslint-disable-next-line
 	<li
 		onClick={props.onClick}
 		className={props.className}

@@ -13,7 +13,7 @@ const ServicesList = props => {
 	const [dipslaySerachBar, setDipslaySerachBar] = useState('none');
 	const [searchInput, setSearchInput] = useState('');
 
-	const [dimensions, setDimensions] = React.useState(null);
+	const [dimensions, setDimensions] = useState(null);
 	const [iWidth, setIWidth] = useState(null);
 	const [serviceNameWidth, setServiceNameWidth] = useState(null);
 	const [descriptionWidth, setDescriptionWidth] = useState(null);
@@ -37,7 +37,7 @@ const ServicesList = props => {
 			width: window.innerWidth,
 		});
 	};
-	React.useEffect(() => {
+	useEffect(() => {
 		window.addEventListener('resize', handleResize, false);
 	}, []);
 
@@ -45,10 +45,8 @@ const ServicesList = props => {
 		const index = i + 1;
 		if (index < 10) {
 			return '00' + index;
-			1;
 		} else if (index > 9 && index < 100) {
 			return '0' + index;
-			1;
 		} else if (index > 99) {
 			return index;
 		}

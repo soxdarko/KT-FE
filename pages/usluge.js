@@ -333,7 +333,7 @@ const Services = props => {
 				errorMessage={errorMessage}
 				validation={true}
 				isSetupGuide={false}
-				cancelAddService={() => cancelAddServiceHandler()}
+				cancelAddService={() => props.cancelAddServiceHandler()}
 				displayCancel={isMobile ? 'none' : 'inline-block'}
 				getAllServicesHandler={getAllServicesHandler}
 				isSetupGuide={false}

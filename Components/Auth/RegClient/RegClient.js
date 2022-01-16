@@ -12,8 +12,10 @@ import Select from '../../UI/Select';
 import Input from '../../UI/Forms/Input';
 
 import classes from '../../UI/UI.module.scss';
+import { useRouter } from 'next/router';
 
 const RegClient = props => {
+	const router = useRouter();
 	const { isMobile } = useDeviceDetect();
 	const isPageLoad = useRef(true);
 	const modalAnimation = isMobile ? classes.modalInMob : classes.modalInPC;
