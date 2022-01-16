@@ -1,10 +1,6 @@
 @import '../UI/UI.module.scss';
 @include scrollbarFormMob('.ReviewMob');
 
-input[type='time']::-webkit-calendar-picker-indicator {
-	background: none;
-	display: none;
-}
 
 .FormBlackBg {
 	position: fixed;

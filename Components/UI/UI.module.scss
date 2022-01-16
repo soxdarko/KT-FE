@@ -68,7 +68,7 @@
 
 .InformationsInput {
 	@extend .InputText;
-	@extend .input;
+	@extend .input !optional;
 	max-width: 400px !important;
 	height: 170px !important;
 	text-align: left;

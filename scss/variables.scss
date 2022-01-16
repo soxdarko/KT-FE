@@ -416,9 +416,9 @@ $disabled-input-bg: rgb(117, 117, 117);
 	.MobileOperator {
 		transition: none;
 		border: px double rgba(128, 128, 128, 0.541);
-		&:hover {
-			background-image: url("data:image/svg+xml;utf8,<svg fill='orange' height='100%' viewBox='5 6 12 12' width='100%' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
-		}
+		// &:hover {
+		// 	background-image: url("data:image/svg+xml;utf8,<svg fill='orange' height='100%' viewBox='5 6 12 12' width='100%' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+		// }
 	}
 	.InvalidInput {
 		border-color: red;
@@ -435,9 +435,9 @@ $disabled-input-bg: rgb(117, 117, 117);
 		margin: 20px auto 5px auto;
 		font-size: 1rem !important;
 		border: 2px double rgba(128, 128, 128, 0.541);
-		&:hover {
-			background-image: url("data:image/svg+xml;utf8,<svg fill='orange' height='100%' viewBox='5 6 12 12' width='100%' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
-		}
+		// &:hover {
+		// 	background-image: url("data:image/svg+xml;utf8,<svg fill='orange' height='100%' viewBox='5 6 12 12' width='100%' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+		// }
 	}
 	.PhoneNumberMob {
 		display: inline-block;
@@ -511,26 +511,26 @@ $disabled-input-bg: rgb(117, 117, 117);
 	cursor: pointer;
 }
 
-select {
-	@include noAppearance;
-	display: inline-block;
-	width: auto;
-	position: relative;
-	padding: 0.2em 1.6em 0.2em 0.2em;
-	border: 2px solid $calendar-time_day-color {
-		radius: 7px;
-	}
-	font-size: 14pt;
-	outline: none;
-	cursor: pointer;
-	transition: $transition;
-	background: {
-		image: url("data:image/svg+xml;utf8,<svg fill='gray' height='100%' viewBox='5 6 12 12' width='100%' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
-		position: calc(100% - 0.5em) 50%;
-		size: 15px;
-		repeat: no-repeat;
-	}
-}
+// select {
+// 	@include noAppearance;
+// 	display: inline-block;
+// 	width: auto;
+// 	position: relative;
+// 	padding: 0.2em 1.6em 0.2em 0.2em;
+// 	border: 2px solid $calendar-time_day-color {
+// 		radius: 7px;
+// 	}
+// 	font-size: 14pt;
+// 	outline: none;
+// 	cursor: pointer;
+// 	transition: $transition;
+// 	background: {
+// 		image: url("data:image/svg+xml;utf8,<svg fill='gray' height='100%' viewBox='5 6 12 12' width='100%' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+// 		position: calc(100% - 0.5em) 50%;
+// 		size: 15px;
+// 		repeat: no-repeat;
+// 	}
+// }
 
 .NoBorder {
 	border: none !important;

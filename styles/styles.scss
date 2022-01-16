@@ -185,3 +185,38 @@ input[type='checkbox']:checked + label {
 		background-color: #40e0d0;
 	}
 }
+
+
+select {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	-ms-appearance: none;
+	appearance: none;
+	display: inline-block;
+	width: auto;
+	position: relative;
+	padding: 0.2em 1.6em 0.2em 0.2em;
+	border: 2px solid black;
+	border-radius: 7px;
+	font-size: 14pt;
+	outline: none;
+	cursor: pointer;
+	-webkit-transition: 0.5s;
+	transition: 0.5s;
+	background-image: url("data:image/svg+xml;utf8,<svg fill='gray' height='100%' viewBox='5 6 12 12' width='100%' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+	background-position: calc(100% - 0.5em) 50%;
+	background-size: 15px;
+	background-repeat: no-repeat;
+  }
+
+
+  input[type='time']::-webkit-calendar-picker-indicator {
+	background: none;
+	display: none;
+  }
+
+  ::-webkit-scrollbar-track {
+	border: 5px ridge white;
+	border-radius: 15px;
+	background-color: #b2bec3;
+  }
