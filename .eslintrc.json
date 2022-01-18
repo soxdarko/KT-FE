@@ -6,11 +6,12 @@
     },
     "env": {
         "browser": true,
-        "es2021": true
+        "es2021": true,
+        "node": true
     },
     "extends": [
         "eslint:recommended",
-        "plugin:react/recommended"
+        "plugin:@next/next/recommended"
     ],
     "parserOptions": {
         "ecmaFeatures": {
@@ -20,10 +21,11 @@
         "sourceType": "module"
     },
     "plugins": [
-        "react"
+        "react", "react-hooks"
     ],
     "rules": {
         "react/prop-types": "off",
-        "react/react-in-jsx-scope": "off"
+        "react/react-in-jsx-scope": "off",
+        "no-unused-vars": ["warn", { "vars": "all", "args": "after-used", "ignoreRestSiblings": false}]
     }
-}
+  }

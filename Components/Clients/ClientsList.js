@@ -21,7 +21,7 @@ const ClientsList = props => {
 	const [dipslaySerachBar, setDipslaySerachBar] = useState('none');
 	const [searchInput, setSearchInput] = useState('');
 
-	const [dimensions, setDimensions] = React.useState(null);
+	const [dimensions, setDimensions] = useState(null);
 	const [iWidth, setIWidth] = useState(null);
 	const [nameWidth, setNameWidth] = useState(null);
 	const [phoneWidth, setPhoneWidth] = useState(null);

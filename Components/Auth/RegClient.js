@@ -22,7 +22,7 @@ const RegServProv = props => {
 	const [formInput, setFormInput] = useState(initState);
 
 	const regHandler = () => {
-		const api = clientRegistration(clientData, userId)
+		const api = clientRegistration(clientData, props.userId)
 			.then(response => {
 				console.log(response),
 					responseHandler(

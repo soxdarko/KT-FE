@@ -25,19 +25,19 @@ const companySetupMenu = props => {
 				type="button"
 				value="Klijenti"
 				className={classes.SetupOptionsButton}
-				onClick={() => forward()}
+				onClick={() => props.forward()}
 			/>
 			<Input
 				type="button"
 				value="Usluge"
 				className={classes.SetupOptionsButton}
-				onClick={() => forward()}
+				onClick={() => props.forward()}
 			/>
 			<Input
 				type="button"
 				value="Radno vreme"
 				className={classes.SetupOptionsButton}
-				onClick={() => forward()}
+				onClick={() => props.forward()}
 			/>
 			<Input
 				type="button"

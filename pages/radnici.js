@@ -11,7 +11,7 @@ import ListBody from '../Components/UI/List/ListBody/ListBody';
 import ListHead from '../Components/UI/List/ListHead/ListHead';
 import WrappedTools from '../Components/UI/WrappedTools';
 import Loader from '../Components/UI/Loader';
-
+import initServicesForm from '../Components/SetupForms/initServicesForm';
 import classes from '../Components/Navigation/Navigation.module.scss';
 
 const Radnici = props => {
@@ -82,7 +82,7 @@ const Radnici = props => {
 				const serviceSettings = response.data.map(service => {
 					return service;
 				});
-				setServicesData(serviceSettings);
+				props.setServicesData(serviceSettings);
 			})
 			.catch(error => {
 				if (error.response) {
