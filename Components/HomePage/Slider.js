@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from "next/image"
 import { useDeviceDetect } from '../../helpers/universalFunctions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
@@ -7,7 +8,7 @@ import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import Slides from './Slides';
 import Radio from '../UI/Radio';
 
-import classes from './HomePage.scss';
+import classes from './HomePage.module.scss';
 
 const Slider = () => {
 	const { isMobile } = useDeviceDetect();
@@ -75,7 +76,8 @@ const Slider = () => {
 				<div className={i === curr ? newActive : prevActive} key={s.id}>
 					<Link href={Slides[curr].link}>
 						<a>
-							<img src={s.image} alt={s.title} />
+						<Image src={s.image} alt={s.title} width={1920} height={603} />
+							{/* <img src={s.image} alt={s.title} /> */}
 						</a>
 					</Link>
 				</div>

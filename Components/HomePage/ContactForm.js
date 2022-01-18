@@ -5,7 +5,7 @@ import InputText from '../UI/InputText';
 import Title from './Title';
 import Submit from '../UI/Submit';
 
-import classes from './HomePage.scss';
+import classes from './HomePage.module.scss';
 
 const ContactForm = () => {
 	const { isMobile } = useDeviceDetect();

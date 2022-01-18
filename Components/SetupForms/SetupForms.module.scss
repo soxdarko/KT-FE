@@ -1,10 +1,4 @@
 @import '../UI/UI.module.scss';
-@include scrollbarFormMob('.ReviewMob');
-
-input[type='time']::-webkit-calendar-picker-indicator {
-	background: none;
-	display: none;
-}
 
 .FormBlackBg {
 	position: fixed;
@@ -89,6 +83,25 @@ input[type='time']::-webkit-calendar-picker-indicator {
 	overflow-y: auto;
 	margin: 45px auto;
 	padding: 0;
+	&::-webkit-scrollbar-track {
+		border: none;
+		border-radius: 15px;
+		// border color does not support transparent on scrollbar
+		// border-color: transparent;
+		background-color: transparent;
+	}
+
+	&::-webkit-scrollbar {
+		width: 5px;
+		background-color: transparent;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		border: 2px ridge rgba($base-orange-color, 0.6) {
+			radius: 5px;
+		}
+		background-color: rgba(228, 23, 23, 0.527);
+	}
 	p {
 		margin: 0;
 		margin-top: 10px;

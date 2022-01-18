@@ -10,7 +10,7 @@ import {
 
 import Input from '../UI/Forms/Input';
 
-import classes from './AddToList.scss';
+import classes from './AddToList.module.scss';
 
 const InviteClient = props => {
 	const { isMobile } = useDeviceDetect();

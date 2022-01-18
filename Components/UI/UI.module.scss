@@ -1,5 +1,4 @@
 @import '../../scss/variables.scss';
-@include scrollbarFormMob('.ListBodyMob');
 
 .ButtonWrapperMob {
 	display: flex;
@@ -536,7 +535,7 @@
 		/* background: $calendar-weeks-button-bg; */
 		background: {
 			color: #404040;
-			image: url("data:image/svg+xml;utf8,<svg fill='orange' height='100%' viewBox='5 6 12 12' width='100%' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+			/* image: url("data:image/svg+xml;utf8,<svg fill='orange' height='100%' viewBox='5 6 12 12' width='100%' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>"); */
 			position: calc(100% - 0.5em) 50%;
 			size: 15px;
 			repeat: no-repeat;
@@ -727,7 +726,7 @@
 		/* background: $calendar-weeks-button-bg; */
 		background: {
 			color: #404040;
-			image: url("data:image/svg+xml;utf8,<svg fill='orange' height='100%' viewBox='5 6 12 12' width='100%' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+			/* image: url("data:image/svg+xml;utf8,<svg fill='orange' height='100%' viewBox='5 6 12 12' width='100%' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>"); */
 			position: calc(100% - 0.5em) 50%;
 			size: 15px;
 			repeat: no-repeat;
@@ -767,6 +766,25 @@
 		collapse: collapse;
 	}
 	background-color: darken($alt-background-color, 1%);
+	&::-webkit-scrollbar-track {
+		border: none;
+		border-radius: 15px;
+		// border color does not support transparent on scrollbar
+		// border-color: transparent;
+		background-color: transparent;
+	}
+
+	&::-webkit-scrollbar {
+		width: 5px;
+		background-color: transparent;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		border: 2px ridge rgba($base-orange-color, 0.6) {
+			radius: 5px;
+		}
+		background-color: rgba(228, 23, 23, 0.527);
+	}
 	.SettingName {
 		display: inline-block;
 		border: none;
@@ -1328,9 +1346,9 @@
 		margin-left: 30px;
 		transition: none;
 		border: px double rgba(128, 128, 128, 0.541);
-		&:hover {
+		/* &:hover {
 			background-image: url("data:image/svg+xml;utf8,<svg fill='orange' height='100%' viewBox='5 6 12 12' width='100%' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
-		}
+		} */
 	}
 	.MobileOperatorMob {
 		display: inline-block;
@@ -1340,9 +1358,9 @@
 		margin: 20px auto 5px auto;
 		font-size: 1rem !important;
 		border: 2px double rgba(128, 128, 128, 0.541);
-		&:hover {
+		/* &:hover {
 			background-image: url("data:image/svg+xml;utf8,<svg fill='orange' height='100%' viewBox='5 6 12 12' width='100%' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
-		}
+		} */
 	}
 }
 

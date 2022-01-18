@@ -1,9 +1,10 @@
 import Link from 'next/link';
-import logo from '../../assets/img/logo.png';
+import Image from "next/image"
+import logo from './logo.png';
 
-const Logo = () => (
+const Logo = (props) => (
   <Link href="/">
-    <img src={logo} alt="Kliktermin" />
+    <Image src={logo} alt="Kliktermin" width={props.width} height={props.height} />
   </Link>
 );
 

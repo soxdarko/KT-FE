@@ -3,7 +3,7 @@ import { useDeviceDetect } from '../../helpers/universalFunctions';
 
 import Button from '../UI/Button';
 
-import classes from './HomePage.scss';
+import classes from './HomePage.module.scss';
 
 const RegLogButton = props => {
 	const { isMobile } = useDeviceDetect();

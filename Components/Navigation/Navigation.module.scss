@@ -415,10 +415,11 @@
 	cursor: pointer;
 	img {
 		height: 100%;
+		padding: 4px 0;
 	}
 }
 
-.EmployeeSelect {
+/* .EmployeeSelect {
 	min-width: 200px;
 	color: $base-orange-color;
 	border-color: transparent !important;
@@ -449,7 +450,7 @@
 		background: gray;
 		color: black;
 	}
-}
+} */
 
 .WrappedToolsContainer {
 	position: fixed;

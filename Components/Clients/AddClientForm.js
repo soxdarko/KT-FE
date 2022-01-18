@@ -201,7 +201,7 @@ const addClientForm = props => {
 					value={props.formInput.mobOperator.value}
 					onChange={e => inputChangedHandler(e, 'mobOperator', props.formInput, props.setFormInput)}
 					invalid={!props.formInput.mobOperator.valid}>
-					<option value="" disabled selected>
+					<option value="" disabled defaultValue>
 						06x
 					</option>
 					<option value="060">060</option>
