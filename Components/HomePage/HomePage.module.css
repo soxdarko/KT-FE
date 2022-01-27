@@ -951,353 +951,519 @@
   background-color: #40e0d0;
 }
 
-.Calendar {
+.HomePageBody {
+  background-color: #303030;
+}
+
+.SliderContainer {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: row;
-          flex-direction: row;
-  height: auto;
-  overflow: hidden;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-  -webkit-box-shadow: #fc0 0 0 6px;
-          box-shadow: #fc0 0 0 6px;
-  background-color: transparent;
-}
-
-.calLeftTable {
-  display: block;
-  float: left;
-  width: 49px;
-  height: 80vh;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-  border-collapse: collapse;
-  color: rgba(255, 255, 255, 0.801);
-  z-index: 1;
-}
-
-.calLeftTable thead {
-  top: -1px;
-  z-index: 2;
-}
-
-.calLeftTable thead tr {
-  display: inline-block;
-}
-
-.calLeftTable thead tr th {
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-  border: 1px solid #fc9815;
-  border-bottom: 3px solid #fc9815;
-  border-right: 3px solid #fc9815;
-  padding: 5px 6.5px;
-  background-color: black;
-}
-
-.calLeftTable tbody {
-  display: inline-block;
-  height: 78vh;
-  padding-bottom: 35px;
-  overflow-y: hidden;
-  z-index: 1;
-}
-
-.calLeftTable tbody tr {
-  display: inline-block;
-}
-
-.calLeftTable tbody tr td {
-  height: 150px;
-  padding: 20px 4px;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-  font-weight: bold;
-  border: 1px solid #fc9815;
-  border-right: 3px solid #fc9815;
-  background-color: black;
-}
-
-.calRightTable {
-  display: block;
-  float: left;
-  position: relative;
-  height: 87vh;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  border-collapse: collapse;
-  color: rgba(255, 255, 255, 0.801);
-}
-
-.calRightTable thead {
-  display: block;
-  position: -webkit-sticky;
-  position: sticky;
-  overflow: hidden;
-  top: 0;
-  z-index: 3;
-}
-
-.calRightTable thead tr {
-  display: inline-block;
-  width: 1700px;
-}
-
-.calRightTable thead tr th {
-  width: 250px;
-  padding: 5px 20px;
-  border: 1px solid #fc9815;
-  border-bottom: 3px solid #fc9815;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-  background-color: black;
-}
-
-.calRightTable tbody {
-  display: block;
-  position: relative;
-  height: 81vh;
-  z-index: 2;
-  overflow-y: scroll;
-  overflow-y: overlay;
-  padding-bottom: 20px;
-  margin-bottom: -25px;
-}
-
-.calRightTable tbody tr {
-  display: inline-block;
-  width: 1700px;
-}
-
-.calRightTable tbody tr td {
-  width: 300px;
-  height: 150px;
-}
-
-.calRightTable tbody tr p {
-  position: absolute;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-flow: column;
-          flex-flow: column;
-  width: 130px;
-  margin: -20px 0 0 10px;
-  font-size: 20px;
-  text-align: center;
-  color: rgba(255, 255, 255, 0.582);
-}
-
-.CellEnabled {
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-  border: 1px solid #fc9815;
-  padding: 20px 40px;
-  contain: layout;
-  cursor: pointer;
-  background-image: #303030;
-}
-
-.CellEnabled:hover {
-  background-image: -webkit-gradient(linear, left bottom, left top, from(#404040), color-stop(#606060), to(#404040));
-  background-image: linear-gradient(to top, #404040, #606060, #404040);
-}
-
-.CellDisabled {
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-  border: 1px solid #fc9815;
-  padding: 20px 40px;
-  contain: layout;
-  cursor: not-allowed;
-  background-color: black;
-}
-
-.Appointment {
-  position: absolute;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
-  width: 241px;
-  margin: -74px 0 0 -40px;
-  padding: 2px;
-  font-size: 20px;
-  text-align: center;
-  white-space: nowrap;
-  -webkit-transition: 0.5s;
-  transition: 0.5s;
-  border: 3px ridge seashell;
-  border-radius: 10px;
+  -webkit-box-align: top;
+      -ms-flex-align: top;
+          align-items: top;
+  position: relative;
+  width: 100%;
+  height: 32vw;
+  margin-top: 3px;
+  background-color: #303030;
   overflow: hidden;
-  z-index: 1;
-  background-image: -webkit-gradient(linear, left bottom, left top, from(#3d4734), color-stop(#303030), to(#3d4734));
-  background-image: linear-gradient(to top, #3d4734, #303030, #3d4734);
 }
 
-.Appointment:hover {
-  border: 3px ridge red;
+.SliderContainer img {
+  width: 50vw;
 }
 
-.Appointment h5 {
-  text-align: center;
-  font-weight: normal;
+.SliderContainer:after {
+  content: '';
+  position: absolute;
+  background-image: -webkit-gradient(linear, left top, right top, from(#303030), color-stop(#fc9815), to(#303030));
+  background-image: linear-gradient(to right, #303030, #fc9815, #303030);
+  width: 100%;
+  height: 3px;
+  left: 0;
+  top: 31.2vw;
+}
+
+.ArrowLeft {
+  display: inline-block;
+  position: absolute;
+  margin-top: 13vw;
+  cursor: pointer;
+  left: 0;
+  margin-left: 10px;
+  font-size: 3rem;
+  z-index: 3;
+  color: azure;
+}
+
+.ArrowLeftMob {
+  display: inline-block;
+  position: absolute;
+  margin-top: 13vw;
+  cursor: pointer;
+  left: 0;
+  margin-left: 10px;
+  font-size: 2rem;
+  z-index: 3;
+  color: red;
+}
+
+.ArrowRight {
+  display: inline-block;
+  position: absolute;
+  margin-top: 13vw;
+  cursor: pointer;
+  left: 100%;
+  margin-left: -30px;
+  font-size: 3rem;
+  z-index: 3;
+  color: azure;
+}
+
+.ArrowRightMob {
+  display: inline-block;
+  position: absolute;
+  margin-top: 13vw;
+  cursor: pointer;
+  left: 100%;
+  margin-left: -30px;
+  font-size: 2rem;
+  z-index: 3;
+  color: red;
+}
+
+.slideOld {
+  position: absolute;
+  -webkit-transition-duration: 3s;
+          transition-duration: 3s;
+  opacity: 0;
+}
+
+.slideNew {
+  position: absolute;
+  opacity: 0;
+}
+
+.slideAuto {
+  position: absolute;
+  opacity: 1;
+  -webkit-animation: next 3s;
+          animation: next 3s;
+}
+
+.slideNext {
+  position: absolute;
+  opacity: 1;
+  -webkit-animation: next 3s;
+          animation: next 3s;
+}
+
+@-webkit-keyframes next {
+  0% {
+    margin-left: -200%;
+  }
+  100% {
+    margin-left: 0;
+  }
+}
+
+@keyframes next {
+  0% {
+    margin-left: -200%;
+  }
+  100% {
+    margin-left: 0;
+  }
+}
+
+.slidePrev {
+  position: absolute;
+  opacity: 1;
+  -webkit-animation: prev 3s;
+          animation: prev 3s;
+}
+
+@-webkit-keyframes prev {
+  0% {
+    margin-left: 200%;
+  }
+  100% {
+    margin-left: 0;
+  }
+}
+
+@keyframes prev {
+  0% {
+    margin-left: 200%;
+  }
+  100% {
+    margin-left: 0;
+  }
+}
+
+.radioContainer {
+  display: inline-block;
+  position: absolute;
+  margin-top: 27.5vw;
+  border-radius: 50%;
+  border: none;
+  z-index: 3;
+}
+
+.Title {
+  display: block;
+  position: relative;
   margin: 0;
-  word-wrap: break-word;
+  padding: 15px 0 0.5% 0;
+  text-align: center;
+  cursor: default;
+  color: #fc9815;
 }
 
-.HrLineAppointment {
+.TitleMob {
+  display: block;
+  position: relative;
+  margin: 0;
+  padding: 15px 0 0.5% 0;
+  font-size: 1.8rem;
+  text-align: center;
+  cursor: default;
+  color: #fc9815;
+}
+
+.OurServicesContainer {
   display: block;
   width: 100%;
-  height: 1px;
-  margin: 4px auto;
-  background-image: -webkit-gradient(linear, left top, right top, from(#303030), color-stop(#fc9815), color-stop(#fc9815), color-stop(#fc9815), to(#303030));
-  background-image: linear-gradient(to right, #303030, #fc9815, #fc9815, #fc9815, #303030);
+  margin: 0;
+  padding: 0;
+  cursor: default;
+}
+
+.OurServicesContainer .OurServices {
+  display: block;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  float: left;
+  width: 31.2%;
+  background-image: -webkit-gradient(linear, left bottom, left top, from(#404040), color-stop(#606060), to(#404040));
+  background-image: linear-gradient(to top, #404040, #606060, #404040);
+  margin: 1.6% 0 0 1.6%;
+  padding: 5px 7px;
+  height: 470px;
   border: none;
+  border-radius: 10px;
+  -webkit-box-shadow: #101010 0 0 8px;
+          box-shadow: #101010 0 0 8px;
 }
 
-.CalNav {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: row;
-          flex-direction: row;
-  -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
+@media screen and (min-width: 1000px) {
+  .OurServicesContainer .OurServices {
+    height: 450px;
+  }
 }
 
-.CalNav input {
+@media screen and (min-width: 1200px) {
+  .OurServicesContainer .OurServices {
+    height: 420px;
+  }
+}
+
+@media screen and (min-width: 1400px) {
+  .OurServicesContainer .OurServices {
+    height: 370px;
+  }
+}
+
+@media screen and (min-width: 1600px) {
+  .OurServicesContainer .OurServices {
+    height: 345px;
+  }
+}
+
+.OurServicesContainer .OurServices .Icon {
+  display: block;
   position: relative;
+  margin: 0;
+  text-align: center;
+  font-size: 8rem;
+  color: #969696;
+}
+
+.OurServicesContainer .OurServices .txtContainer {
+  display: block;
+}
+
+.OurServicesContainer .OurServices h4 {
+  font-size: 2rem;
+  color: #303030;
+  margin: 3px 0;
+  text-align: center;
+  display: block;
+}
+
+.OurServicesContainer .OurServices p {
+  font-size: 1.34rem;
+  color: rgba(223, 223, 223, 0.767);
+  text-align: center;
+  text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.3), 0px -1px 0px rgba(0, 0, 0, 0.7);
+  font-weight: lighter;
+  margin: 10px 0;
+}
+
+.OurServicesContainer .OurServicesMob {
+  display: block;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  width: auto;
+  height: auto;
+  background-image: -webkit-gradient(linear, left bottom, left top, from(#404040), color-stop(#606060), to(#404040));
+  background-image: linear-gradient(to top, #404040, #606060, #404040);
+  margin: 1.6% 0 0 1.6%;
+  padding: 5px 7px;
+  border: none;
+  border-radius: 10px;
+  -webkit-box-shadow: #101010 0 0 8px;
+          box-shadow: #101010 0 0 8px;
+}
+
+.OurServicesContainer .OurServicesMob .Icon {
+  display: block;
+  position: relative;
+  margin: 0;
+  text-align: center;
+  font-size: 3rem;
+  color: #969696;
+}
+
+.OurServicesContainer .OurServicesMob .txtContainer {
+  display: block;
+}
+
+.OurServicesContainer .OurServicesMob h4 {
+  font-size: 1.5rem;
+  color: #303030;
+  margin: 3px 0;
+  text-align: center;
+  display: block;
+}
+
+.OurServicesContainer .OurServicesMob p {
+  font-size: 1rem;
+  color: rgba(223, 223, 223, 0.767);
+  text-align: center;
+  text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.3), 0px -1px 0px rgba(0, 0, 0, 0.7);
+  font-weight: lighter;
+  margin: 10px 0;
+}
+
+.Contact {
+  display: block;
+  position: relative;
+  margin-top: -20px;
+  text-align: unset;
+  z-index: 1;
+  background-color: transparent;
+}
+
+.Contact h2 {
+  margin-top: 25px;
+  text-align: center;
+  color: #303030;
+}
+
+.Contact p {
+  text-align: center;
+  color: #fc9815;
+}
+
+.Contact p strong {
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.Contact input[type='text'],
+.Contact input[type='number'],
+.Contact .Contact_Input {
+  display: block;
+  width: 80vw;
+  max-width: 500px;
+  margin: 15px auto;
+  font-size: 1.3em;
+}
+
+.Contact .Message {
+  display: block;
+  width: 80vw;
+  height: 400px;
+  max-width: 500px;
+  margin: 15px auto 0 auto;
+  font-size: 1.2em;
+  font-family: inherit;
+}
+
+.Contact .Submit {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  cursor: pointer;
+  outline: none;
+  overflow: hidden;
+  font-size: 1.2rem;
+  font-weight: 600;
+  -webkit-text-decoration: normal;
+          text-decoration: normal;
+  text-overflow: ellipsis;
+  border-radius: 12px;
+  box-shadow: 3px 3px 3px rgba(68, 68, 68, 0.6);
+  -moz-box-shadow: 3px 3px 3px rgba(68, 68, 68, 0.6);
+  -webkit-box-shadow: 3px 3px 3px rgba(68, 68, 68, 0.6);
+  transition: all 402ms cubic-bezier(0.68, -0.75, 0.265, 1.75);
+  -webkit-transition: all 402ms cubic-bezier(0.68, -0.75, 0.265, 1.75);
+  color: #fc9815;
+  background-image: -webkit-gradient(linear, left bottom, left top, from(#404040), color-stop(#606060), to(#404040));
+  background-image: linear-gradient(to top, #404040, #606060, #404040);
+  display: block;
+  margin: 20px auto 30px auto;
+  width: 30%;
+  max-width: 400px;
   height: 35px;
-  padding: 0 0.6em;
 }
 
-.CalNav h1 {
+.Contact .Submit:active {
+  box-shadow: 1px rgba(0, 0, 0, 0.2) inset;
+  -moz-box-shadow: 1px rgba(0, 0, 0, 0.2) inset;
+  -webkit-box-shadow: 1px rgba(0, 0, 0, 0.2) inset;
+  background-image: -webkit-gradient(linear, left bottom, left top, from(#404040), color-stop(#505050), to(#404040));
+  background-image: linear-gradient(to top, #404040, #505050, #404040);
+}
+
+.Contact .Submit:hover {
+  background-image: -webkit-gradient(linear, left bottom, left top, from(#505050), color-stop(#303030), color-stop(#303030), to(#505050));
+  background-image: linear-gradient(to top, #505050, #303030, #303030, #505050);
+}
+
+.ContactMob {
+  display: block;
+  position: relative;
+  margin-top: -40px;
+  text-align: unset;
+  z-index: 1;
+  background-color: transparent;
+}
+
+.ContactMob h2 {
+  margin-top: 20px;
+  text-align: center;
+  color: #303030;
+}
+
+.ContactMob .InfoBg {
+  display: block;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  margin: 0;
+  padding: 1px 0;
+  background-color: #101010;
+}
+
+.ContactMob p {
+  text-align: center;
+  color: #fc9815;
+}
+
+.ContactMob p strong {
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.ContactMob h3 {
+  margin-top: 20px;
+  font-size: 20px;
+  text-align: center;
+  color: #303030;
+}
+
+.ContactMob input[type='text'],
+.ContactMob input[type='number'],
+.ContactMob .Contact_Input {
+  display: block;
+  width: 95vw;
+  max-width: 500px;
+  margin: 15px auto;
+  font-size: 1.3em;
+}
+
+.ContactMob .Message {
+  display: block;
+  width: 95vw;
+  height: 400px;
+  max-width: 500px;
+  margin: 15px auto 0 auto;
+  font-size: 1.2em;
+  font-family: inherit;
+}
+
+.ContactMob .Submit {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  cursor: pointer;
+  outline: none;
+  overflow: hidden;
+  font-size: 1.2rem;
+  font-weight: 600;
+  -webkit-text-decoration: normal;
+          text-decoration: normal;
+  text-overflow: ellipsis;
+  border-radius: 12px;
+  box-shadow: 3px 3px 3px rgba(68, 68, 68, 0.6);
+  -moz-box-shadow: 3px 3px 3px rgba(68, 68, 68, 0.6);
+  -webkit-box-shadow: 3px 3px 3px rgba(68, 68, 68, 0.6);
+  transition: all 402ms cubic-bezier(0.68, -0.75, 0.265, 1.75);
+  -webkit-transition: all 402ms cubic-bezier(0.68, -0.75, 0.265, 1.75);
+  color: #fc9815;
+  background-image: -webkit-gradient(linear, left bottom, left top, from(#404040), color-stop(#606060), to(#404040));
+  background-image: linear-gradient(to top, #404040, #606060, #404040);
+  display: block;
+  margin: 20px auto 30px auto;
+  width: 50%;
+  max-width: 300px;
+  height: 45px;
+}
+
+.ContactMob .Submit:active {
+  box-shadow: 1px rgba(0, 0, 0, 0.2) inset;
+  -moz-box-shadow: 1px rgba(0, 0, 0, 0.2) inset;
+  -webkit-box-shadow: 1px rgba(0, 0, 0, 0.2) inset;
+  background-image: -webkit-gradient(linear, left bottom, left top, from(#404040), color-stop(#505050), to(#404040));
+  background-image: linear-gradient(to top, #404040, #505050, #404040);
+}
+
+.ContactMob .Submit:hover {
+  background-image: -webkit-gradient(linear, left bottom, left top, from(#505050), color-stop(#303030), color-stop(#303030), to(#505050));
+  background-image: linear-gradient(to top, #505050, #303030, #303030, #505050);
+}
+
+.RegLogButton {
+  display: block;
+  position: fixed;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  width: 100vw;
+  height: 100px;
+  bottom: 0;
+  padding: 20px 10px;
+  z-index: 9;
+  -webkit-transition: ease-in-out 1s;
+  transition: ease-in-out 1s;
+  background-color: #202020;
+}
+
+.RegLogButton input {
+  display: block;
+  width: 48%;
+  height: 100%;
   margin: auto;
-  color: rgba(217, 217, 217, 0.801);
+  font-size: 1.2rem;
 }
-
-.CalNav p {
-  margin: auto;
-  font-size: 5vw;
-  color: rgba(217, 217, 217, 0.801);
-}
-
-@media screen and (min-width: 1900px) {
-  .calRightTable tbody {
-    padding-bottom: 0;
-    margin-bottom: 0;
-  }
-  .calLeftTable tbody {
-    padding-bottom: 28px;
-    margin-bottom: -28px;
-  }
-}
-
-@media screen and (max-height: 820px) {
-  .calLeftTable {
-    height: 70vh;
-  }
-  .calLeftTable tbody {
-    height: 68vh;
-    padding-bottom: 25px;
-    margin-bottom: -25px;
-  }
-  .calRightTable {
-    height: 77vh;
-  }
-  .calRightTable tbody {
-    height: 71vh;
-    padding-bottom: 5px;
-    margin-bottom: -25px;
-  }
-}
-
-@media screen and (max-height: 700px) {
-  .calLeftTable {
-    height: 75vh;
-  }
-  .calLeftTable tbody {
-    height: 73vh;
-    padding-bottom: 25px;
-    margin-bottom: -25px;
-  }
-  .calRightTable {
-    height: 82vh;
-  }
-  .calRightTable tbody {
-    height: 76vh;
-    padding-bottom: 5px;
-    margin-bottom: -25px;
-  }
-}
-
-@media screen and (max-height: 600px) {
-  .calLeftTable {
-    height: 60vh;
-  }
-  .calLeftTable tbody {
-    height: 58vh;
-    padding-bottom: 25px;
-    margin-bottom: -25px;
-  }
-  .calRightTable {
-    height: 67vh;
-  }
-  .calRightTable tbody {
-    height: 61vh;
-    padding-bottom: 5px;
-    margin-bottom: -25px;
-  }
-}
-
-@media screen and (max-height: 300px) {
-  .calLeftTable {
-    height: 40vh;
-  }
-  .calLeftTable tbody {
-    height: 38vh;
-    padding-bottom: 25px;
-    margin-bottom: -25px;
-  }
-  .calRightTable {
-    height: 47vh;
-  }
-  .calRightTable tbody {
-    height: 41vh;
-    padding-bottom: 5px;
-    margin-bottom: -25px;
-  }
-}
-
-@media screen and (max-height: 200px) {
-  .calLeftTable {
-    height: 35vh;
-  }
-  .calLeftTable tbody {
-    height: 33vh;
-    padding-bottom: 25px;
-    margin-bottom: -25px;
-  }
-  .calRightTable {
-    height: 42vh;
-  }
-  .calRightTable tbody {
-    height: 36vh;
-    padding-bottom: 5px;
-    margin-bottom: -25px;
-  }
-}
-/*# sourceMappingURL=Calendar.module.css.map */
+/*# sourceMappingURL=HomePage.module.css.map */

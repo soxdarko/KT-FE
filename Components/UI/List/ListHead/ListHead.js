@@ -1,6 +1,5 @@
-import { faSave, faCopy, faPaste, faSearch, faLink } from '@fortawesome/free-solid-svg-icons';
+import { faSave, faCopy, faPaste, faSearch, faLink, faUndo, } from '@fortawesome/free-solid-svg-icons';
 import { useDeviceDetect } from '../../../../helpers/universalFunctions';
-
 import Distancer from '../../Distancer';
 import ListHeadButton from './ListHeadButton';
 import Select from '../../Select';
@@ -55,9 +54,16 @@ const ListHead = props => {
 				<ListHeadButton
 					className={classes.CopyWeek}
 					value={isMobile ? '' : `Dodaj ${props.add}`}
-					faIcon={props.addNew}
+					faIcon={faSave}
 					display={props.displayAdd}
 					onClick={props.onAdd}
+				/>
+				<ListHeadButton
+					className={classes.Save}
+					value="Stopiraj izmene"
+					faIcon={faUndo}
+					display={!isMobile && props.isProfile === 1 ? props.displayUndo : 'none'}
+					onClick={props.stopEdit}
 				/>
 				<ListHeadButton
 					className={classes.Save}

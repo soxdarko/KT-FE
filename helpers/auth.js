@@ -1,12 +1,11 @@
 import Router from 'next/router';
 import nextCookie from 'next-cookies';
 
-export async function auth(ctx) {
-	const { token } = await nextCookie(ctx);
+export  function auth(ctx) {
+	const { token } =  nextCookie(ctx);
 
 	if (ctx.req && !token) {
 		ctx.res.writeHead(302, { Location: '/' });
-		ctx.res.end();
 		return;
 	}
 

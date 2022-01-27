@@ -1,247 +1,143 @@
 import { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
 import {
 	useDeviceDetect,
 	inputChangedHandler,
 	responseHandler,
+	infoMessageHandler,
+	updateValidity
 } from '../../helpers/universalFunctions';
-import { faSave, faCheckCircle, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
-
-import ListHeadButton from '../UI/List/ListHead/ListHeadButton';
-import Input from '../UI/Forms/Input';
-import Label from '../UI/Forms/Label';
+import { saveEmployeeProfile } from '../../api/saveEmployeeProfile.js';
+import WrappedButtonsMob from '../UI/WrappedButtonsMob';
 import ListBody from '../UI/List/ListBody/ListBody';
 import ListHead from '../UI/List/ListHead/ListHead';
-import AddClientButton from '../UI/AddClientButton';
 
 import classes from '../UI/UI.module.scss';
 
 const Profile = props => {
 	const { isMobile } = useDeviceDetect();
-	const isPageLoad = useRef(true);
-	const [autorefreshIcon, setAutorefreshIcon] = useState(true);
+	const isComponentLoad = useRef(true);
+	const [editMode, setEditMode] = useState(false)
 	const [userData, setUserData] = useState([]);
-	const [formInput, setFormInput] = useState({
+	const initialData = {
 		name: {
-			value: 'Jovan Stefanovic',
+			value: props.profileData.name,
 			touched: false,
 			valid: true,
 		},
 		userName: {
-			value: 'JovanS',
-			touched: false,
-			valid: true,
-		},
-		company: {
-			value: 'JovanFrizeraj',
+			value: props.profileData.userName,
 			touched: false,
 			valid: true,
 		},
 		email: {
-			value: 'zbni.rs@gmail.com',
+			value: props.profileData.email,
 			touched: false,
 			valid: true,
 		},
 		phone: {
-			value: '0691120296',
+			value: props.profileData.phone,
 			touched: false,
 			valid: true,
 		},
-		city: {
-			value: 'Subotica',
-			touched: false,
-			valid: true,
-		},
-		address: {
-			value: 'Kozaracka 31',
-			touched: false,
-			valid: true,
-		},
-		activity: {
-			value: 'Frizer',
-			touched: false,
-			valid: true,
-		},
-		timePerField: {
-			value: '15',
-			touched: false,
-			valid: true,
-		},
-		resLimit: {
-			value: '3',
-			touched: false,
-			valid: true,
-		},
-		password: {
+		oldPassword: {
 			value: '',
 			touched: false,
 			valid: true,
 		},
-	});
+		newPassword: {
+			value: '',
+			touched: false,
+			valid: true,
+		},
+	}
+	const [formInput, setFormInput] = useState(initialData);
 
-	const pushHandler = () => {
-		const api = axios
-			.post('/', userData)
-			.then(response => {
-				console.log(response),
-					responseHandler(
-						props.setShowResponseModal,
-						props.modalAnimationIn,
-						'Uspešno ste se prijavili',
-						'green',
-						classes.backdropIn
-					);
-			})
-			.catch(error => console.log(error));
-		api;
+	const inputValidityHandler = (object, message) => {
+		updateValidity(setFormInput, object, formInput, '', false);
+		responseHandler(props.setShowResponseModal, message, 'red', !props.responseTriger);
+		props.setShowBackdrop(classes.backdropIn);
 	};
 
-	useEffect(() => {
-		if (isPageLoad.current) {
-			isPageLoad.current = false;
-			return;
-		}
-		pushHandler();
-	}, [userData]);
+	const apiErrorHandler = error => {
+		console.log(error);
+		props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+	};
+
+	const inputChangeChecker = (e, inputIdentifer) => {
+		inputChangedHandler(e, inputIdentifer, formInput, setFormInput)
+		!editMode ? setEditMode(true) : {}
+	}
+
+	function resetForm() {
+		setFormInput(initialData);
+		setEditMode(false)
+	}
+
+	const addEmployeeProfileDataHandler = () => {
+		props.setIsLoading(false);
+		const api = saveEmployeeProfile(userData)
+			.then(response => {
+				console.log(response);
+				infoMessageHandler(props.setShowInfoModal, 'Uspešno sačuvano', !props.infoTriger);
+				setEditMode(false)
+			})
+			.catch(error => {
+				if (error.response) {
+					console.log(error.response)
+					/* error.response.data.map(error => {
+						console.log(error.response);
+						error.response.data.map(err => {
+							props.errorMessage(err.errorMessage);
+						});
+					}); */
+				} else if (error.request) {
+					apiErrorHandler(error.request);
+				} else {
+					apiErrorHandler(error);
+				}
+			});
+		api;
+	};
 
 	const onSubmit = e => {
 		e.preventDefault();
 		const formData = {
-			userName: formInput.name.value.trim(),
-			password: formInput.userName.value.trim(),
-			company: formInput.company.value.trim(),
-			email: formInput.email.value.trim(),
-			phone: formInput.phone.value.trim(),
-			city: formInput.city.value.trim(),
-			address: formInput.address.value.trim(),
-			activity: formInput.activity.value.trim(),
-			timePer: formInput.timePerField.value.trim(),
-			resLimit: formInput.resLimit.value.trim(),
+			Id: props.profileData.id,
+			Name: formInput.name.value.trim(),
+			Phone: formInput.phone.value.trim(),
+			Email: formInput.email.value.trim(),
+			OldPassword: formInput.oldPassword.value.trim(),
+			NewPassword: formInput.newPassword.value.trim(),
 		};
+		const emailPattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+		const numericPattern = /^\d+$/;
 		if (!formInput.name.value.trim()) {
-			setFormInput({
-				...formInput,
-				name: {
-					value: '',
-					valid: false,
-				},
-			});
-			responseHandler(
-				props.setShowResponseModal,
-				props.modalAnimationIn,
-				'Morate uneti ime i prezime',
-				'red'
-			);
-			props.setShowBackdrop(classes.backdropIn);
-		} else if (!formInput.userName.value.trim()) {
-			setFormInput({
-				...formInput,
-				userName: {
-					value: '',
-					valid: false,
-				},
-			});
-			responseHandler(
-				props.setShowResponseModal,
-				props.modalAnimationIn,
-				'Morate uneti korisničko ime',
-				'red'
-			);
-			props.setShowBackdrop(classes.backdropIn);
-		} else if (!formInput.company.value.trim()) {
-			setFormInput({
-				...formInput,
-				company: {
-					value: '',
-					valid: false,
-				},
-			});
-			responseHandler(
-				props.setShowResponseModal,
-				props.modalAnimationIn,
-				'Morate uneti naziv firme',
-				'red'
-			);
-			props.setShowBackdrop(classes.backdropIn);
-		} else if (!formInput.email.value.trim()) {
-			setFormInput({
-				...formInput,
-				email: {
-					value: '',
-					valid: false,
-				},
-			});
-			responseHandler(
-				props.setShowResponseModal,
-				props.modalAnimationIn,
-				'Morate uneti E-mail asresu',
-				'red'
-			);
-			props.setShowBackdrop(classes.backdropIn);
-		} else if (!formInput.phone.value.trim()) {
-			setFormInput({
-				...formInput,
-				phone: {
-					value: '',
-					valid: false,
-				},
-			});
-			responseHandler(
-				props.setShowResponseModal,
-				props.modalAnimationIn,
-				'Morate uneti broj telefona',
-				'red'
-			);
-			props.setShowBackdrop(classes.backdropIn);
-		} else if (!formInput.activity.value.trim()) {
-			setFormInput({
-				...formInput,
-				activity: {
-					value: '',
-					valid: false,
-				},
-			});
-			responseHandler(
-				props.setShowResponseModal,
-				props.modalAnimationIn,
-				'Morate uneti delatnost',
-				'red'
-			);
-			props.setShowBackdrop(classes.backdropIn);
-		} else if (!formInput.timePerField.value.trim()) {
-			setFormInput({
-				...formInput,
-				timePerField: {
-					value: '',
-					valid: false,
-				},
-			});
-			responseHandler(
-				props.setShowResponseModal,
-				props.modalAnimationIn,
-				'Morate uneti dužinu trajanja polja u kalendaru',
-				'red'
-			);
-			props.setShowBackdrop(classes.backdropIn);
-		} else if (!formInput.resLimit.value.trim()) {
-			setFormInput({
-				...formInput,
-				resLimit: {
-					value: '',
-					valid: false,
-				},
-			});
-			responseHandler(
-				props.setShowResponseModal,
-				props.modalAnimationIn,
-				'Morate uneti broj dozvoljenih rezervacija za period od 30 dana',
-				'red'
-			);
-			props.setShowBackdrop(classes.backdropIn);
-		} else {
-			setUserData([...userData, formData]);
+			inputValidityHandler('name', 'Morate uneti ime i prezime!');
+		} else if (
+			!formInput.email.value.trim() ||
+			!emailPattern.test(formInput.email.value)
+		) {
+			inputValidityHandler('email', 'Morate uneti validnu e-mail adresu!');
+		} else if (
+			!formInput.phone.value.trim() ||
+			!numericPattern.test(formInput.phone.value) ||
+			formInput.phone.value.length < 9
+		) {
+			inputValidityHandler('phone', 'Morate uneti validan broj telefona!');
+		} 
+		else {
+			setUserData(formData);
+			props.setIsLoading(true);
 		}
 	};
+
+	useEffect(() => {
+		if (isComponentLoad.current) {
+			isComponentLoad.current = false;
+			return;
+		}
+		addEmployeeProfileDataHandler();
+	}, [userData]);
 
 	if (isMobile) {
 		return (
@@ -251,7 +147,9 @@ const Profile = props => {
 					displayCopy="none"
 					displayPaste="none"
 					displaySearch="none"
+					dipslaySerachBar='none'
 					displayAdd="none"
+					addNew={null}
 					displayLink="none"
 					displaySelectWeek="none"
 				/>
@@ -263,7 +161,7 @@ const Profile = props => {
 								type="text"
 								value={formInput.name.value}
 								className={classes.InputMob}
-								onChange={e => inputChangedHandler(e, 'name', formInput, setFormInput)}
+								onChange={e => inputChangeChecker(e, 'name')}
 							/>
 						</div>
 						<div>
@@ -272,16 +170,7 @@ const Profile = props => {
 								type="text"
 								value={formInput.userName.value}
 								className={classes.InputMob}
-								onChange={e => inputChangedHandler(e, 'userName', formInput, setFormInput)}
-							/>
-						</div>
-						<div>
-							<div>Naziv Firme</div>
-							<input
-								type="text"
-								value={formInput.company.value}
-								className={classes.InputMob}
-								onChange={e => inputChangedHandler(e, 'company', formInput, setFormInput)}
+								onChange={e => inputChangeChecker(e, 'userName')}
 							/>
 						</div>
 						<div>
@@ -290,7 +179,7 @@ const Profile = props => {
 								type="text"
 								value={formInput.email.value}
 								className={classes.InputMob}
-								onChange={e => inputChangedHandler(e, 'email', formInput, setFormInput)}
+								onChange={e => inputChangeChecker(e, 'email')}
 							/>
 						</div>
 						<div>
@@ -299,101 +188,39 @@ const Profile = props => {
 								type="number"
 								value={formInput.phone.value}
 								className={classes.InputMob}
-								onChange={e => inputChangedHandler(e, 'phone', formInput, setFormInput)}
+								onChange={e => inputChangeChecker(e, 'phone')}
 							/>
 						</div>
 						<div>
-							<div>Mesto</div>
+							<div>Trenutna lozinka</div>
 							<input
-								type="text"
-								value={formInput.city.value}
+								type="password"
+								value={formInput.oldPassword.value}
 								className={classes.InputMob}
-								onChange={e => inputChangedHandler(e, 'city', formInput, setFormInput)}
+								onChange={e => inputChangeChecker(e, 'oldPassword')}
 							/>
 						</div>
 						<div>
-							<div>Adresa</div>
+							<div>Nova lozinka</div>
 							<input
-								type="text"
-								value={formInput.address.value}
+								type="password"
+								value={formInput.newPassword.value}
 								className={classes.InputMob}
-								onChange={e => inputChangedHandler(e, 'address', formInput, setFormInput)}
-							/>
-						</div>
-						<div>
-							<div>Delatnost</div>
-							<input
-								type="text"
-								value={formInput.activity.value}
-								className={classes.InputMob}
-								onChange={e => inputChangedHandler(e, 'activity', formInput, setFormInput)}
-							/>
-						</div>
-						<div>
-							<div>Dužina polja u kalendaru</div>
-							<input
-								type="number"
-								value={formInput.timePerField.value}
-								className={classes.InputMob}
-								onChange={e => inputChangedHandler(e, 'timePerField', formInput, setFormInput)}
-							/>
-						</div>
-						<div>
-							<div>Mesečni limit rezervacija po klijentu</div>
-							<input
-								type="number"
-								value={formInput.resLimit.value}
-								className={classes.InputMob}
-								onChange={e => inputChangedHandler(e, 'resLimit', formInput, setFormInput)}
-							/>
-						</div>
-						<div className={classes.NoBorder}>
-							<ListHeadButton
-								type="button"
-								value="Autoosvežavanje termina"
-								className={[classes.ListButtonMob, classes.AutorefreshMob].join(' ')}
-								faIcon={autorefreshIcon ? faCheckCircle : faTimesCircle}
-								IconClassName={autorefreshIcon ? classes.Active : classes.Passive}
-								onClick={() => setAutorefreshIcon(!autorefreshIcon)}
-							/>
-						</div>
-						<div className={classes.NoBorder}>
-							<input
-								type="button"
-								value="Promeni lozinku"
-								onClick={() => props.setDisplayChangePass('block')}
-								className={[classes.FormButtonMob, classes.ListButtonMob].join(' ')}
-							/>
-						</div>
-						<div className={classes.NoBorder}>
-							<input
-								type="button"
-								value="Deaktiviraj nalog"
-								className={[classes.ButtonMob, classes.Danger, classes.Deactivate].join(' ')}
-								onClick={() => {
-									props.setDisplayConfirmModal('block'),
-										props.setShowConfirmModal(classes.modalUp),
-										props.setShowBackdrop(classes.backdropIn),
-										props.setDisplayInviteClient('none');
-								}}
+								onChange={e => inputChangeChecker(e, 'newPassword')}
 							/>
 						</div>
 					</div>
 				</ListBody>
-				<ListHeadButton
-					value="Sačuvaj izmene"
-					display={props.displaySave}
-					faIcon={faSave}
-					className={classes.SaveMob}
-					onClick={onSubmit}
-				/>
-				<AddClientButton
-					onClick={() => {
-						props.setShowInviteClient(classes.slideInLeft),
-							props.setDisplayConfirmModal('none'),
-							props.setDisplayInviteClient('block');
-					}}
-				/>
+				<WrappedButtonsMob
+				save={onSubmit}
+				isMobile={isMobile}
+				displayForward={'none'}
+				displaySave="block"
+				displayAdd="none"
+				displayStopEdit={editMode ? 'block' : 'none'}
+				stopEdit={() => resetForm()}
+				validation={true}
+			/>
 			</>
 		);
 	} else {
@@ -404,136 +231,71 @@ const Profile = props => {
 					displayCopy="none"
 					displayPaste="none"
 					displaySearch="none"
+					displayUndo={editMode ? 'block' : 'none'}
+					stopEdit={() => resetForm()}
+					isProfile={1}
 					dipslaySerachBar="none"
 					displayAdd="none"
 					displayLink="none"
 					displaySelectWeek="none"
+					addNew={null}
 					onSave={onSubmit}
 				/>
 				<ListBody>
-					<div className={classes.SettingName}>
+				<div className={classes.SettingName}>
 						<div>Ime i Prezime</div>
 						<div>Korisničko ime</div>
-						<div>Naziv firme</div>
 						<div>E-mail</div>
 						<div>Telefon</div>
-						<div>Mesto</div>
-						<div>Adresa</div>
-						<div>Delatnost</div>
-						<div>Lozinka</div>
-						<div>Dužina trajanja jednog polja u kalendaru</div>
-						<div>Broj dozvoljenih rezervacija za period od 30 dana</div>
-						<div>Automatsko osvežavanje novih zakazanih termina?</div>
-						<div>Link za kalendar i registraciju novih</div>
-						<div>Deaktivacija naloga</div>
+						<div>Trenutna lozinka</div>
+						<div>Nova lozinka</div>
+{/* 						<div>Deaktivacija naloga</div> */}
 					</div>
-					<div className={classes.SettingProp}>
+								<div className={classes.SettingProp}>
 						<div>
 							<input
 								type="text"
 								value={formInput.name.value}
-								onChange={e => inputChangedHandler(e, 'name', formInput, setFormInput)}
+								onChange={e => inputChangeChecker(e, 'name')}
 							/>
 						</div>
 						<div>
 							<input
 								type="text"
 								value={formInput.userName.value}
-								onChange={e => inputChangedHandler(e, 'userName', formInput, setFormInput)}
-							/>
-						</div>
-						<div>
-							<input
-								type="text"
-								value={formInput.company.value}
-								onChange={e => inputChangedHandler(e, 'company', formInput, setFormInput)}
+								onChange={e => inputChangeChecker(e, 'userName')}
 							/>
 						</div>
 						<div>
 							<input
 								type="text"
 								value={formInput.email.value}
-								onChange={e => inputChangedHandler(e, 'email', formInput, setFormInput)}
+								onChange={e => inputChangeChecker(e, 'email')}
 							/>
 						</div>
 						<div>
 							<input
 								type="number"
 								value={formInput.phone.value}
-								onChange={e => inputChangedHandler(e, 'phone', formInput, setFormInput)}
+								onChange={e => inputChangeChecker(e, 'phone')}
 							/>
 						</div>
 						<div>
 							<input
-								type="text"
-								value={formInput.city.value}
-								onChange={e => inputChangedHandler(e, 'city', formInput, setFormInput)}
+								type="password"
+								value={formInput.oldPassword.value}
+								onChange={e => inputChangeChecker(e, 'oldPassword')}
 							/>
 						</div>
 						<div>
 							<input
-								type="text"
-								value={formInput.address.value}
-								onChange={e => inputChangedHandler(e, 'address', formInput, setFormInput)}
-							/>
-						</div>
-						<div>
-							<input
-								type="text"
-								value={formInput.activity.value}
-								onChange={e => inputChangedHandler(e, 'activity', formInput, setFormInput)}
-							/>
-						</div>
-						<div>
-							<input
-								type="button"
-								value="Promeni lozinku"
-								onClick={() => props.setDisplayChangePass('block')}
-							/>
-						</div>
-						<div>
-							<input
-								type="number"
-								value={formInput.timePerField.value}
-								onChange={e => inputChangedHandler(e, 'timePerField', formInput, setFormInput)}
-							/>
-						</div>
-						<div>
-							<input
-								type="number"
-								value={formInput.resLimit.value}
-								onChange={e => inputChangedHandler(e, 'resLimit', formInput, setFormInput)}
-							/>
-						</div>
-						<div>
-							<Input type="checkbox" id="autorefresh" />
-							<Label htmlFor="autorefresh" />
-						</div>
-						<div>
-							<input type="button" value="Kopiraj link" />
-						</div>
-						<div>
-							<input
-								type="button"
-								value="Deaktiviraj"
-								onClick={() => {
-									props.setDisplayConfirmModal('block'),
-										props.setShowConfirmModal(classes.modalUp),
-										props.setShowBackdrop(classes.backdropIn),
-										props.setDisplayInviteClient('none');
-								}}
+								type="password"
+								value={formInput.newPassword.value}
+								onChange={e => inputChangeChecker(e, 'newPassword')}
 							/>
 						</div>
 					</div>
 				</ListBody>
-				<AddClientButton
-					onClick={() => {
-						props.setShowInviteClient(classes.slideInLeft),
-							props.setDisplayInviteClient('block'),
-							props.setDisplayConfirmModal('none'),
-							props.setShowBackdrop(classes.backdropIn);
-					}}
-				/>
 			</>
 		);
 	}

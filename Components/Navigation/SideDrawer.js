@@ -8,12 +8,11 @@ import {
 	faSignOutAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import { userLogOut } from '../../api/userLogOut';
-
 import NavItems from './NavItems';
 import NavItem from './NavItem';
 import ServiceProviderLogo from '../UI/ServiceProviderLogo';
 import Backdrop from '../UI/Backdrop';
-import Input from '../UI/Forms/Input';
+import Input from '../UI/Forms/Input'    ;
 
 import classes from './Navigation.module.scss';
 

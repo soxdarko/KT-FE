@@ -82,28 +82,19 @@ const ChangePass = props => {
 		if (!formInput.oldPass.value.trim()) {
 			updateValidity(setFormInput, 'oldPass', formInput, '', false);
 			responseHandler(
-				props.setShowResponseModal,
-				modalAnimation,
-				'Morate uneti trenutnu lozinku!',
-				'red'
+				props.setShowResponseModal, 'Morate uneti trenutnu lozinku!', 'red', !props.triger
 			);
 			props.setShowBackdrop(classes.backdropIn);
 		} else if (!formInput.newPass.value.trim()) {
 			updateValidity(setFormInput, 'newPass', formInput, '', false);
 			responseHandler(
-				props.setShowResponseModal,
-				modalAnimation,
-				'Morate uneti novu lozinku!',
-				'red'
+				props.setShowResponseModal, 'Morate uneti novu lozinku!', 'red', !props.triger
 			);
 			props.setShowBackdrop(classes.backdropIn);
 		} else if (!formInput.passConfirm.value.trim()) {
 			updateValidity(setFormInput, 'passConfirm', formInput, '', false);
 			responseHandler(
-				props.setShowResponseModal,
-				modalAnimation,
-				'Morate potvditi nouv lozinku!',
-				'red'
+				props.setShowResponseModal, 'Morate potvditi nouv lozinku!', 'red', !props.triger
 			);
 			props.setShowBackdrop(classes.backdropIn);
 		} else if (formInput.newPass.value.trim() !== formInput.passConfirm.value.trim()) {
@@ -119,10 +110,7 @@ const ChangePass = props => {
 				},
 			});
 			responseHandler(
-				props.setShowResponseModal,
-				modalAnimation,
-				'Nova lozinka i potvrda moraju biti jednake!',
-				'red'
+				props.setShowResponseModal, 'Nova lozinka i potvrda moraju biti jednake!', 'red', !props.triger
 			);
 			props.setShowBackdrop(classes.backdropIn);
 		} else {
