@@ -6,18 +6,21 @@ export default async (req, res) => {
 	const token = cookie.substring(cookie.indexOf('=') + 1);
 	const url = `users/saveEmployeeProfile`;
 
-	const saveEmployeeProfile = await fetchJson(url, 'post', token, obj)
-		.then(response => {
-			return response;
-		})
-		.catch(err => {
-			console.log(err);
-		});
+    async function saveEmployeeProfile() {
+        const api = await fetchJson(url, 'post', token, obj)
+        .then(res => {
+            return res.data;
+	    })
+        .catch(err => {
+            return err.response
+        });
 
-        saveEmployeeProfile;
+        return api
+    }
 
-        const data = saveEmployeeProfile();
+        const response = await saveEmployeeProfile();
 
-	res.statusCode = 200;
-	res.json(await data);
+        response.length === 0 ? res.statusCode = 200 : res.statusCode = response.status
+
+	res.json(response.data);
 };

@@ -1,23 +1,23 @@
 import { useState } from 'react';
 import Toolbar from '../../Navigation/Toolbar';
 import SideDrawer from '../../Navigation/SideDrawer';
+import Sovljanski from '../../../assets/img/sovljanski.jpg';
 
 import classes from '../hoc.module.scss';
 
-import Sovljanski from '../../../assets/img/sovljanski.jpg';
-
 const Layout = props => {
 	const [sideDrawerMob, setSideDrawerMob] = useState('translateX(-100%)');
+	const [showBackdrop, setShowBackdrop] = useState('');
 	const [backdropDisplay, setBackdropDisplay] = useState('none');
 
 	const sideDrawerOpenHandler = () => {
 		setSideDrawerMob('translateX(0)');
-		setBackdropDisplay('block');
+		setShowBackdrop(classes.backdropIn);
 	};
 
 	const sideDrawerCloseHandler = () => {
 		setSideDrawerMob('translateX(-100%)');
-		setBackdropDisplay('none');
+		setShowBackdrop(classes.backdropOut);
 	};
 
 	return (
@@ -49,9 +49,10 @@ const Layout = props => {
 			<SideDrawer
 				displayMob={props.displaySideDrawerMob}
 				displayPC={props.displaySideDrawerPC}
-				displaySideDrawerBackdrop={backdropDisplay}
+				displaySideDrawerBackdrop={'block'}
 				transform={sideDrawerMob}
-				sideDrawerClose={sideDrawerCloseHandler}
+				sideDrawerCloseHandler={sideDrawerCloseHandler}
+				showBackdrop={showBackdrop}
 				colorCalIcon={props.colorCalIcon}
 				colorClientsIcon={props.colorClientsIcon}
 				colorServicesIcon={props.colorServicesIcon}

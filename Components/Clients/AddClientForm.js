@@ -25,6 +25,12 @@ const addClientForm = props => {
 		isMobile ? {} : props.resetForm();
 	}
 
+	const errorMessage = (err, message = 'Došlo je do greške, kontaktirajte nas putem kontakt forme') => {
+		console.log(err)
+		responseHandler(props.setShowResponseModal, message, 'red', !props.triger);
+		setShowBackdrop(classes.backdropIn);
+	};
+
 	const addClientHandler = () => {
 		props.setIsLoading(false);
 		const api = addOrUpdateNewClient(props.userData)
@@ -41,28 +47,16 @@ const addClientForm = props => {
 					!props.triger
 				);
 			})
-			.catch(error => {
-				if (error.response) {
-					console.log(error.response);
-					error.response.data.map(err => {
+			.catch(err => {
+				if (err.response) {
+					console.log(err.response);
+					err.response.data.map(err => {
 						responseHandler(props.setShowResponseModal, err.errorMessage, 'red', !props.triger);
 					});
-				} else if (error.request) {
-					console.log(error.request);
-					responseHandler(
-						props.setShowResponseModal,
-						'Došlo je do greške, kontaktirajte nas putem kontakt forme',
-						'red',
-						!props.triger
-					);
+				} else if (err.request) {
+					errorMessage(err.request)
 				} else {
-					console.log(error);
-					responseHandler(
-						props.setShowResponseModal,
-						'Došlo je do greške, kontaktirajte nas putem kontakt forme',
-						'red',
-						!props.triger
-					);
+					errorMessage(err)
 				}
 			});
 		api;

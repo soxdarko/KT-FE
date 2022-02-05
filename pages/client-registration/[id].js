@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { useDeviceDetect, cookieReqParser } from '../../helpers/universalFunctions';
 import { fetchJson } from '../../api/fetchJson';
 import { useRouter } from 'next/router';
@@ -13,7 +13,6 @@ import ResponseModal from '../../Components/UI/Modal/ResponseModal';
 
 const ClientRegistration = props => {
 	const { isMobile } = useDeviceDetect();
-	const isPageLoad = useRef(true);
 	const router = useRouter();
 	const [showBackdrop, setShowBackdrop] = useState('');
 	const modalAnimationOut = isMobile ? classes.modalOutMob : classes.modalOutPC;

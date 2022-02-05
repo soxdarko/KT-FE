@@ -54,7 +54,7 @@ const ListHead = props => {
 				<ListHeadButton
 					className={classes.CopyWeek}
 					value={isMobile ? '' : `Dodaj ${props.add}`}
-					faIcon={faSave}
+					faIcon={props.addNew}
 					display={props.displayAdd}
 					onClick={props.onAdd}
 				/>

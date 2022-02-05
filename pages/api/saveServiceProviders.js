@@ -6,16 +6,20 @@ export default async (req, res) => {
 	const token = cookie.substring(cookie.indexOf('=') + 1);
 	const url = `users/saveServiceProviders`;
 
-	const saveServiceProviders = await fetchJson(url, 'post', token, obj)
-		.then(response => {
-			return response;
-		})
-		.catch(err => {
-			console.log(err);
-		});
+	async function saveServiceProviders() {
+        const api = await fetchJson(url, 'post', token, obj)
+        .then(res => {
+            return res.data;
+	    })
+        .catch(err => {
+            return err.response
+        });
 
-	saveServiceProviders;
+        return api
+    }
 
-	res.statusCode = 200;
-	res.json({ success: true });
+    const response = await saveServiceProviders();
+
+    response.length === 0 ? res.statusCode = 200 : res.statusCode = response.status
+	res.json(response.data);
 };

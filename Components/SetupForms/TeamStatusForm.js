@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { addNewServiceProvider } from '../../api/addNewServiceProvider';
+import { saveServiceProviders } from '../../api/saveServiceProviders';
 import { addNewEmployee } from '../../api/addNewEmployee';
 
 import Input from '../UI/Forms/Input';
@@ -17,7 +17,7 @@ const TeamStatusForm = props => {
 	const [singleEmployee, setSingleEmployee] = useState(false);
 
 	const addNewServiceProviderHandler = () => {
-		const api = addNewServiceProvider({}, props.token)
+		const api = saveServiceProviders([])
 			.then(response => {
 				console.log(response);
 				props.setIsLoading(false);
@@ -29,13 +29,13 @@ const TeamStatusForm = props => {
 						displayEmployee: 'block',
 					});
 			})
-			.catch(error => {
+			.catch(err => {
 				props.setIsLoading(false);
-				if (error.response) {
-					console.log(error.response);
+				if (err.response) {
+					console.log(err.response);
 					window.location = '/';
-				} else if (error.request) {
-					console.log(error.request);
+				} else if (err.request) {
+					console.log(err.request);
 				} else {
 					console.log('nesto drugo');
 				}

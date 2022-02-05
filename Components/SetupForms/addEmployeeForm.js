@@ -32,9 +32,9 @@ const addEmployeeForm = props => {
 		inputChangedHandler(e, object, props.emplyeesFormInput, props.setEmplyeesFormInput);
 	};
 
-	const apiErrorHandler = error => {
-		console.log(error);
-		props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+	const apiErrorHandler = (err, message) => {
+		console.log(err);
+		props.errorMessage(message);
 	};
 
 	const serviceProvidersPreview = serviceProviders => {
@@ -50,49 +50,40 @@ const addEmployeeForm = props => {
 
 	const getAllEmployeesHandler = async () => {
 		const api = await getAllEmployees()
-			.then(response => {
-				const getEmployeesData = response.data.map(employee => {
+			.then(res => {
+				const getEmployeesData = res.data.map(employee => {
 					return employee;
 				});
 				props.setEmployeeData(getEmployeesData);
 			})
-			.catch(error => {
-				if (error.response) {
-					console.log(error.response);
-					error.response.data.map(err => {
-						props.errorMessage(err.errorMessage);
-					});
-				} else if (error.request) {
-					apiErrorHandler(error.request);
+			.catch(err => {
+				if (err.response) {
+					apiErrorHandler(err.response)
+				} else if (err.request) {
+					apiErrorHandler(err.request)
 				} else {
-					apiErrorHandler(error);
+					apiErrorHandler(err)
 				}
 			});
 		return api;
 	};
 
 	const addEmployeesHandler = () => {
-		props.setIsLoading(false);
 		const api = saveEmployees(userData)
-			.then(response => {
-				console.log(response);
+			.then(res => {
+				console.log(res);
 				getAllEmployeesHandler();
 				props.resetForm();
 				infoMessageHandler(props.setShowInfoModal, 'Uspešno sačuvano', !props.triger);
+				props.setIsLoading(false);
 			})
-			.catch(error => {
-				if (error.response) {
-					error.response.data.map(err => {
-						console.log(error.response);
-						error.response.data.map(err => {
-							props.errorMessage(err.errorMessage);
-						});
-					});
-					console.log(error.response);
-				} else if (error.request) {
-					apiErrorHandler(error.request);
+			.catch(err => {
+				if (err.response) {
+					apiErrorHandler(err.response)
+				} else if (err.request) {
+					apiErrorHandler(err.request)
 				} else {
-					apiErrorHandler(error);
+					apiErrorHandler(err)
 				}
 			});
 		api;

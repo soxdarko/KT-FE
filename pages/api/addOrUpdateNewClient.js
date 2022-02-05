@@ -6,16 +6,21 @@ export default async (req, res) => {
 	const token = cookie.substring(cookie.indexOf('=') + 1);
 	const url = `users/addOrUpdateNewClient`;
 
-	const addOrUpdateNewClient = await fetchJson(url, 'post', token, obj)
-		.then(response => {
-			return response;
-		})
-		.catch(err => {
-			console.log(err);
-		});
+	async function addOrUpdateNewClient() {
+        const api = await fetchJson(url, 'post', token, obj)
+        .then(res => {
+            return res.data;
+	    })
+        .catch(err => {
+            return err.response
+        });
 
-	addOrUpdateNewClient;
+        return api
+    }
 
-	res.statusCode = 200;
-	res.json({ success: true });
+	const response = await addOrUpdateNewClient();
+
+	response.length === 0 ? res.statusCode = 200 : res.statusCode = response.status
+
+	res.json(response.data);
 };

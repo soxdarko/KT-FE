@@ -74,32 +74,31 @@ const Services = props => {
 		}
 	};
 
-	const errorMessage = message => {
-		responseHandler(setShowResponseModal, message, 'red');
+	const errorMessage = (err, message = 'Došlo je do greške, pokušajte ponovo ili nas kontaktirajte putem kontakt forme') => {
+		console.log(err)
+		responseHandler(setShowResponseModal, message, 'red', !showResponseModal.triger);
 		setShowBackdrop(classes.backdropIn);
 	};
 
 	const saveSettingsServicesHandler = async () => {
 		const api = await saveSettingsServices(serviceSettingsData)
-			.then(response => {
-				console.log(response);
+			.then(res => {
+				console.log(res);
 				setDisplayServiceSettings('none');
 				infoMessageHandler(setShowInfoModal, 'Uspešno sačuvano', !showInfoModal.triger);
 				getServiceSettingsHandler();
 			})
-			.catch(error => {
+			.catch(err => {
 				!holdBackdrop ? setHoldBackdrop(true) : {};
-				if (error.response) {
-					console.log(error);
-					/* error.response.data.map(err => {
-						errorMessage(err.errorMessage);
-					}); */
-				} else if (error.request) {
-					console.log(error.request);
-					errorMessage('Došlo je do greške, pokušajte ponovo');
+				if (err.response) {
+					console.log(err.response);
+					err.response.data.map(err => {
+						errorMessage([], err.errorMessage);
+					});
+				} else if (err.request) {
+					errorMessage(err.request)
 				} else {
-					console.log(error);
-					errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+					errorMessage(err);
 				}
 			});
 		api;
@@ -107,26 +106,24 @@ const Services = props => {
 
 	const deleteServiceHandler = async () => {
 		const api = await deleteService(serviceId)
-			.then(response => {
-				console.log(response);
+			.then(res => {
+				console.log(res);
 				getAllServicesHandler();
 				setDisplayWrappedTools('none');
 				resetForm();
 				infoMessageHandler(setShowInfoModal, 'Usluga uspešno obrisana!', !showInfoModal.triger);
 			})
-			.catch(error => {
+			.catch(err => {
 				!holdBackdrop ? setHoldBackdrop(true) : {};
-				if (error.response) {
-					console.log(error);
-					error.response.data.map(err => {
-						errorMessage(err.errorMessage);
+				if (err.response) {
+					console.log(err);
+					err.response.data.map(err => {
+						errorMessage([], err.errorMessage);
 					});
-				} else if (error.request) {
-					console.log(error.request);
-					errorMessage('Došlo je do greške, pokušajte ponovo');
+				} else if (err.request) {
+					errorMessage(err.request);
 				} else {
-					console.log(error);
-					errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+					errorMessage(err);
 				}
 			});
 		api;
@@ -134,26 +131,24 @@ const Services = props => {
 
 	const getAllServicesHandler = async () => {
 		const api = await getAllServices()
-			.then(response => {
-				console.log(response);
-				const serviceSettings = response.data.map(service => {
+			.then(res => {
+				console.log(res);
+				const serviceSettings = res.data.map(service => {
 					return service;
 				});
 				setServicesData(serviceSettings);
 			})
-			.catch(error => {
+			.catch(err => {
 				setHoldBackdrop(false);
-				if (error.response) {
-					console.log(error.response);
-					error.response.data.map(err => {
-						errorMessage(err.errorMessage);
+				if (err.response) {
+					console.log(err.response);
+					err.response.data.map(err => {
+						errorMessage([], err.errorMessage);
 					});
-				} else if (error.request) {
-					console.log(error.request);
-					errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+				} else if (err.request) {
+					errorMessage(err.request);
 				} else {
-					console.log(error);
-					errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+					errorMessage(err);
 				}
 			});
 		return api;
@@ -161,25 +156,23 @@ const Services = props => {
 
 	const getServiceSettingsHandler = async () => {
 		const api = await getSettingsServices()
-			.then(response => {
-				const getServiceSettingsData = response.data.map(setting => {
+			.then(res => {
+				const getServiceSettingsData = res.data.map(setting => {
 					return setting;
 				});
 				setServiceSettings(getServiceSettingsData);
 			})
-			.catch(error => {
+			.catch(err => {
 				setHoldBackdrop(false);
-				if (error.response) {
-					console.log(error.response);
-					error.response.data.map(err => {
+				if (err.response) {
+					console.log(err.response);
+					err.response.data.map(err => {
 						errorMessage(err.errorMessage);
 					});
-				} else if (error.request) {
-					console.log(error.request);
-					errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+				} else if (err.request) {
+					errorMessage(err.request);
 				} else {
-					console.log(error);
-					errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+					errorMessage(err);
 				}
 			});
 		return api;

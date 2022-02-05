@@ -1,16 +1,20 @@
 import { useState, useEffect } from 'react';
-import { useDeviceDetect, cookieReqParser } from '../../../helpers/universalFunctions';
+import { cookieReqParser, responseHandler, infoMessageHandler } from '../../../helpers/universalFunctions';
 import { fetchJson } from '../../../api/fetchJson';
-import { userVerification } from '../../api/userVerification';
+import { userVerification } from '../../../api/userVerification';
 
 import VerifyModal from '../../../Components/UI/Modal/VerifyModal';
 
-import classes from '../../../Components/UI/UI.module.scss';
-
 const userVerificationPage = props => {
-	const { isMobile } = useDeviceDetect();
-	const modalAnimationIn = isMobile ? classes.modalInMob : classes.modalInPC;
-	const [showResponseModal, setShowResponseModal] = useState(true);
+	const [showResponseModal, setShowResponseModal] = useState({
+		triger: false,
+		message: null,
+		border: '',
+	});
+	const [showInfoModal, setShowInfoModal] = useState({
+		triger: false,
+		message: null,
+	});
 
 	const id = props.id;
 	const type = props.type;
@@ -19,19 +23,33 @@ const userVerificationPage = props => {
 		verificationType: type,
 	};
 
+	const errorMessage = (err, message = 'Došlo je do greške, kontaktirajte nas putem kontakt forme') => {
+		console.log(err)
+		responseHandler(setShowResponseModal, message, 'red', showResponseModal.triger);
+		setShowBackdrop(classes.backdropIn);
+	};
+
 	const userVerificationHandler = () => {
 		const api = userVerification(userData)
 			.then(response => {
 				console.log(response);
+				infoMessageHandler(
+					setShowInfoModal,
+					'Verifikacija uspešna',
+					!showInfoModal.triger
+				);
 				setShowResponseModal(!showResponseModal);
 			})
-			.catch(error => {
-				if (error.response) {
-					console.log(error.response);
-				} else if (error.request) {
-					console.log(error.request);
+			.catch(err => {
+				if (err.response) {
+					console.log(err.response);
+					err.response.data.map(err => {
+						responseHandler(setShowResponseModal, err.response, 'red', showResponseModal.triger);
+					});
+				} else if (err.request) {
+					errorMessage(err.request)
 				} else {
-					console.log('nesto drugo');
+					errorMessage(err)
 				}
 			});
 		api;

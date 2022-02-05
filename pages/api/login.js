@@ -6,13 +6,23 @@ export default async (req, res) => {
 	const password = req.body.userData.password;
 	const url = `users/login?username=${userName}&password=${password}`;
 
-	const responseData = await fetchJson(url, 'get', {}).then(response => {
-		return response.data;
-	});
+	async function login() {
+        const api = await fetchJson(url, 'get', {})
+        .then(res => {
+            return res.data;
+	    })
+        .catch(err => {
+            return err.response
+        });
+
+        return api
+    }
+
+	const response = await login();
 
 	const request_config = res.setHeader(
 		'Set-Cookie',
-		cookie.serialize('token', responseData.access_token, {
+		cookie.serialize('token', response.access_token, {
 			httpOnly: true,
 			secure: process.env.NODE_ENV !== 'development',
 			maxAge: 60 * 60,
@@ -21,7 +31,7 @@ export default async (req, res) => {
 		})
 	);
 	request_config;
-
-	res.statusCode = 200;
-	res.json(responseData);
+	
+	!response.status ? res.statusCode = 200 : res.statusCode = response.status
+	res.json(response.data);
 };

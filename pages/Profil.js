@@ -70,10 +70,7 @@ const profil = props => {
 			/>
 			<Backdrop
 				backdropAnimation={showBackdrop}
-				onClick={() => {
-					setShowBackdrop(classes.backdropOut);
-					setShowConfirmModal(classes.modalDown);
-				}}
+				onClick={() => setShowBackdrop(classes.backdropOut)}
 			/>
 			<Loader loading={isLoading} />
 			<InfoModal 
@@ -93,10 +90,12 @@ const profil = props => {
 				message="Da li sigurno želite deaktivirati profil? Deaktivacija profila onemogućuje Vas i klijente da Vam rezervišu termine !!!"
 				submitValue="DEAKTIVIRAJ"
 				onDecline={() => {
-					setShowConfirmModal(classes.modalDown), setShowBackdrop(classes.backdropOut);
+					setShowConfirmModal(classes.modalDown); 
+					setShowBackdrop(classes.backdropOut);
 				}}
 				onSubmit={() => {
-					setShowConfirmModal(classes.modalDown), setShowBackdrop(classes.backdropOut);
+					setShowConfirmModal(classes.modalDown);
+					setShowBackdrop(classes.backdropOut);
 				}}
 			/>
 			<PassRecovery

@@ -31,28 +31,29 @@ const AddServicesForm = props => {
 		));
 	};
 
+	const apiErrorHandler = (err, message) => {
+		console.log(err);
+		props.errorMessage(message);
+	};
+
 	const addServiceToManyHandler = () => {
 		const api = saveServicesToManyEmployees(serviceData)
-			.then(response => {
-				console.log(response);
+			.then(res=> {
+				console.log(res);
 				props.getAllServicesHandler();
 				props.resetForm();
-				/* props.isSetupGuide ? props.setServicesFormInput(initServicesForm) : {}; */
 				infoMessageHandler(props.setShowInfoModal, 'Uspešno sačuvano', !props.triger);
 				props.setShowBackdrop(classes.backdropOut);
 				props.setDisplayAddServicesForm(props.isSetupGuide ? 'block' : 'none');
 				props.setIsLoading(false);
 			})
-			.catch(error => {
-				if (error.response) {
-					console.log(error);
-					error.response.data.map(err => {
-						props.errorMessage(err.errorMessage);
-					});
-				} else if (error.request) {
-					apiErrorHandler(error.request);
+			.catch(err => {
+				if (err.response) {
+					apiErrorHandler(err.response)
+				} else if (err.request) {
+					apiErrorHandler(err.request)
 				} else {
-					apiErrorHandler(error);
+					apiErrorHandler(err)
 				}
 			});
 		api;
@@ -175,11 +176,6 @@ const AddServicesForm = props => {
 
 	const onChange = (e, object) => {
 		inputChangedHandler(e, object, props.servicesFormInput, props.setServicesFormInput);
-	};
-
-	const apiErrorHandler = error => {
-		console.log(error);
-		props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
 	};
 
 	function cancelAddServicePcHandler() {

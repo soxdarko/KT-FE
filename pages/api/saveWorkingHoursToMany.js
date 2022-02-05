@@ -6,16 +6,20 @@ export default async (req, res) => {
 	const token = cookie.substring(cookie.indexOf('=') + 1);
 	const url = `settings/saveWorkingHoursToMany`;
 
-	const saveWorkingHoursToMany = await fetchJson(url, 'post', token, obj)
-		.then(response => {
-			return response;
-		})
-		.catch(err => {
-			console.log(err);
-		});
+	async function saveWorkingHoursToMany() {
+        const api = await fetchJson(url, 'post', token, obj)
+        .then(res => {
+            return res.data;
+	    })
+        .catch(err => {
+            return err.response
+        });
 
-	saveWorkingHoursToMany;
+        return api
+    }
 
-	res.statusCode = 200;
-	res.json({ success: true });
+        const reponse = await saveWorkingHoursToMany();
+
+    /* res.statusCode = reponse.status; */
+	res.json(reponse.data);
 };

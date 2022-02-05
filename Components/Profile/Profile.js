@@ -58,8 +58,8 @@ const Profile = props => {
 		props.setShowBackdrop(classes.backdropIn);
 	};
 
-	const apiErrorHandler = error => {
-		console.log(error);
+	const apiErrorHandler = err => {
+		console.log(err);
 		props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
 	};
 
@@ -76,27 +76,23 @@ const Profile = props => {
 	const addEmployeeProfileDataHandler = () => {
 		props.setIsLoading(false);
 		const api = saveEmployeeProfile(userData)
-			.then(response => {
-				console.log(response);
+			.then(res => {
+				console.log(res);
 				infoMessageHandler(props.setShowInfoModal, 'Uspešno sačuvano', !props.infoTriger);
 				setEditMode(false)
 			})
-			.catch(error => {
-				if (error.response) {
-					console.log(error.response)
-					/* error.response.data.map(error => {
-						console.log(error.response);
-						error.response.data.map(err => {
-							props.errorMessage(err.errorMessage);
-						});
-					}); */
-				} else if (error.request) {
-					apiErrorHandler(error.request);
+			.catch(err => {
+				if (err.response) {
+					console.log(err.response);
+					const errMessage = err.response.data.map(d => d.errorMessage).join('...');
+					responseHandler(props.setShowResponseModal, errMessage, 'red', !props.responseTriger);
+				} else if (err.request) {
+					apiErrorHandler(err.request);
 				} else {
-					apiErrorHandler(error);
+					apiErrorHandler(err);
 				}
 			});
-		api;
+		return api;
 	};
 
 	const onSubmit = e => {

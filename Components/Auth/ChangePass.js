@@ -6,6 +6,7 @@ import {
 	inputChangedHandler,
 	updateValidity,
 	responseHandler,
+	infoMessageHandler
 } from '../../helpers/universalFunctions';
 
 import Input from '../UI/Forms/Input';
@@ -57,7 +58,8 @@ const ChangePass = props => {
 		const api = axios
 			.post('/users/companyRegistration', changePass)
 			.then(response => {
-				console.log(response), alert('Uspešno ste premenili lozinku');
+				console.log(response);
+				alert('Uspešno ste premenili lozinku');
 			})
 			.catch(error => console.log(error));
 		api;

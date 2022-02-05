@@ -6,16 +6,20 @@ export default async (req, res) => {
 	const token = cookie.substring(cookie.indexOf('=') + 1);
 	const url = `users/saveEmployees`;
 
-	const saveEmployees = await fetchJson(url, 'post', token, obj)
-		.then(response => {
-			return response;
-		})
-		.catch(err => {
-			console.log(err);
-		});
+	async function saveEmployees() {
+        const api = await fetchJson(url, 'post', token, obj)
+        .then(res => {
+            return res.data;
+	    })
+        .catch(err => {
+            return err.response
+        });
 
-	saveEmployees;
+        return api
+    }
 
-	res.statusCode = 200;
-	res.json({ success: true });
+	const response = await saveEmployees();
+
+	response.length === 0 ? res.statusCode = 200 : res.statusCode = response.status
+	res.json(response.data);
 };

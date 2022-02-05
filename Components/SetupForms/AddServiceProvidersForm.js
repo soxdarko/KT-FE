@@ -37,29 +37,26 @@ const AddServiceProvidersForm = props => {
 		inputChangedHandler(e, object, props.servProvFormInput, props.setServProvFormInput);
 	};
 
-	const apiErrorHandler = error => {
-		console.log(error);
-		props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+	const apiErrorHandler = (err, message) => {
+		console.log(err);
+		props.errorMessage(message);
 	};
 
 	const getAllServiceProvidersHandler = async () => {
 		const api = await getAllServiceProviders()
-			.then(response => {
-				const getServiceProviderData = response.data.map(serviceProvider => {
+			.then(res => {
+				const getServiceProviderData = res.data.map(serviceProvider => {
 					return serviceProvider;
 				});
 				props.setServiceProviderData(getServiceProviderData);
 			})
-			.catch(error => {
-				if (error.response) {
-					console.log(error.response);
-					error.response.data.map(err => {
-						props.errorMessage(err.errorMessage);
-					});
-				} else if (error.request) {
-					apiErrorHandler(error.request);
+			.catch(err => {
+				if (err.response) {
+					apiErrorHandler(err.response)
+				} else if (err.request) {
+					apiErrorHandler(err.request)
 				} else {
-					apiErrorHandler(error);
+					apiErrorHandler(err)
 				}
 			});
 		return api;
@@ -67,22 +64,18 @@ const AddServiceProvidersForm = props => {
 
 	const addServiceProviderHandler = () => {
 		const api = saveServiceProviders(props.serviceProviderInfo)
-			.then(response => {
-				console.log(response);
+			.then(res => {
+				console.log(res);
 				getAllServiceProvidersHandler();
 				infoMessageHandler(props.setShowInfoModal, 'Uspešno sačuvano', !props.triger);
-				props.setIsLoading(true);
 			})
-			.catch(error => {
-				if (error.response) {
-					console.log(error.response);
-					error.response.data.map(err => {
-						props.errorMessage(err.errorMessage);
-					});
-				} else if (error.request) {
-					apiErrorHandler(error.request);
+			.catch(err => {
+				if (err.response) {
+					apiErrorHandler(err.response)
+				} else if (err.request) {
+					apiErrorHandler(err.request)
 				} else {
-					apiErrorHandler(error);
+					apiErrorHandler(err)
 				}
 			});
 		api;

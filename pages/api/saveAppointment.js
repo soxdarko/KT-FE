@@ -12,8 +12,7 @@ export default async (req, res) => {
 				return res.data;
 			})
 			.catch(err => {
-
-				return err.response.data
+				return err.response
 			});
 
 		return api;
@@ -21,6 +20,6 @@ export default async (req, res) => {
 
 	const response = await saveAppointmentResponse();
 
-	res.statusCode = 400;
-	res.json(response);
+	response.length === 0 ? res.statusCode = 200 : res.statusCode = response.status
+	res.json(response.data);
 };

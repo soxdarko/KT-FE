@@ -22,7 +22,7 @@ const SideDrawer = props => {
 	if (isMobile) {
 		return (
 			<>
-				<Backdrop display={props.displaySideDrawerBackdrop} onClick={props.sideDrawerClose} />
+				<Backdrop display='block' onClick={() => props.sideDrawerCloseHandler()} backdropAnimation={props.showBackdrop} />
 				<div
 					className={classes.SideDrawerMob}
 					style={{ transform: props.transform, display: props.displayMob }}>

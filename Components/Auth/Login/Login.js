@@ -31,6 +31,13 @@ const Login = props => {
 		setFormInput(initState);
 	}
 
+	const apiErrorHandler = (err, message = 'Došlo je do greške, kontaktirajte nas putem kontakt forme') => {
+		console.log(err);
+		responseHandler(props.setShowResponseModal, message, 'red', !props.triger);
+		props.setShowBackdrop(classes.backdropIn);
+		props.setIsLoading(false);
+	};
+
 	const getGuideStatus = async () => {
 		const api = await getCompanyGuideStatus()
 			.then(response => {
@@ -38,31 +45,15 @@ const Login = props => {
 				const getGuideStatusData = response.data;
 				props.setUserStatus(getGuideStatusData);
 			})
-			.catch(error => {
-				if (error.response) {
-					console.log(error.response);
-					responseHandler(
-						props.setShowResponseModal,
-						'Došlo je do greške, obratite nam se putem kontakt forme!',
-						'red',
-						!props.triger
-					);
-				} else if (error.request) {
-					console.log(error.request);
-					responseHandler(
-						props.setShowResponseModal,
-						'Došlo je do greške, obratite nam se putem kontakt forme!',
-						'red',
-						!props.triger
-					);
+			.catch(err => {
+				if (err.response) {
+					console.log(err.response);
+					const errMessage = err.response.data.map(d => d.errorMessage).join('...');
+					apiErrorHandler(err.response, errMessage)
+				} else if (err.request) {
+					apiErrorHandler(err.request);
 				} else {
-					console.log(error);
-					responseHandler(
-						props.setShowResponseModal,
-						'Došlo je do greške, obratite nam se putem kontakt forme!',
-						'red',
-						!props.triger
-					);
+					apiErrorHandler(err);
 				}
 			});
 		return api;
@@ -86,31 +77,15 @@ const Login = props => {
 				getGuideStatus();
 				setFormInput(initState);
 			})
-			.catch(error => {
-				if (error.response) {
-					console.log('error',error.response);
-					responseHandler(
-						props.setShowResponseModal,
-						'Uneli ste pogrešno korisničko ime ili lozinku!',
-						'red',
-						!props.triger
-					);
-				} else if (error.request) {
-					console.log(error.request);
-					responseHandler(
-						props.setShowResponseModal,
-						'Došlo je do greške, obratite nam se putem kontakt forme!',
-						'red',
-						!props.triger
-					);
+			.catch(err => {
+				if (err.response) {
+					console.log(err.response);
+					const errMessage = err.response.data.map(d => d.errorMessage).join('...');
+					apiErrorHandler(err.response, errMessage)
+				} else if (err.request) {
+					apiErrorHandler(err.request);
 				} else {
-					console.log(error);
-					responseHandler(
-						props.setShowResponseModal,
-						'Došlo je do greške, obratite nam se putem kontakt forme!',
-						'red',
-						!props.triger
-					);
+					apiErrorHandler(err);
 				}
 			});
 		api;

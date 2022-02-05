@@ -95,10 +95,15 @@ const WorkingTimeForm = props => {
 		props.setWorkingTimeFormInput(defaultForm);
 	};
 
+	const apiErrorHandler = (err, message) => {
+		console.log(err);
+		props.errorMessage(message);
+	};
+
 	const getWorkingHoursHandler = async () => {
 		const api = await getWorkingHours(props.employeeId, selectedMondayFormated)
-			.then(response => {
-				const getWorkingHoursData = response.data.map(workingHours => {
+			.then(res => {
+				const getWorkingHoursData = res.data.map(workingHours => {
 					return workingHours;
 				});
 				if (getWorkingHoursData.length > 0) {
@@ -107,18 +112,13 @@ const WorkingTimeForm = props => {
 					return initialTimeFormHandler();
 				}
 			})
-			.catch(error => {
-				if (error.response) {
-					console.log(error.response);
-					error.response.data.map(err => {
-						props.errorMessage(err.errorMessage);
-					});
-				} else if (error.request) {
-					console.log(error.request);
-					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+			.catch(err => {
+				if (err.response) {
+					apiErrorHandler(err.response)
+				} else if (err.request) {
+					apiErrorHandler(err.request)
 				} else {
-					console.log(error);
-					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+					apiErrorHandler(err)
 				}
 			});
 		return api;
@@ -126,32 +126,20 @@ const WorkingTimeForm = props => {
 
 	const addWorkingHoursHandler = () => {
 		const api = saveWorkingHoursToMany(props.workingHoursData)
-			.then(response => {
-				console.log(response);
+			.then(res => {
+				console.log(res);
 				infoMessageHandler(props.setShowInfoModal, 'Uspešno sačuvano', !props.triger);
 			})
-			.catch(error => {
-				if (error.response) {
-					error.response.data.map(err => {
-						const Input = err.type[0].toLowerCase() + err.type.slice(1);
-						props.errorMessage(err.errorMessage);
-						updateValidity(
-							props.setWorkingTimeFormInput,
-							Input,
-							props.workingTimeFormInput,
-							'',
-							false
-						);
-					});
-				} else if (error.request) {
-					console.log(error.request);
-					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+			.catch(err => {
+				if (err.response) {
+					apiErrorHandler(err.response)
+				} else if (err.request) {
+					apiErrorHandler(err.request)
 				} else {
-					console.log(error);
-					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+					apiErrorHandler(err)
 				}
 			});
-		api;
+		return api;
 	};
 
 	useEffect(() => {

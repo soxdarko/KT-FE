@@ -20,19 +20,16 @@ const EmployeeQuestionForm = props => {
 				props.setIsLoading(false);
 				props.setDisplayEmployeeQuestionForm('none');
 			})
-			.catch(error => {
-				props.setIsLoading(false);
-				if (error.response) {
-					console.log(error.response);
-					error.response.data.map(err => {
-						props.errorMessage(err.errorMessage);
+			.catch(err => {
+				if (err.response) {
+					console.log(err.response);
+					err.response.data.map(err => {
+						props.errorMessage([], err.errorMessage);
 					});
-				} else if (error.request) {
-					console.log(error.request);
-					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+				} else if (err.request) {
+					props.errorMessage(err.request);
 				} else {
-					console.log(error);
-					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+					props.errorMessage(err);
 				}
 			});
 		api;

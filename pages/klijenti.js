@@ -71,32 +71,31 @@ const Clients = props => {
 		}
 	};
 
-	const errorMessage = message => {
-		responseHandler(setShowResponseModal, message, 'red');
+	const errorMessage = (err, message = 'Došlo je do greške, pokušajte ponovo ili nas kontaktirajte putem kontakt forme') => {
+		console.log(err)
+		responseHandler(setShowResponseModal, message, 'red', showResponseModal.triger);
 		setShowBackdrop(classes.backdropIn);
 	};
 
 	const getClientsHandler = async deleted => {
 		const api = await getClients(deleted)
-			.then(response => {
-				const getClientsData = response.data.map(client => {
+			.then(res => {
+				const getClientsData = res.data.map(client => {
 					return client;
 				});
 				setClientData(getClientsData);
 			})
-			.catch(error => {
+			.catch(err => {
 				setHoldBackdrop(false);
-				if (error.response) {
-					console.log(error.response);
-					error.response.data.map(err => {
-						errorMessage(err.errorMessage);
+				if (err.response) {
+					console.log(err.response);
+					err.response.data.map(err => {
+						errorMessage([], err.errorMessage);
 					});
-				} else if (error.request) {
-					console.log(error.request);
-					errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+				} else if (err.request) {
+					errorMessage(err.request);
 				} else {
-					console.log(error);
-					errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+					errorMessage(err);
 				}
 			});
 		return api;
@@ -104,8 +103,8 @@ const Clients = props => {
 
 	const banClientHandler = () => {
 		const api = banClient(clientId)
-			.then(response => {
-				console.log(response);
+			.then(res => {
+				console.log(res);
 				getClientsHandler(false);
 				resetForm();
 				infoMessageHandler(
@@ -114,19 +113,17 @@ const Clients = props => {
 					!showInfoModal.triger
 				);
 			})
-			.catch(error => {
+			.catch(err => {
 				!holdBackdrop ? setHoldBackdrop(true) : {};
-				if (error.response) {
-					console.log(error.response);
-					error.response.data.map(err => {
-						errorMessage(err.errorMessage);
+				if (err.response) {
+					console.log(err.response);
+					err.response.data.map(err => {
+						errorMessage([], err.errorMessage);
 					});
-				} else if (error.request) {
-					console.log(error.request);
-					errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+				} else if (err.request) {
+					errorMessage(err.request);
 				} else {
-					console.log(error);
-					errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+					errorMessage(err);
 				}
 			});
 		api;

@@ -5,7 +5,7 @@ import {
 	updateValidity,
 	responseHandler,
 } from '../../../helpers/universalFunctions';
-import { newCompany } from '../../../pages/api/userRegistration';
+import { userRegistration } from '../../../api/userRegistration';
 import initState from './initState';
 
 import Select from '../../UI/Select';
@@ -27,41 +27,34 @@ const RegServProv = props => {
 		props.setShowBackdrop(classes.backdropOut);
 	}
 
+	const apiErrorHandler = (err, message = 'Došlo je do greške, kontaktirajte nas putem kontakt forme') => {
+		console.log(err);
+		responseHandler(props.setShowResponseModal, message, 'red', !props.responseTriger);
+		props.setShowBackdrop(classes.backdropIn);
+		props.setIsLoading(false);
+	};
+
 	const regHandler = () => {
-		const api = newCompany(companyData)
+		const api = userRegistration(companyData)
 			.then(response => {
-				console.log(response),
-					responseHandler(
-						props.setShowResponseModal,
-						'Poslali smo Vam verifikacioni e-mail i sms. Klikom na link u e-mail-u i sms-u registracija će biti završena.',
-						'green',
-						!props.triger
-					);
+				console.log(response);
+				responseHandler(
+					props.setShowResponseModal,
+					'Poslali smo Vam verifikacioni e-mail i sms. Klikom na link u e-mail-u i sms-u registracija će biti završena.',
+					'green',
+					!props.triger
+				);
 				props.setDisplayRegServProv('none');
 			})
-			.catch(error => {
-				if (error.response) {
-					error.response.data.map(err => {
-						const Input = err.type[0].toLowerCase() + err.type.slice(1);
-						responseHandler(props.setShowResponseModal, err.errorMessage, 'red', !props.triger);
-						updateValidity(setFormInput, Input, formInput, '', false);
-					});
-				} else if (error.request) {
-					console.log(error.request);
-					responseHandler(
-						props.setShowResponseModal,
-						'Došlo je do greške, obratite nam se putem kontakt forme!',
-						'red',
-						!props.triger
-					);
+			.catch(err => {
+				if (err.response) {
+					console.log(err.response);
+					const errMessage = err.response.data.map(d => d.errorMessage).join('...');
+					apiErrorHandler(err.response, errMessage)
+				} else if (err.request) {
+					apiErrorHandler(err.request);
 				} else {
-					console.log(error);
-					responseHandler(
-						props.setShowResponseModal,
-						'Došlo je do greške, obratite nam se putem kontakt forme!',
-						'red',
-						!props.triger
-					);
+					apiErrorHandler(err);
 				}
 			});
 		api;

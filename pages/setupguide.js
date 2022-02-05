@@ -71,7 +71,8 @@ const setupguide = props => {
 
 	/* console.log(props.userStatus.guideStatus); */
 
-	const errorMessage = message => {
+	const errorMessage = (err, message = 'Došlo je do greške, pokušajte ponovo ili nas kontaktirajte putem kontakt forme') => {
+		console.log(err)
 		responseHandler(setShowResponseModal, message, 'red');
 		setShowBackdrop(classes.backdropIn);
 		setIsLoading(false);
@@ -101,24 +102,22 @@ const setupguide = props => {
 
 	const getAllServicesHandler = async () => {
 		const api = await getAllServices()
-			.then(response => {
-				const getServicesData = response.data.map(service => {
+			.then(res => {
+				const getServicesData = res.data.map(service => {
 					return service;
 				});
 				setServicesData(getServicesData);
 			})
-			.catch(error => {
-				if (error.response) {
-					console.log(error.response);
-					error.response.data.map(err => {
-						props.errorMessage(err.errorMessage);
+			.catch(err => {
+				if (err.response) {
+					console.log(err.response)
+					err.response.data.map(err => {
+						errorMessage([], err.errorMessage);
 					});
-				} else if (error.request) {
-					console.log(error.request);
-					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+				} else if (err.request) {
+					errorMessage(err.request);
 				} else {
-					console.log(error);
-					props.errorMessage('Došlo je do greške, kontaktirajte nas putem kontakt forme');
+					errorMessage(err);
 				}
 			});
 		return api;
