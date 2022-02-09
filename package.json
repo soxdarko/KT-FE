@@ -67,7 +67,8 @@
 		"predeploy": "npm run build",
 		"deploy": "gh-pages -d dist",
 		"dev": "next",
-		"build": "next build"
+		"build": "next build",
+		"start": "next start -p 3600"
 	},
 	"repository": {
 		"type": "git",
