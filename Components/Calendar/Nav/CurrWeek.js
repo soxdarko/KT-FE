@@ -1,7 +1,7 @@
-import { useDeviceDetect } from '../../../helpers/universalFunctions';
+import { UseDeviceDetect } from '../../../helpers/universalFunctions';
 
 const CurrWeek = props => {
-	const { isMobile } = useDeviceDetect();
+	const { isMobile } = UseDeviceDetect();
 
 	if (isMobile) {
 		return <p>{props.currWeek}</p>;

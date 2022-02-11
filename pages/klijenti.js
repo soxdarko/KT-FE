@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { auth } from '../helpers/auth';
 import { fetchJson } from '../api/fetchJson';
 import {
-	useDeviceDetect,
+	UseDeviceDetect,
 	responseHandler,
 	infoMessageHandler,
 } from '../helpers/universalFunctions';
@@ -27,7 +27,7 @@ import Loader from '../Components/UI/Loader';
 import classes from '../Components/Navigation/Navigation.module.scss';
 
 const Clients = props => {
-	const { isMobile } = useDeviceDetect();
+	const { isMobile } = UseDeviceDetect();
 	const [isLoading, setIsLoading] = useState(false);
 	const [formInput, setFormInput] = useState(initClientForm);
 	const [userData, setUserData] = useState({});

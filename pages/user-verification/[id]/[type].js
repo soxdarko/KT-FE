@@ -5,7 +5,7 @@ import { userVerification } from '../../../api/userVerification';
 
 import VerifyModal from '../../../Components/UI/Modal/VerifyModal';
 
-const userVerificationPage = props => {
+const UserVerificationPage = props => {
 	const [showResponseModal, setShowResponseModal] = useState({
 		triger: false,
 		message: null,
@@ -104,4 +104,4 @@ userVerificationPage.getInitialProps = async ({ req, query }) => {
 	};
 };
 
-export default userVerificationPage;
+export default UserVerificationPage;

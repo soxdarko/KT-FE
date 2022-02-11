@@ -1,4 +1,4 @@
-import { useDeviceDetect } from '../../helpers/universalFunctions';
+import { UseDeviceDetect } from '../../helpers/universalFunctions';
 
 import DescriptionLabel from '../UI/DescriptionLabel';
 import Input from '../UI/Forms/Input';
@@ -7,7 +7,7 @@ import WrappedButtonsMob from '../UI/WrappedButtonsMob';
 import classes from '../SetupForms/SetupForms.module.scss';
 
 const GreetingForm = props => {
-	const { isMobile } = useDeviceDetect();
+	const { isMobile } = UseDeviceDetect();
 
 	const forward = async () => {
 		props.setDisplayGreeting('none');

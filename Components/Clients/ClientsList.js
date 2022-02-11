@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState, useEffect, useRef } from 'react';
-import { useDeviceDetect, confirmHandler } from '../../helpers/universalFunctions';
+import { UseDeviceDetect, confirmHandler } from '../../helpers/universalFunctions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
 	faUserPlus,
@@ -16,7 +16,7 @@ import ListHead from '../UI/List/ListHead/ListHead';
 import classes from '../UI/UI.module.scss';
 
 const ClientsList = props => {
-	const { isMobile } = useDeviceDetect();
+	const { isMobile } = UseDeviceDetect();
 	const isComponentLoad = useRef(true);
 	const [dipslaySerachBar, setDipslaySerachBar] = useState('none');
 	const [searchInput, setSearchInput] = useState('');
@@ -144,7 +144,7 @@ const ClientsList = props => {
 								)
 								.map((client, i) => {
 									return (
-										<div className={classes.TbodyRow}>
+										<div className={classes.TbodyRow} key={client.id}>
 											<div className={classes.NumMob}>{indexNum(i)}</div>
 											<div className={classes.ListDataContainer}>
 												<div>{client.name}</div>

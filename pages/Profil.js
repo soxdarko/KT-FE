@@ -1,29 +1,24 @@
 import { useState } from 'react';
 import { auth } from '../helpers/auth';
 import { fetchJson } from '../api/fetchJson';
-import { useDeviceDetect, responseHandler } from '../helpers/universalFunctions';
+import { responseHandler } from '../helpers/universalFunctions';
 import Head from 'next/head';
 import ServiceProvidersEmployees from '../Components/DataFromBE/Clients';
-
 import Layout from '../Components/hoc/Layout/Layout';
 import Profile from '../Components/Profile/Profile';
 import Backdrop from '../Components/UI/Backdrop';
 import InfoModal from '../Components/UI/Modal/InfoModal';
 import ConfirmModal from '../Components/UI/Modal/ConfirmModal';
 import ResponseModal from '../Components/UI/Modal/ResponseModal';
-import ChangePass from '../Components/Auth/ChangePass';
 import PassRecovery from '../Components/Auth/PassRecovery/PassRecovery';
 import Loader from '../Components/UI/Loader';
 
 import classes from '../Components/Navigation/Navigation.module.scss';
 
-const profil = props => {
-	const { isMobile } = useDeviceDetect();
+const Profil = props => {
 	const [isLoading, setIsLoading] = useState(false);
-	const modalAnimationIn = isMobile ? classes.modalInMob : classes.modalInPC;
 	const [profileData, setProfileeData] = useState(props.profileData);
 	const [displayConfirmModal, setDisplayConfirmModal] = useState('none');
-	const [displayChangePass, setDisplayChangePass] = useState('none');
 	const [displayPassRecovery, setDisplayPassRecovery] = useState('none');
 	const [showBackdrop, setShowBackdrop] = useState('');
 	const [showInfoModal, setShowInfoModal] = useState({
@@ -102,24 +97,13 @@ const profil = props => {
 				displayPassRecovery={displayPassRecovery}
 				setDisplayPassRecovery={setDisplayPassRecovery}
 				setShowResponseModal={setShowResponseModal}
-				modalAnimationIn={modalAnimationIn}
 				setShowBackdrop={setShowBackdrop}
-			/>
-			<ChangePass
-				displayChangePass={displayChangePass}
-				setDisplayChangePass={setDisplayChangePass}
-				setDisplayPassRecovery={setDisplayPassRecovery}
-				setShowResponseModal={setShowResponseModal}
-				setShowBackdrop={setShowBackdrop}
-				modalAnimationIn={modalAnimationIn}
-				triger={setShowResponseModal.triger}
 			/>
 			<Profile
 				setDisplayConfirmModal={setDisplayConfirmModal}
 				setShowBackdrop={setShowBackdrop}
 				errorMessage={errorMessage}
 				setShowConfirmModal={setShowConfirmModal}
-				setDisplayChangePass={setDisplayChangePass}
 				setShowResponseModal={setShowResponseModal}
 				setShowInfoModal={setShowInfoModal}
 				responseTriger={setShowResponseModal.triger}
@@ -155,4 +139,4 @@ export async function getServerSideProps(ctx) {
 	};
 }
 
-export default profil;
+export default Profil;

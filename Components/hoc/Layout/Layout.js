@@ -8,7 +8,6 @@ import classes from '../hoc.module.scss';
 const Layout = props => {
 	const [sideDrawerMob, setSideDrawerMob] = useState('translateX(-100%)');
 	const [showBackdrop, setShowBackdrop] = useState('');
-	const [backdropDisplay, setBackdropDisplay] = useState('none');
 
 	const sideDrawerOpenHandler = () => {
 		setSideDrawerMob('translateX(0)');

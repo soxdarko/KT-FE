@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
-import { useDeviceDetect } from '../../../helpers/universalFunctions';
+import { UseDeviceDetect } from '../../../helpers/universalFunctions';
 
 import classes from '../UI.module.scss';
 
 const InfoModal = props => {
-	const { isMobile } = useDeviceDetect();
+	const { isMobile } = UseDeviceDetect();
 	const isComponentLoad = useRef(true);
 	const [animation, setAnimation] = useState('');
 	const modalAnimationIn = isMobile ? classes.modalInMob : classes.modalInPC;

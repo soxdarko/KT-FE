@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import {
-	useDeviceDetect,
+	UseDeviceDetect,
 	inputChangedHandler,
 	updateValidity,
 	responseHandler,
@@ -17,7 +17,7 @@ import WrappedButtonsMob from '../UI/WrappedButtonsMob';
 import classes from './SetupForms.module.scss';
 
 const AddServicesForm = props => {
-	const { isMobile } = useDeviceDetect();
+	const { isMobile } = UseDeviceDetect();
 	const isComponentLoad = useRef(true);
 	const [serviceData, setServiceData] = useState({});
 

@@ -1,4 +1,4 @@
-import { useDeviceDetect } from '../../../helpers/universalFunctions';
+import { UseDeviceDetect } from '../../../helpers/universalFunctions';
 
 import Filter from '../../UI/Filter';
 import Table from '../../UI/Table';
@@ -7,7 +7,7 @@ import Input from '../../UI/Forms/Input';
 import classes from '../../UI/UI.module.scss';
 
 const ServicePickerForm = props => {
-	const { isMobile } = useDeviceDetect();
+	const { isMobile } = UseDeviceDetect();
 
 	if (isMobile) {
 		return (

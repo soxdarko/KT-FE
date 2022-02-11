@@ -1,6 +1,6 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import {
-	useDeviceDetect,
+	UseDeviceDetect,
 	inputChangedHandler,
 	updateValidity,
 	responseHandler,
@@ -14,8 +14,8 @@ import WrappedButtonsMob from '../UI/WrappedButtonsMob';
 
 import classes from '../../Components/SetupForms/SetupForms.module.scss';
 
-const addClientForm = props => {
-	const { isMobile } = useDeviceDetect();
+const AddClientForm = props => {
+	const { isMobile } = UseDeviceDetect();
 	const isComponentLoad = useRef(true);
 
 	function stopEdit() {
@@ -258,4 +258,4 @@ const addClientForm = props => {
 	);
 };
 
-export default addClientForm;
+export default AddClientForm;

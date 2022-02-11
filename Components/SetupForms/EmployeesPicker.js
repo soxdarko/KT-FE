@@ -1,10 +1,10 @@
-import { useDeviceDetect, checkBoxGroupToArrayHandler } from '../../helpers/universalFunctions';
+import { UseDeviceDetect, checkBoxGroupToArrayHandler } from '../../helpers/universalFunctions';
 import CheckBox from '../UI/CheckBox';
 
 import classes from './SetupForms.module.scss';
 
 const EmployeesPicker = props => {
-	const { isMobile } = useDeviceDetect();
+	const { isMobile } = UseDeviceDetect();
 
 	const displayEmployeesHeader = () => {
 		if (listItems.length === 0 && !props.editMode) {

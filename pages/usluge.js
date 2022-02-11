@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-	useDeviceDetect,
+	UseDeviceDetect,
 	responseHandler,
 	infoMessageHandler,
 } from '../helpers/universalFunctions';
@@ -28,7 +28,7 @@ import ServiceSettings from '../Components/UI/Forms/ServiceSettings';
 import classes from '../Components/Navigation/Navigation.module.scss';
 
 const Services = props => {
-	const { isMobile } = useDeviceDetect();
+	const { isMobile } = UseDeviceDetect();
 	const [displayAddServicesForm, setDisplayAddServicesForm] = useState('none');
 	const [displayWrappedTools, setDisplayWrappedTools] = useState('none');
 	const [isLoading, setIsLoading] = useState(false);
@@ -329,7 +329,6 @@ const Services = props => {
 				cancelAddService={() => props.cancelAddServiceHandler()}
 				displayCancel={isMobile ? 'none' : 'inline-block'}
 				getAllServicesHandler={getAllServicesHandler}
-				isSetupGuide={false}
 				resetForm={resetForm}
 				triger={showResponseModal.triger}
 			/>

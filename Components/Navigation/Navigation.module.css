@@ -1121,7 +1121,7 @@
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
   overflow: auto;
-  z-index: 301;
+  z-index: 500;
   -webkit-transition: -webkit-transform 0.3s ease-out;
   transition: -webkit-transform 0.3s ease-out;
   transition: transform 0.3s ease-out;

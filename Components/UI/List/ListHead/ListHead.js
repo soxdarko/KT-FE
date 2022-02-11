@@ -1,5 +1,5 @@
 import { faSave, faCopy, faPaste, faSearch, faLink, faUndo, } from '@fortawesome/free-solid-svg-icons';
-import { useDeviceDetect } from '../../../../helpers/universalFunctions';
+import { UseDeviceDetect } from '../../../../helpers/universalFunctions';
 import Distancer from '../../Distancer';
 import ListHeadButton from './ListHeadButton';
 import Select from '../../Select';
@@ -8,7 +8,7 @@ import Input from '../../../UI/Forms/Input';
 import classes from '../../UI.module.scss';
 
 const ListHead = props => {
-	const { isMobile } = useDeviceDetect();
+	const { isMobile } = UseDeviceDetect();
 
 	const inputClassName = isMobile ? classes.InputTextMob : classes.InputText;
 
@@ -87,7 +87,8 @@ const ListHead = props => {
 					name="stopSearch"
 					value="Poništi"
 					onClick={() => {
-						props.setDipslaySerachBar('none'), props.setSearchInput('');
+						props.setDipslaySerachBar('none');
+						props.setSearchInput('');
 					}}
 				/>
 			</div>

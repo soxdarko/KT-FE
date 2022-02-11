@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useDeviceDetect, infoMessageHandler } from '../../../helpers/universalFunctions';
+import { UseDeviceDetect, infoMessageHandler } from '../../../helpers/universalFunctions';
 import { saveServicesToManyEmployees } from '../../../api/saveServicesToManyEmployees';
 import TextArea from './TextArea';
 import Input from './Input';
@@ -8,7 +8,7 @@ import classes from '../UI.module.scss';
 import WrappedButtonsMob from '../WrappedButtonsMob';
 
 const ServiceDescription = props => {
-	const { isMobile } = useDeviceDetect();
+	const { isMobile } = UseDeviceDetect();
 	const isComponentLoad = useRef(true);
 
 	const saveDescription = () => {

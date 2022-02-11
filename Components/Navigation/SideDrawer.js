@@ -1,4 +1,4 @@
-import { useDeviceDetect } from '../../helpers/universalFunctions';
+import { UseDeviceDetect } from '../../helpers/universalFunctions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
 	faCalendarAlt,
@@ -17,7 +17,7 @@ import Input from '../UI/Forms/Input'    ;
 import classes from './Navigation.module.scss';
 
 const SideDrawer = props => {
-	const { isMobile } = useDeviceDetect();
+	const { isMobile } = UseDeviceDetect();
 
 	if (isMobile) {
 		return (

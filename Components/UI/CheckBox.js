@@ -1,5 +1,3 @@
-import classes from './UI.module.scss';
-
 const CheckBox = props => (
 	<>
 		<input

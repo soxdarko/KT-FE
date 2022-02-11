@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import Router from 'next/router';
 import moment from 'moment';
 
-export function useDeviceDetect() {
+export function UseDeviceDetect() {
 	const [isMobile, setMobile] = useState(false);
 
 	useEffect(() => {

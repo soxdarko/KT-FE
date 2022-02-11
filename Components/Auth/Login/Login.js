@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { userLogin } from '../../../api/userLogin';
 import {
-	useDeviceDetect,
+	UseDeviceDetect,
 	inputChangedHandler,
 	responseHandler,
 } from '../../../helpers/universalFunctions';
@@ -13,7 +13,7 @@ import Input from '../../UI/Forms/Input';
 import classes from '../../UI/UI.module.scss';
 
 const Login = props => {
-	const { isMobile } = useDeviceDetect();
+	const { isMobile } = UseDeviceDetect();
 	const isComponentLoad = useRef(true);
 	const [loginUser, setLoginUser] = useState([]);
 	const [formInput, setFormInput] = useState(initState);

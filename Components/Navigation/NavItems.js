@@ -1,9 +1,9 @@
-import { useDeviceDetect } from '../../helpers/universalFunctions';
+import { UseDeviceDetect } from '../../helpers/universalFunctions';
 
 import classes from './Navigation.module.scss';
 
 const NavItems = props => {
-	const { isMobile } = useDeviceDetect();
+	const { isMobile } = UseDeviceDetect();
 	if (isMobile) {
 		return (
 			<ul className={classes.NavServiceProviderItemsMob} style={{ display: props.display }}>

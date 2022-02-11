@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 /* import axios from '../../../utils/Axios/axios-appointments'; */
 import {
-	useDeviceDetect,
+	UseDeviceDetect,
 	inputChangedHandler,
 	responseHandler,
 } from '../../../helpers/universalFunctions';
@@ -14,7 +14,7 @@ import Select from '../../UI/Select';
 import classes from '../../UI/UI.module.scss';
 
 const PassRecovery = props => {
-	const { isMobile } = useDeviceDetect();
+	const { isMobile } = UseDeviceDetect();
 	const isPageLoad = useRef(true);
 	const modalAnimation = isMobile ? classes.modalInMob : classes.modalInPC;
 	const [userData, setUserData] = useState([]);
@@ -28,6 +28,26 @@ const PassRecovery = props => {
 	}
 
 	/* const passRecoveryHandler = () => {
+		const api = saveServiceProviders(props.serviceProviderInfo)
+			.then(res => {
+				console.log(res);
+				getAllServiceProvidersHandler();
+				infoMessageHandler(props.setShowInfoModal, 'Uspešno sačuvano', !props.triger);
+			})
+			.catch(err => {
+				if (err.response) {
+					apiErrorHandler(err.response)
+				} else if (err.request) {
+					apiErrorHandler(err.request)
+				} else {
+					apiErrorHandler(err)
+				}
+			});
+		api;
+	};
+
+
+	const passRecoveryHandler = () => {
 		const api = axios
 			.post('/logins.json', userData)
 			.then(response => {
@@ -44,7 +64,7 @@ const PassRecovery = props => {
 			isPageLoad.current = false;
 			return;
 		}
-		/* passRecoveryHandler(); */
+		passRecoveryHandler();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [userData]);
 
@@ -65,18 +85,7 @@ const PassRecovery = props => {
 		} else {
 			setFormInput({
 				...formInput,
-				mobOperator: {
-					value: '',
-					valid: false,
-				},
-				phone: {
-					value: '',
-					valid: false,
-				},
-				email: {
-					value: '',
-					valid: false,
-				},
+				initState
 			});
 			responseHandler(
 				props.setShowResponseModal,

@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import Input from '../UI/Forms/Input';
 import classes from '../UI/UI.module.scss';
 import Login from './Login/Login';
 import PassRecovery from './PassRecovery/PassRecovery';
@@ -49,7 +48,6 @@ const AuthTabs = props => {
 			<Login
 				displayLogin={displayLogin}
 				setDisplayLogin={setDisplayLogin}
-				setIsLoading={props.setIsLoading}
 				modalAnimation={props.showResponseModal.animation}
 				setDisplayPassRecovery={props.setDisplayPassRecovery}
 				setShowResponseModal={props.setShowResponseModal}

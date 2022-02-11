@@ -1,5 +1,5 @@
 import {
-	useDeviceDetect,
+	UseDeviceDetect,
 	inputChangedHandlerArray,
 	absenceHoursResetHandler,
 	inputChangedHandlerCheckBox,
@@ -10,7 +10,7 @@ import TimeField from 'react-simple-timefield';
 import classes from './SetupForms.module.scss';
 
 const workingHoursBody = props => {
-	const { isMobile } = useDeviceDetect();
+	const { isMobile } = UseDeviceDetect();
 
 	const displayOverlay = !props.employeeId ? 'block' : 'none';
 

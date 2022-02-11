@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { auth } from '../helpers/auth';
 import { fetchJson } from '../api/fetchJson';
-import { useDeviceDetect, responseHandler } from '../helpers/universalFunctions';
+import { UseDeviceDetect, responseHandler } from '../helpers/universalFunctions';
 import Head from 'next/head';
 import Layout from '../Components/hoc/Layout/Layout';
 import { getAllServices } from '../api/getAllServices';
@@ -22,8 +22,8 @@ import Loader from '../Components/UI/Loader';
 
 import classes from '../Components/SetupForms/SetupForms.module.scss';
 
-const setupguide = props => {
-	const { isMobile } = useDeviceDetect();
+const Setupguide = props => {
+	const { isMobile } = UseDeviceDetect();
 	const [serviceProviderData, setServiceProviderData] = useState(props.serviceProviders);
 	const [employeeData, setEmployeeData] = useState(props.employees);
 	const isAnyServiceProvider = props.serviceProviders.length !== 0 ? true : false;
@@ -349,4 +349,4 @@ export async function getServerSideProps(ctx) {
 	};
 }
 
-export default setupguide;
+export default Setupguide;

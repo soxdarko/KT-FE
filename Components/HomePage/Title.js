@@ -1,9 +1,9 @@
-import { useDeviceDetect } from '../../helpers/universalFunctions';
+import { UseDeviceDetect } from '../../helpers/universalFunctions';
 
 import classes from './HomePage.module.scss';
 
 const Title = props => {
-	const { isMobile } = useDeviceDetect();
+	const { isMobile } = UseDeviceDetect();
 	return (
 		<h1 className={isMobile ? classes.TitleMob : classes.Title} style={{ top: props.top }}>
 			{props.txt}

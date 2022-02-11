@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from "next/image"
-import { useDeviceDetect } from '../../helpers/universalFunctions';
+import { UseDeviceDetect } from '../../helpers/universalFunctions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 
@@ -11,7 +11,7 @@ import Radio from '../UI/Radio';
 import classes from './HomePage.module.scss';
 
 const Slider = () => {
-	const { isMobile } = useDeviceDetect();
+	const { isMobile } = UseDeviceDetect();
 	const [newActive, setNewActive] = useState(classes.slideAuto);
 	const [prevActive, setPrevActive] = useState(classes.slideOld);
 	const [curr, setCurr] = useState(0);

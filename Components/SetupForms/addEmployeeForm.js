@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import {
-	useDeviceDetect,
+	UseDeviceDetect,
 	inputChangedHandler,
 	updateValidity,
 	responseHandler,
@@ -16,8 +16,8 @@ import WrappedButtonsMob from '../UI/WrappedButtonsMob';
 
 import classes from '../../Components/SetupForms/SetupForms.module.scss';
 
-const addEmployeeForm = props => {
-	const { isMobile } = useDeviceDetect();
+const AddEmployeeForm = props => {
+	const { isMobile } = UseDeviceDetect();
 	const isComponentLoad = useRef(true);
 	const [userData, setUserData] = useState({});
 	const [displayToolBox, setDisplayToolBox] = useState('none');
@@ -346,4 +346,4 @@ const addEmployeeForm = props => {
 	);
 };
 
-export default addEmployeeForm;
+export default AddEmployeeForm;

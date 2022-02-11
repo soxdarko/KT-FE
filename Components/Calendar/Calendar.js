@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import moment from 'moment';
-import { useDeviceDetect, getTimeString } from '../../helpers/universalFunctions';
+import { UseDeviceDetect, getTimeString } from '../../helpers/universalFunctions';
 import Days from './RightTable/CalHead/Days';
 import Time from './LeftTable/Time';
 import CalBodyRow from './RightTable/CalBody/CalBodyRow';
@@ -19,7 +19,7 @@ import { v4 as uuidv4 } from 'uuid';
 import InfoModal from '../UI/Modal/InfoModal';
 
 const Calendar = props => {
-	const { isMobile } = useDeviceDetect();
+	const { isMobile } = UseDeviceDetect();
 	const isPageLoad = useRef(true);
 	const modalAnimationIn = isMobile ? classes.modalInMob : classes.modalInPC;
 	const [checkedServices, setCheckedServices] = useState([]);
