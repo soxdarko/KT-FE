@@ -4,22 +4,21 @@ import { fetchJson } from '../api/fetchJson';
 import { UseDeviceDetect, responseHandler } from '../helpers/universalFunctions';
 import Head from 'next/head';
 import Layout from '../Components/hoc/Layout/Layout';
+import ResponseModal from '../Components/UI/Modal/ResponseModal';
+import InfoModal from '../Components/UI/Modal/InfoModal';
+import Loader from '../Components/UI/Loader';
+import Backdrop from '../Components/UI/Backdrop';
+import GreetingForm from '../Components/SetupForms/GreetingForm';
+import ServiceProviderQuestionForm from '../Components/SetupForms/ServiceProviderQuestionForm';
+import EmployeesQuestionForm from '../Components/SetupForms/EmployeesQuestionForm';
+import AddServiceProvidersForm from '../Components/SetupForms/AddServiceProvidersForm'
+import AddEmployeeForm from '../Components/SetupForms/addEmployeeForm'
+import AddServicesForm from '../Components/SetupForms/AddServicesForm'
+import WorkingTimeForm  from '../Components/SetupForms/WorkingTimeForm'
 import { getAllServices } from '../api/getAllServices';
 import initServiceProviderForm from '../Components/SetupForms/initServiceProviderForm';
 import initEmployeeForm from '../Components/SetupForms/initEmployeeForm';
 import initServicesForm from '../Components/SetupForms/initServicesForm';
-import Backdrop from '../Components/UI/Backdrop';
-import AddServiceProvidersForm from '../Components/SetupForms/AddServiceProvidersForm';
-import AddEmployeeForm from '../Components/SetupForms/AddEmployeeForm';
-import ResponseModal from '../Components/UI/Modal/ResponseModal';
-import InfoModal from '../Components/UI/Modal/InfoModal';
-import ServiceProviderQuestionForm from '../Components/SetupForms/ServiceProviderQuestionForm';
-import EmployeeQuestionForm from '../Components/SetupForms/EmployeesQuestionForm';
-import GreetingForm from '../Components/SetupForms/GreetingForm';
-import AddServicesForm from '../Components/SetupForms/AddServicesForm';
-import WorkingTimeForm from '../Components/SetupForms/WorkingTimeForm';
-import Loader from '../Components/UI/Loader';
-
 import classes from '../Components/SetupForms/SetupForms.module.scss';
 
 const Setupguide = props => {
@@ -179,7 +178,7 @@ const Setupguide = props => {
 						setServiceProviderData={setServiceProviderData}
 						setIsLoading={setIsLoading}
 					/>
-					<EmployeeQuestionForm
+					<EmployeesQuestionForm
 						setDisplayEmployeeQuestionForm={setDisplayEmployeeQuestionForm}
 						displayEmployeeQuestionForm={displayEmployeeQuestionForm}
 						setDisplayAddEmployeeForm={setDisplayAddEmployeeForm}

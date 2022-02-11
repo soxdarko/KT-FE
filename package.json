@@ -67,7 +67,8 @@
 		"deploy": "gh-pages -d dist",
 		"dev": "next",
 		"build": "next build",
-		"lint": "next lint"
+		"lint": "next lint",
+		"start": "next start -p 3600"
 	},
 	"repository": {
 		"type": "git",

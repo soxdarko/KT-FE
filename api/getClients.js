@@ -1,7 +1,8 @@
 import axios from 'axios';
+const API_URL = process.env.API_URL;
 
 export const getClients = deleted => {
-	return axios.post('http://localhost:3000/api/getClients', {
+	return axios.post(`${API_URL}/api/getClients`, {
 		deleted: deleted,
 	});
 };
