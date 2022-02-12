@@ -130,7 +130,7 @@ const SideDrawer = props => {
 								className={classes.sideDrawerIconPC}
 								style={{ color: props.colorCalIcon }}
 							/>
-							<NavItem display="block" className={classes.NavItemServiceProviderPC} link="/">
+							<NavItem display="block" className={classes.NavItemServiceProviderPC} link="/klijenti">
 								<Input
 									type="button"
 									value="Lista klijenata"
@@ -143,7 +143,7 @@ const SideDrawer = props => {
 								className={classes.sideDrawerIconPC}
 								style={{ color: props.colorClientsIcon }}
 							/>
-							<NavItem display="block" className={classes.NavItemServiceProviderPC} link="/">
+							<NavItem display="block" className={classes.NavItemServiceProviderPC} link="/usluge">
 								<Input
 									type="button"
 									value="Lista usluga"

@@ -21,7 +21,6 @@ const RegServProv = props => {
 	const [formInput, setFormInput] = useState(initState);
 
 	function closeForm() {
-		props.setDisplayRegServProv('none');
 		props.setDisplayTabContainer('none');
 		setFormInput(initState);
 		props.setShowBackdrop(classes.backdropOut);
@@ -44,7 +43,8 @@ const RegServProv = props => {
 					'green',
 					!props.triger
 				);
-				props.setDisplayRegServProv('none');
+				props.setDisplayTabContainer('none');
+				props.setShowBackdrop(classes.backdropOut);
 			})
 			.catch(err => {
 				if (err.response) {
