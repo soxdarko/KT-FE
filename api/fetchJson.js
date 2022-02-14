@@ -1,9 +1,10 @@
 import axios from 'axios';
+const API_URL_BE = process.env.API_URL_BE;
 
 export const fetchJson = (url, method, token, body) => {
-	const apiUrl = 'http://localhost:5000/';
+	console.log('API_URL_BE', API_URL_BE);
 	const Axios = axios.create({
-		baseURL: apiUrl,
+		baseURL: API_URL_BE,
 		headers: token ? { Authorization: 'Bearer ' + token } : {},
 	});
 
@@ -28,7 +29,7 @@ function checkStatus(response) {
 	// throw error;
 }
 
-export function handleError(error) {
-	if (!error.response) return Promise.resolve('fetch_error');
-	return error.response.text().then(text);
-}
+// export function handleError(error) {
+// 	if (!error.response) return Promise.resolve('fetch_error');
+// 	return error.response.text().then(text);
+// }
