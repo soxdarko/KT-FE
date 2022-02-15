@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { userLogin } from '../../../api/userLogin';
 import {
-	UseDeviceDetect,
+	useDeviceDetect,
 	inputChangedHandler,
 	responseHandler,
 } from '../../../helpers/universalFunctions';
@@ -13,7 +13,7 @@ import Input from '../../UI/Forms/Input';
 import classes from '../../UI/UI.module.scss';
 
 const Login = props => {
-	const { isMobile } = UseDeviceDetect();
+	const { isMobile } = useDeviceDetect();
 	const isComponentLoad = useRef(true);
 	const [loginUser, setLoginUser] = useState([]);
 	const [formInput, setFormInput] = useState(initState);
@@ -41,7 +41,7 @@ const Login = props => {
 	const getGuideStatus = async () => {
 		const api = await getCompanyGuideStatus()
 			.then(response => {
-				console.log(response.data)
+				console.log('getGuideStatus: ',response)
 				const getGuideStatusData = response.data;
 				props.setUserStatus(getGuideStatusData);
 			})
@@ -68,7 +68,7 @@ const Login = props => {
 		props.setIsLoading(false);
 		const api = userLogin(userData)
 			.then(response => {
-				console.log(response);
+				console.log('userLogin',response);
 				props.infoMessageHandler(
 					props.setShowInfoModal,
 					'Uspešno ste se prijavili!',

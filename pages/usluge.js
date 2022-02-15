@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-	UseDeviceDetect,
+	useDeviceDetect,
 	responseHandler,
 	infoMessageHandler,
 } from '../helpers/universalFunctions';
@@ -28,7 +28,7 @@ import ServiceSettings from '../Components/UI/Forms/ServiceSettings';
 import classes from '../Components/Navigation/Navigation.module.scss';
 
 const Services = props => {
-	const { isMobile } = UseDeviceDetect();
+	const { isMobile } = useDeviceDetect();
 	const [displayAddServicesForm, setDisplayAddServicesForm] = useState('none');
 	const [displayWrappedTools, setDisplayWrappedTools] = useState('none');
 	const [isLoading, setIsLoading] = useState(false);

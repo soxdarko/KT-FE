@@ -1,5 +1,5 @@
 import { faSave, faCopy, faPaste, faSearch, faLink, faUndo, } from '@fortawesome/free-solid-svg-icons';
-import { UseDeviceDetect } from '../../../../helpers/universalFunctions';
+import { useDeviceDetect } from '../../../../helpers/universalFunctions';
 import Distancer from '../../Distancer';
 import ListHeadButton from './ListHeadButton';
 import Select from '../../Select';
@@ -8,7 +8,7 @@ import Input from '../../../UI/Forms/Input';
 import classes from '../../UI.module.scss';
 
 const ListHead = props => {
-	const { isMobile } = UseDeviceDetect();
+	const { isMobile } = useDeviceDetect();
 
 	const inputClassName = isMobile ? classes.InputTextMob : classes.InputText;
 

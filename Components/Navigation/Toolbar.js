@@ -1,4 +1,4 @@
-import { UseDeviceDetect } from '../../helpers/universalFunctions';
+import { useDeviceDetect } from '../../helpers/universalFunctions';
 
 import Logo from '../Logo/Logo';
 import HamburgerButton from './HamburgerButton';
@@ -9,7 +9,7 @@ import Distancer from '../UI/Distancer';
 import classes from './Navigation.module.scss';
 
 const Toolbar = props => {
-	const { isMobile } = UseDeviceDetect();
+	const { isMobile } = useDeviceDetect();
 
 	const adminList = () => {
 		if (props.selectData !== null) {

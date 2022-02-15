@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import {
-	UseDeviceDetect,
+	useDeviceDetect,
 	inputChangedHandler,
 	responseHandler,
 	infoMessageHandler,
@@ -14,7 +14,7 @@ import ListHead from '../UI/List/ListHead/ListHead';
 import classes from '../UI/UI.module.scss';
 
 const Profile = props => {
-	const { isMobile } = UseDeviceDetect();
+	const { isMobile } = useDeviceDetect();
 	const isComponentLoad = useRef(true);
 	const [editMode, setEditMode] = useState(false)
 	const [userData, setUserData] = useState([]);

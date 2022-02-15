@@ -26,7 +26,7 @@ const UserVerificationPage = props => {
 	const errorMessage = (err, message = 'Došlo je do greške, kontaktirajte nas putem kontakt forme') => {
 		console.log(err)
 		responseHandler(setShowResponseModal, message, 'red', showResponseModal.triger);
-		setShowBackdrop(classes.backdropIn);
+		props.setShowBackdrop(props.classes.backdropIn);
 	};
 
 	const userVerificationHandler = () => {
@@ -74,7 +74,7 @@ const UserVerificationPage = props => {
 	);
 };
 
-userVerificationPage.getInitialProps = async ({ req, query }) => {
+UserVerificationPage.getInitialProps = async ({ req, query }) => {
 	const { id, type } = query;
 	let cookiesString = req != undefined ? req.headers.cookie : '';
 	let token = cookieReqParser(cookiesString, 'pdfgen_token');

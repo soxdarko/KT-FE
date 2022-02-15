@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import {
-	UseDeviceDetect,
+	useDeviceDetect,
 	inputChangedHandler,
 	updateValidity,
 	responseHandler,
@@ -14,7 +14,7 @@ import Input from '../../UI/Forms/Input';
 import classes from '../../UI/UI.module.scss';
 
 const RegServProv = props => {
-	const { isMobile } = UseDeviceDetect();
+	const { isMobile } = useDeviceDetect();
 	const isComponentLoad = useRef(true);
 	const [companyData, setCompanyData] = useState({});
 

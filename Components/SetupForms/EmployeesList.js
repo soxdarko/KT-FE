@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { UseDeviceDetect } from '../../helpers/universalFunctions';
+import { useDeviceDetect } from '../../helpers/universalFunctions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencilAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { ArrowRightOutlined, PlusOutlined, SaveOutlined, ToolOutlined } from '@ant-design/icons';
@@ -9,7 +9,7 @@ import classes from './SetupForms.module.scss';
 import ToolBox from '../UI/ToolBox';
 
 const EmployeesList = props => {
-	const { isMobile } = UseDeviceDetect();
+	const { isMobile } = useDeviceDetect();
 	const [userForEdit, setUserForEdit] = useState('');
 
 	function editHandler(filteredEmployee) {

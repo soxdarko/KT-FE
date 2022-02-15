@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState, useEffect, useRef } from 'react';
-import { UseDeviceDetect, confirmHandler } from '../../helpers/universalFunctions';
+import { useDeviceDetect, confirmHandler } from '../../helpers/universalFunctions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faTrash, faEdit, faWrench } from '@fortawesome/free-solid-svg-icons';
 import ListBody from '../UI/List/ListBody/ListBody';
@@ -9,7 +9,7 @@ import ListHead from '../UI/List/ListHead/ListHead';
 import classes from '../UI/UI.module.scss';
 
 const ServicesList = props => {
-	const { isMobile } = UseDeviceDetect();
+	const { isMobile } = useDeviceDetect();
 	const isComponentLoad = useRef(true);
 	const [dipslaySerachBar, setDipslaySerachBar] = useState('none');
 	const [searchInput, setSearchInput] = useState('');

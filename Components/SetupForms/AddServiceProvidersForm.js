@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import {
-	UseDeviceDetect,
+	useDeviceDetect,
 	inputChangedHandler,
 	updateValidity,
 	responseHandler,
@@ -17,7 +17,7 @@ import WrappedButtonsMob from '../UI/WrappedButtonsMob';
 import TextArea from 'antd/lib/input/TextArea';
 
 const AddServiceProvidersForm = props => {
-	const { isMobile } = UseDeviceDetect();
+	const { isMobile } = useDeviceDetect();
 	const isComponentLoad = useRef(true);
 	const [displayToolBox, setDisplayToolBox] = useState('none');
 

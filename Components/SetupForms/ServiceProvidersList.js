@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { UseDeviceDetect } from '../../helpers/universalFunctions';
+import { useDeviceDetect } from '../../helpers/universalFunctions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // bice potrebno za unapredjenja
 import { faPencilAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons'; // bice potrebno za unapredjenja
 import { ToolOutlined } from '@ant-design/icons'; // bice potrebno za unapredjenja
@@ -8,7 +8,7 @@ import classes from './SetupForms.module.scss';
 import ToolBox from '../UI/ToolBox'; // bice potrebno za unapredjenja
 
 const ServiceProvidersList = props => {
-	const { isMobile } = UseDeviceDetect(); // bice potrebno za unapredjenja
+	const { isMobile } = useDeviceDetect(); // bice potrebno za unapredjenja
 	/* const [userForEdit, setUserForEdit] = useState(''); */ const listItems = props.serviceProviderData.map(
 		user => {
 			if (isMobile) {

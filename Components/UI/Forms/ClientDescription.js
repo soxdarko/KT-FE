@@ -1,4 +1,4 @@
-import { UseDeviceDetect } from '../../../helpers/universalFunctions';
+import { useDeviceDetect } from '../../../helpers/universalFunctions';
 import TextArea from './TextArea';
 import Input from './Input';
 import WrappedButtonsMob from '../WrappedButtonsMob';
@@ -6,7 +6,7 @@ import WrappedButtonsMob from '../WrappedButtonsMob';
 import classes from '../UI.module.scss';
 
 const ClientDescription = props => {
-	const { isMobile } = UseDeviceDetect();
+	const { isMobile } = useDeviceDetect();
 
 	const onSubmit = e => {
 		e.preventDefault();

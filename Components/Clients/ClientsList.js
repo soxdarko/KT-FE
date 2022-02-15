@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState, useEffect, useRef } from 'react';
-import { UseDeviceDetect, confirmHandler } from '../../helpers/universalFunctions';
+import { useDeviceDetect, confirmHandler } from '../../helpers/universalFunctions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
 	faUserPlus,
@@ -16,7 +16,7 @@ import ListHead from '../UI/List/ListHead/ListHead';
 import classes from '../UI/UI.module.scss';
 
 const ClientsList = props => {
-	const { isMobile } = UseDeviceDetect();
+	const { isMobile } = useDeviceDetect();
 	const isComponentLoad = useRef(true);
 	const [dipslaySerachBar, setDipslaySerachBar] = useState('none');
 	const [searchInput, setSearchInput] = useState('');

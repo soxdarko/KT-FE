@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import nextCookie from 'next-cookies';
 import Link from 'next/link';
 import Head from 'next/head';
-import { UseDeviceDetect, infoMessageHandler } from '../helpers/universalFunctions';
+import { useDeviceDetect, infoMessageHandler } from '../helpers/universalFunctions';
 
 import Layout from '../Components/hoc/Layout/Layout';
 import Backdrop from '../Components/UI/Backdrop';
@@ -25,7 +25,7 @@ import Loader from '../Components/UI/Loader';
 import classes from '../Components/Navigation/Navigation.module.scss';
 
 const Index = () => {
-	const { isMobile } = UseDeviceDetect();
+	const { isMobile } = useDeviceDetect();
 	const router = useRouter();
 	const isPageLoad = useRef(true);
 	const [regColor, setRegColor] = useState('orange');

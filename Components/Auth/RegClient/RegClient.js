@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import {
-	UseDeviceDetect,
+	useDeviceDetect,
 	inputChangedHandler,
 	updateValidity,
 	responseHandler,
@@ -16,7 +16,7 @@ import { useRouter } from 'next/router';
 
 const RegClient = props => {
 	const router = useRouter();
-	const { isMobile } = UseDeviceDetect();
+	const { isMobile } = useDeviceDetect();
 	const isPageLoad = useRef(true);
 	const modalAnimation = isMobile ? classes.modalInMob : classes.modalInPC;
 	const [clientData, setClientData] = useState({});

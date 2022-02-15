@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { UseDeviceDetect } from '../../helpers/universalFunctions';
+import { useDeviceDetect } from '../../helpers/universalFunctions';
 
 import Input from '../UI/Forms/Input';
 import Backdrop from '../UI/Backdrop';
@@ -7,7 +7,7 @@ import Backdrop from '../UI/Backdrop';
 import classes from './HomePage.module.scss';
 
 const AuthButton = props => {
-	const { isMobile } = UseDeviceDetect();
+	const { isMobile } = useDeviceDetect();
 	const [scrollY, setScrollY] = useState(0);
 	const [show, setShow] = useState(true);
 

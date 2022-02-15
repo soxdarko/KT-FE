@@ -15,128 +15,128 @@ import Loader from '../Components/UI/Loader';
 
 import classes from '../Components/Navigation/Navigation.module.scss';
 
-const Profil = props => {
-	const [isLoading, setIsLoading] = useState(false);
-	const [profileData, setProfileeData] = useState(props.profileData);
-	const [displayConfirmModal, setDisplayConfirmModal] = useState('none');
-	const [displayPassRecovery, setDisplayPassRecovery] = useState('none');
-	const [showBackdrop, setShowBackdrop] = useState('');
-	const [showInfoModal, setShowInfoModal] = useState({
-		triger: false,
-		message: null,
-	});
-	const [showConfirmModal, setShowConfirmModal] = useState({
-		message: null,
-		triger: false,
-	});
-	const [showResponseModal, setShowResponseModal] = useState({
-		triger: false,
-		message: null,
-		border: '',
-	});
+const Profil = (props) => {
+    const [isLoading, setIsLoading] = useState(false);
+    const [profileData, setProfileeData] = useState(props.profileData);
+    const [displayConfirmModal, setDisplayConfirmModal] = useState('none');
+    const [displayPassRecovery, setDisplayPassRecovery] = useState('none');
+    const [showBackdrop, setShowBackdrop] = useState('');
+    const [showInfoModal, setShowInfoModal] = useState({
+        triger: false,
+        message: null,
+    });
+    const [showConfirmModal, setShowConfirmModal] = useState({
+        message: null,
+        triger: false,
+    });
+    const [showResponseModal, setShowResponseModal] = useState({
+        triger: false,
+        message: null,
+        border: '',
+    });
 
-	const errorMessage = message => {
-		responseHandler(setShowResponseModal, message, 'red');
-		setShowBackdrop(classes.backdropIn);
-	};
+    const errorMessage = (message) => {
+        responseHandler(setShowResponseModal, message, 'red');
+        setShowBackdrop(classes.backdropIn);
+    };
 
-	return (
-		<>
-			<Head>
-				<title>KlikTermin | Profil</title>
-				<meta name="viewport" content="width=device-width, initial-scale=1" />
-			</Head>
-			<Layout
-				displayLoginBtn="none"
-				displayRegisterBtn="none"
-				displayToolbarNavBtn="none"
-				displayToolbarBookingBtn="none"
-				displaySelect="none"
-				displayNotifLabel="block"
-				colorProfileIcon="#fc9815"
-				classNameCal={classes.sideDrawerButtonActive}
-				classNameClients={classes.sideDrawerButton}
-				classNameServices={classes.sideDrawerButton}
-				classNameProfile={classes.sideDrawerButton}
-				classNameEmployeeSelect={classes.EmployeeSelect}
-				selectData={ServiceProvidersEmployees}
-				sms="10"
-				license="5"
-			/>
-			<Backdrop
-				backdropAnimation={showBackdrop}
-				onClick={() => setShowBackdrop(classes.backdropOut)}
-			/>
-			<Loader loading={isLoading} />
-			<InfoModal 
-				message={showInfoModal.message}
-				showInfoModal={showInfoModal}
-				borderColor="green"
-			/>
-			<ResponseModal
-				showResponseModal={showResponseModal}
-				setShowBackdrop={setShowBackdrop}
-				holdBackdrop={false}
-				setIsLoading={setIsLoading}
-			/>
-			<ConfirmModal
-				display={displayConfirmModal}
-				animation={showConfirmModal}
-				message="Da li sigurno želite deaktivirati profil? Deaktivacija profila onemogućuje Vas i klijente da Vam rezervišu termine !!!"
-				submitValue="DEAKTIVIRAJ"
-				onDecline={() => {
-					setShowConfirmModal(classes.modalDown); 
-					setShowBackdrop(classes.backdropOut);
-				}}
-				onSubmit={() => {
-					setShowConfirmModal(classes.modalDown);
-					setShowBackdrop(classes.backdropOut);
-				}}
-			/>
-			<PassRecovery
-				displayPassRecovery={displayPassRecovery}
-				setDisplayPassRecovery={setDisplayPassRecovery}
-				setShowResponseModal={setShowResponseModal}
-				setShowBackdrop={setShowBackdrop}
-			/>
-			<Profile
-				setDisplayConfirmModal={setDisplayConfirmModal}
-				setShowBackdrop={setShowBackdrop}
-				errorMessage={errorMessage}
-				setShowConfirmModal={setShowConfirmModal}
-				setShowResponseModal={setShowResponseModal}
-				setShowInfoModal={setShowInfoModal}
-				responseTriger={setShowResponseModal.triger}
-				infoTriger={setShowInfoModal.triger}
-				profileData={profileData}
-				setIsLoading={setIsLoading}
-			/>
-		</>
-	);
+    return (
+        <>
+            <Head>
+                <title>KlikTermin | Profil</title>
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
+            </Head>
+            <Layout
+                displayLoginBtn="none"
+                displayRegisterBtn="none"
+                displayToolbarNavBtn="none"
+                displayToolbarBookingBtn="none"
+                displaySelect="none"
+                displayNotifLabel="block"
+                colorProfileIcon="#fc9815"
+                classNameCal={classes.sideDrawerButtonActive}
+                classNameClients={classes.sideDrawerButton}
+                classNameServices={classes.sideDrawerButton}
+                classNameProfile={classes.sideDrawerButton}
+                classNameEmployeeSelect={classes.EmployeeSelect}
+                selectData={ServiceProvidersEmployees}
+                sms="10"
+                license="5"
+            />
+            <Backdrop
+                backdropAnimation={showBackdrop}
+                onClick={() => setShowBackdrop(classes.backdropOut)}
+            />
+            <Loader loading={isLoading} />
+            <InfoModal
+                message={showInfoModal.message}
+                showInfoModal={showInfoModal}
+                borderColor="green"
+            />
+            <ResponseModal
+                showResponseModal={showResponseModal}
+                setShowBackdrop={setShowBackdrop}
+                holdBackdrop={false}
+                setIsLoading={setIsLoading}
+            />
+            <ConfirmModal
+                display={displayConfirmModal}
+                animation={showConfirmModal}
+                message="Da li sigurno želite deaktivirati profil? Deaktivacija profila onemogućuje Vas i klijente da Vam rezervišu termine !!!"
+                submitValue="DEAKTIVIRAJ"
+                onDecline={() => {
+                    setShowConfirmModal(classes.modalDown);
+                    setShowBackdrop(classes.backdropOut);
+                }}
+                onSubmit={() => {
+                    setShowConfirmModal(classes.modalDown);
+                    setShowBackdrop(classes.backdropOut);
+                }}
+            />
+            <PassRecovery
+                displayPassRecovery={displayPassRecovery}
+                setDisplayPassRecovery={setDisplayPassRecovery}
+                setShowResponseModal={setShowResponseModal}
+                setShowBackdrop={setShowBackdrop}
+            />
+            <Profile
+                setDisplayConfirmModal={setDisplayConfirmModal}
+                setShowBackdrop={setShowBackdrop}
+                errorMessage={errorMessage}
+                setShowConfirmModal={setShowConfirmModal}
+                setShowResponseModal={setShowResponseModal}
+                setShowInfoModal={setShowInfoModal}
+                responseTriger={setShowResponseModal.triger}
+                infoTriger={setShowInfoModal.triger}
+                profileData={profileData}
+                setIsLoading={setIsLoading}
+            />
+        </>
+    );
 };
 
 export async function getServerSideProps(ctx) {
-	const token = await auth(ctx);
-	const guideStatusUrl = `users/getCompanyGuideStatus`;
-	const resGuideStatusUrl = await fetchJson(guideStatusUrl, 'get', token);
-	const getEmployeeProfileUrl = `users/getEmployeeProfile`;
-	const getEmployeeProfile = await fetchJson(getEmployeeProfileUrl, 'get', token);
+    const token = await auth(ctx);
+    const guideStatusUrl = `users/getCompanyGuideStatus`;
+    const resGuideStatusUrl = await fetchJson(guideStatusUrl, 'get', token);
+    const getEmployeeProfileUrl = `users/getEmployeeProfile`;
+    const getEmployeeProfile = await fetchJson(getEmployeeProfileUrl, 'get', token);
 
-	/* const profileData = getEmployeeProfile.data.map(data => {
+    /* const profileData = getEmployeeProfile.data.map(data => {
 		return data;
 	}); */
 
-	const profileData = getEmployeeProfile.data
+    const profileData = getEmployeeProfile.data;
 
-	const userStatus = resGuideStatusUrl.data;
+    const userStatus = resGuideStatusUrl.data;
 
-	return {
-		props: {
-			token,
-			userStatus,
-			profileData
-		},
-	};
+    return {
+        props: {
+            token,
+            userStatus,
+            profileData,
+        },
+    };
 }
 
 export default Profil;

@@ -3,7 +3,7 @@ import Link from 'next/link';
 import moment from 'moment';
 import { FaCopy, FaPaste } from 'react-icons/fa';
 import {
-	UseDeviceDetect,
+	useDeviceDetect,
 	updateValidity,
 	infoMessageHandler,
 } from '../../helpers/universalFunctions';
@@ -18,7 +18,7 @@ import classes from './SetupForms.module.scss';
 import WorkingHoursBody from './WorkingHoursBody';
 
 const WorkingTimeForm = props => {
-	const { isMobile } = UseDeviceDetect();
+	const { isMobile } = useDeviceDetect();
 	const isComponentLoad = useRef(true);
 
 	const d_Start = new Date(),

@@ -1,11 +1,11 @@
-import { UseDeviceDetect } from '../../helpers/universalFunctions';
+import { useDeviceDetect } from '../../helpers/universalFunctions';
 
 import Input from '../UI/Forms/Input';
 
 import classes from '../SetupForms/SetupForms.module.scss';
 
-const companySetupMenu = props => {
-	const { isMobile } = UseDeviceDetect();
+const CompanySetupMenu = props => {
+	const { isMobile } = useDeviceDetect();
 
 	return (
 		<div style={{ dipslay: props.displayMenu }} className={classes.CompanySetupMenu}>
@@ -50,4 +50,4 @@ const companySetupMenu = props => {
 	);
 };
 
-export default companySetupMenu;
+export default CompanySetupMenu;

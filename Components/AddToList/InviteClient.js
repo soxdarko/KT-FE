@@ -1,4 +1,4 @@
-import { UseDeviceDetect } from '../../helpers/universalFunctions';
+import { useDeviceDetect } from '../../helpers/universalFunctions';
 import {
 	FacebookMessengerShareButton,
 	FacebookMessengerIcon,
@@ -13,7 +13,7 @@ import Input from '../UI/Forms/Input';
 import classes from './AddToList.module.scss';
 
 const InviteClient = props => {
-	const { isMobile } = UseDeviceDetect();
+	const { isMobile } = useDeviceDetect();
 	const classNameMob = [classes.InviteClientMob, props.animation].join(' ');
 	const className = [classes.InviteClient, props.animation].join(' ');
 	return (

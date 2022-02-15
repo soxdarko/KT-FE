@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
-import { UseDeviceDetect } from '../../helpers/universalFunctions';
+import { useDeviceDetect } from '../../helpers/universalFunctions';
 
 import Button from '../UI/Button';
 
 import classes from './HomePage.module.scss';
 
 const RegLogButton = props => {
-	const { isMobile } = UseDeviceDetect();
+	const { isMobile } = useDeviceDetect();
 	const [scrollY, setScrollY] = useState(0);
 	const [show, setShow] = useState(true);
 

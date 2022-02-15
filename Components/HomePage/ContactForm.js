@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { UseDeviceDetect } from '../../helpers/universalFunctions';
+import { useDeviceDetect } from '../../helpers/universalFunctions';
 import TextareaAutosize from 'react-textarea-autosize';
 import InputText from '../UI/InputText';
 import Title from './Title';
@@ -8,7 +8,7 @@ import Submit from '../UI/Submit';
 import classes from './HomePage.module.scss';
 
 const ContactForm = () => {
-	const { isMobile } = UseDeviceDetect();
+	const { isMobile } = useDeviceDetect();
 	const [message, setMessage] = useState([]);
 	const [formValidation, setFormValidation] = useState(true);
 

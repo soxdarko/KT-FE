@@ -1,4 +1,4 @@
-import { UseDeviceDetect, checkBoxGroupToArrayHandler } from '../../helpers/universalFunctions';
+import { useDeviceDetect, checkBoxGroupToArrayHandler } from '../../helpers/universalFunctions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencilAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 
@@ -8,7 +8,7 @@ import Label from '../UI/Forms/Label';
 import classes from './SetupForms.module.scss';
 
 const ServicesList = props => {
-	const { isMobile } = UseDeviceDetect();
+	const { isMobile } = useDeviceDetect();
 
 	const listItems = props.listOfEmployees.map(user => {
 		return (
