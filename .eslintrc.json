@@ -11,7 +11,7 @@
   },
   "extends": [
       "eslint:recommended",
-      "plugin:@next/next/recommended"
+      "plugin:react/recommended"
   ],
   "parserOptions": {
       "ecmaFeatures": {
@@ -26,6 +26,6 @@
   "rules": {
       "react/prop-types": "off",
       "react/react-in-jsx-scope": "off",
-      "no-unused-vars": ["warn", { "vars": "all", "args": "after-used", "ignoreRestSiblings": false}],
+      "no-unused-vars": ["warn", { "vars": "all", "args": "after-used", "ignoreRestSiblings": false}]
   }
 }

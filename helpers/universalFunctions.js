@@ -193,16 +193,16 @@ export function useWindowSize() {
     });
 
     useEffect(() => {
+        function handleResize() {
+            // Set window width/height to state
+            setWindowSize({
+                width: window.innerWidth,
+                height: window.innerHeight,
+            });
+        }
         // only execute all the code below in client side
         if (typeof window !== 'undefined') {
             // Handler to call on window resize
-            function handleResize() {
-                // Set window width/height to state
-                setWindowSize({
-                    width: window.innerWidth,
-                    height: window.innerHeight,
-                });
-            }
 
             // Add event listener
             window.addEventListener('resize', handleResize);
@@ -220,6 +220,7 @@ export function useWindowSize() {
 export function getMonday(date) {
     var day = date.getDay() || 7;
     if (day !== 1) date.setHours(-24 * (day - 1));
+    console.log('getMonday-date-monday', date);
     return date;
 }
 

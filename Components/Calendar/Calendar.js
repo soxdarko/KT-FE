@@ -18,6 +18,7 @@ import { saveAppointment } from '../../api/saveAppointment';
 import { v4 as uuidv4 } from 'uuid';
 import InfoModal from '../UI/Modal/InfoModal';
 import { getErrorMessage } from '../../helpers/universalFunctions';
+import { getMondayForAPI } from '../../helpers/universalFunctions';
 
 const Calendar = (props) => {
     const { isMobile } = useDeviceDetect();
@@ -53,6 +54,7 @@ const Calendar = (props) => {
         const prepDaysInWeek = days.map((d, i) => {
             return { day: d, date: getDateFromDayOfWeek(new Date(), i) };
         });
+        console.log('prepDaysInWeek', prepDaysInWeek);
         setDaysInWeek(prepDaysInWeek);
     };
 
@@ -237,7 +239,7 @@ const Calendar = (props) => {
         .weekday(6)
         .format(isMobile ? 'D.MM' : 'D.MMM')
         .toUpperCase(); // next Sunday .add(7, 'days')
-    const currMondayName = (i) =>
+    const calendarHeaderDates = (i) =>
         moment()
             .locale('sr')
             .add(7 * week, 'days')
@@ -363,7 +365,7 @@ const Calendar = (props) => {
                     style={{ width: isMobile ? '100%' : '97%' }}
                 >
                     <tr>
-                        <Days days={days} key={days} date={currMondayName} />
+                        <Days days={days} key={days} date={calendarHeaderDates} />
                     </tr>
                 </thead>
                 <tbody
@@ -394,7 +396,7 @@ const Calendar = (props) => {
         <>
             <InfoModal
                 message={infoMessage}
-                modalAnimation={showInfoModal}
+                showInfoModal={showInfoModal}
                 borderColor="green"
             />
             <RegCodeClientForm

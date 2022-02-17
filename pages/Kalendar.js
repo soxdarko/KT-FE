@@ -25,6 +25,13 @@ const CalendarPage = (props) => {
         router.replace(router.asPath);
     };
 
+    useEffect(() => {
+        console.log('workingHours-test: ', props.workingHours);
+        console.log('services-test: ', props.services);
+        console.log('employees-test: ', props.employees);
+        console.log('token-test: ', props.token);
+    }, []);
+
     return (
         <>
             <Head>
