@@ -7,10 +7,12 @@ import Calendar from '../Components/Calendar/Calendar';
 import { getMondayForAPI } from '../helpers/universalFunctions';
 import classes from '../Components/Navigation/Navigation.module.scss';
 import { useRouter } from 'next/router';
+import { parseJwt } from '../helpers/universalFunctions';
 
 const CalendarPage = (props) => {
     const router = useRouter();
-    const [selectedEmployee, setSelectedEmployee] = useState(props.employees[0].id);
+    const [selectedEmployee, setSelectedEmployee] = useState(props.employeeId);
+    const [mondayDate, setMondayDate] = useState(props.mondayDate);
     const [clientFormBackdrop, setClientFormBackdrop] = useState('none');
 
     const clientFormBackdropShow = () => {
@@ -26,11 +28,11 @@ const CalendarPage = (props) => {
     };
 
     useEffect(() => {
-        console.log('workingHours-test: ', props.workingHours);
-        console.log('services-test: ', props.services);
-        console.log('employees-test: ', props.employees);
-        console.log('token-test: ', props.token);
-    }, []);
+        if (mondayDate && selectedEmployee)
+            router.replace(
+                `kalendar?mondayDate=${mondayDate}&employeeId=${selectedEmployee}`
+            );
+    }, [mondayDate, selectedEmployee]);
 
     return (
         <>
@@ -72,47 +74,68 @@ const CalendarPage = (props) => {
 };
 
 export async function getServerSideProps(ctx) {
-    const token = await auth(ctx);
+    const { employeeId, mondayDate } = ctx.query;
+    const token = auth(ctx);
+
+    const parsedJWT = parseJwt(token);
+    const loggedInUser = parsedJWT?.userId;
+    const mondayDateForAPI = mondayDate ?? getMondayForAPI();
+
     const serviceProvidersUrl = `users/getAllServiceProviders`;
     const resServiceProviders = await fetchJson(serviceProvidersUrl, 'get', token);
-    const employeesUrl = `users/getAllEmployees`;
-    const resEmployees = await fetchJson(employeesUrl, 'get', token);
     const servicesUrl = `appointments/getAllServices`;
     const resServices = await fetchJson(servicesUrl, 'get', token);
     const guideStatusUrl = `users/getCompanyGuideStatus`;
     const resGuideStatusUrl = await fetchJson(guideStatusUrl, 'get', token);
-    const workingHoursUrl = `settings/getWorkingHours?dateOfMonday=${getMondayForAPI()}`;
+    const employeesUrl = `users/getAllEmployees`;
+    const resEmployees = await fetchJson(employeesUrl, 'get', token);
+
+    let employeeIdForAPI = employeeId ?? loggedInUser;
+    if (!employeeId && resEmployees?.length > 0) {
+        if (!resEmployees.find((e) => e.id == loggedInUser))
+            employeeIdForAPI = resEmployees[0].id;
+    }
+
+    const workingHoursUrl = `settings/getWorkingHours?dateOfMonday=${mondayDateForAPI}&employeeId=${employeeIdForAPI}`;
     const workingHours = await fetchJson(workingHoursUrl, 'get', token).then(
         (res) => res.data
     );
-    const appointmentUrl = `appointments/getAppointments?&dateOfMonday=${getMondayForAPI()}`;
+    const appointmentUrl = `appointments/getAppointments?&dateOfMonday=${mondayDateForAPI}&employeeId=${employeeIdForAPI}`;
     const appointments = await fetchJson(appointmentUrl, 'get', token).then(
         (res) => res.data
     );
 
-    const serviceProviders = resServiceProviders.data.map((name) => {
-        return name;
-    });
+    const serviceProviders =
+        resServiceProviders.data &&
+        resServiceProviders.data.map((name) => {
+            return name;
+        });
 
-    const employees = resEmployees.data.map((name) => {
-        return name;
-    });
+    const employees =
+        resEmployees.data &&
+        resEmployees.data.map((name) => {
+            return name;
+        });
 
-    const services = resServices.data.map((name) => {
-        return name;
-    });
+    const services =
+        resServices.data &&
+        resServices.data.map((name) => {
+            return name;
+        });
 
     const userStatus = resGuideStatusUrl.data;
 
     return {
         props: {
-            token,
+            token: token,
             serviceProviders,
             employees,
             services,
             userStatus,
             workingHours,
             appointments,
+            employeeId: employeeIdForAPI,
+            mondayDate: mondayDateForAPI,
         },
     };
 }

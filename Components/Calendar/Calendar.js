@@ -54,7 +54,6 @@ const Calendar = (props) => {
         const prepDaysInWeek = days.map((d, i) => {
             return { day: d, date: getDateFromDayOfWeek(new Date(), i) };
         });
-        console.log('prepDaysInWeek', prepDaysInWeek);
         setDaysInWeek(prepDaysInWeek);
     };
 
@@ -229,21 +228,18 @@ const Calendar = (props) => {
     const currYear = moment().format('YYYY');
     const currMonday = moment()
         .locale('sr')
-        .add(7 * week, 'days')
-        .weekday(0)
+        .startOf('isoweek')
         .format(isMobile ? 'D.MM' : 'D.MMM')
         .toUpperCase();
-    const currSunday = moment()
+    const currSunday = moment(currMonday)
         .locale('sr')
-        .add(7 * week, 'days')
-        .weekday(6)
+        .add(6, 'days')
         .format(isMobile ? 'D.MM' : 'D.MMM')
         .toUpperCase(); // next Sunday .add(7, 'days')
     const calendarHeaderDates = (i) =>
-        moment()
+        moment(currMonday)
             .locale('sr')
-            .add(7 * week, 'days')
-            .weekday(i)
+            .add(i, 'days')
             .format('ddd / D.MMM')
             .toUpperCase();
 

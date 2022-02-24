@@ -1,17 +1,17 @@
 import Router from 'next/router';
 import nextCookie from 'next-cookies';
 
-export  function auth(ctx) {
-	const { token } =  nextCookie(ctx);
+export function auth(ctx) {
+    const { token } = nextCookie(ctx);
 
-	if (ctx.req && !token) {
-		ctx.res.writeHead(302, { Location: '/' });
-		return;
-	}
+    if (ctx.req && (!token || token === 'undefined')) {
+        ctx.res.writeHead(302, { Location: '/' });
+        return;
+    }
 
-	if (!token) {
-		Router.push('/');
-	}
+    if (!token || token === 'undefined') {
+        Router.push('/');
+    }
 
-	return token;
+    return token;
 }
