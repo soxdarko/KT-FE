@@ -1,17 +1,14 @@
-import { fetchJson } from '../../api/fetchJson';
+import { fetchJson } from '../../api/fetchJson'
+import cookie from 'cookie'
 
 export default async (req, res) => {
-	const serviceId = req.body.serviceId;
-	const cookie = req.headers.cookie;
-	const token = cookie.substring(cookie.indexOf('=') + 1);
-	const url = `appointments/deleteService?serviceId=${serviceId}`;
-
-	const deleteService = await fetchJson(url, 'post', token).then(response => {
-		return response;
-	});
-
-	deleteService;
-
-	res.statusCode = 200;
-	res.json({ success: true });
-};
+  const cookies = cookie.parse(req.headers.cookie || '')
+  const serviceId = req.body.serviceId
+  const response = await fetchJson(
+    `appointments/deleteService?serviceId=${serviceId}`,
+    'post',
+    cookies.token,
+  )
+  res.statusCode = response?.status ? response.status : 200
+  res.json(response.data)
+}

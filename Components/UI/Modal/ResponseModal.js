@@ -1,47 +1,68 @@
-import { useState, useEffect, useRef } from 'react';
-import { useDeviceDetect } from '../../../helpers/universalFunctions';
+import { useState, useEffect, useRef } from 'react'
+import { useDeviceDetect } from '../../../helpers/universalFunctions'
+import Backdrop from '../Backdrop'
 
-import Input from '../Forms/Input';
+import Input from '../Forms/Input'
 
-import classes from '../UI.module.scss';
+import classes from '../UI.module.scss'
 
-const ResponseModal = props => {
-	const { isMobile } = useDeviceDetect();
-	const isComponentLoad = useRef(true);
-	const [animation, setAnimation] = useState('');
-	const modalAnimationIn = isMobile ? classes.modalInMob : classes.modalInPC;
-	const modalAnimationOut = isMobile ? classes.modalOutMob : classes.modalOutPC;
-	const className = [classes.Response, animation].join(' ');
-	const classNameMob = [classes.ResponseMob, animation].join(' ');
+const ResponseModal = (props) => {
+  const { isMobile } = useDeviceDetect()
+  const isComponentLoad = useRef(true)
+  const [animations, setAnimations] = useState({
+    modal: '',
+    backdrop: '',
+    displayBackdrop: 'none',
+  })
+  const modalAnimationIn = isMobile ? classes.modalInMob : classes.modalInPC
+  const modalAnimationOut = isMobile ? classes.modalOutMob : classes.modalOutPC
+  const className = [classes.Response, animations.modal].join(' ')
+  const classNameMob = [classes.ResponseMob, animations.modal].join(' ')
 
-	useEffect(() => {
-		if (isComponentLoad.current) {
-			isComponentLoad.current = false;
-			return;
-		}
-		setAnimation(modalAnimationIn);
-		props.setIsLoading(false);
-	}, [props.showResponseModal.triger]);
+  useEffect(() => {
+    if (isComponentLoad.current) {
+      isComponentLoad.current = false
+      return
+    }
+    setAnimations({
+      modal: modalAnimationIn,
+      backdrop: classes.backdropIn,
+      displayBackdrop: 'block',
+    })
+  }, [props.showResponseModal.triger])
 
-	function removeModalHandler() {
-		setAnimation(modalAnimationOut);
-		props.holdBackdrop ? {} : props.setShowBackdrop(classes.backdropOut);
-	}
+  function removeModalHandler() {
+    setAnimations({
+      modal: modalAnimationOut,
+      backdrop: classes.backdropOut,
+      displayBackdrop: 'none',
+    })
+    props.setIsLoading(false)
+    props.holdBackdrop ? {} : props.setShowBackdrop(classes.backdropOut)
+  }
 
-	return (
-		<div
-			className={isMobile ? classNameMob : className}
-			style={{ borderColor: props.showResponseModal.border }}>
-			<p>{props.showResponseModal.message}</p>
-			<Input
-				type="button"
-				value="OK"
-				display={props.showButton}
-				className={classes.Confirm}
-				onClick={() => removeModalHandler()}
-			/>
-		</div>
-	);
-};
+  return (
+    <>
+      <Backdrop
+        backdropAnimation={animations.backdrop}
+        display={animations.displayBackdrop}
+        zIndex={`${9999}!important`}
+      />
+      <div
+        className={isMobile ? classNameMob : className}
+        style={{ borderColor: props.showResponseModal.border }}
+      >
+        <p>{props.showResponseModal.message}</p>
+        <Input
+          type="button"
+          value="OK"
+          display={props.showButton}
+          className={classes.Confirm}
+          onClick={() => removeModalHandler()}
+        />
+      </div>
+    </>
+  )
+}
 
-export default ResponseModal;
+export default ResponseModal
