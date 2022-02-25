@@ -4,6 +4,6 @@ const Days = (props) => (
       <th key={day}>{props.date(i)}</th>
     ))}
   </>
-);
+)
 
-export default Days;
+export default Days

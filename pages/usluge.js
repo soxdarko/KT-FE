@@ -179,6 +179,8 @@ const Services = (props) => {
     setEditMode(true)
   }
 
+  console.log(props.token)
+
   return (
     <>
       <Head>

@@ -21,6 +21,7 @@ import { saveAppointment } from '../../api/saveAppointment'
 import { v4 as uuidv4 } from 'uuid'
 import InfoModal from '../UI/Modal/InfoModal'
 import { getErrorMessage } from '../../helpers/universalFunctions'
+import { getMondayForAPI } from '../../helpers/universalFunctions'
 
 const Calendar = (props) => {
   const { isMobile } = useDeviceDetect()
@@ -230,21 +231,18 @@ const Calendar = (props) => {
   const currYear = moment().format('YYYY')
   const currMonday = moment()
     .locale('sr')
-    .add(7 * week, 'days')
-    .weekday(0)
+    .startOf('isoweek')
     .format(isMobile ? 'D.MM' : 'D.MMM')
     .toUpperCase()
-  const currSunday = moment()
+  const currSunday = moment(currMonday)
     .locale('sr')
-    .add(7 * week, 'days')
-    .weekday(6)
+    .add(6, 'days')
     .format(isMobile ? 'D.MM' : 'D.MMM')
     .toUpperCase() // next Sunday .add(7, 'days')
-  const currMondayName = (i) =>
-    moment()
+  const calendarHeaderDates = (i) =>
+    moment(currMonday)
       .locale('sr')
-      .add(7 * week, 'days')
-      .weekday(i)
+      .add(i, 'days')
       .format('ddd / D.MMM')
       .toUpperCase()
 
@@ -367,7 +365,7 @@ const Calendar = (props) => {
           style={{ width: isMobile ? '100%' : '97%' }}
         >
           <tr>
-            <Days days={days} key={days} date={currMondayName} />
+            <Days days={days} key={days} date={calendarHeaderDates} />
           </tr>
         </thead>
         <tbody
@@ -396,11 +394,11 @@ const Calendar = (props) => {
 
   return (
     <>
-      {/* <InfoModal
-                message={infoMessage}
-                modalAnimation={showInfoModal}
-                borderColor="green"
-            /> */}
+      <InfoModal
+        message={infoMessage}
+        showInfoModal={showInfoModal}
+        borderColor="green"
+      />
       <RegCodeClientForm
         displayRegCodeClient={displayRegCodeClient}
         RegCodeClientHandler={RegCodeClientHandler}

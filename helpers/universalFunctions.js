@@ -201,16 +201,16 @@ export function useWindowSize() {
   })
 
   useEffect(() => {
+    function handleResize() {
+      // Set window width/height to state
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      })
+    }
     // only execute all the code below in client side
     if (typeof window !== 'undefined') {
       // Handler to call on window resize
-      function handleResize() {
-        // Set window width/height to state
-        setWindowSize({
-          width: window.innerWidth,
-          height: window.innerHeight,
-        })
-      }
 
       // Add event listener
       window.addEventListener('resize', handleResize)
@@ -271,3 +271,21 @@ export function getErrorMessage(errorResponse) {
 }
 
 export const getResponseData = (response) => response.data.map((data) => data)
+export function parseJwt(token) {
+  if (!token) {
+    return null
+  }
+
+  var base64Url = token.split('.')[1]
+  var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
+  var jsonPayload = decodeURIComponent(
+    atob(base64)
+      .split('')
+      .map(function (c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+      })
+      .join(''),
+  )
+
+  return JSON.parse(jsonPayload)
+}
