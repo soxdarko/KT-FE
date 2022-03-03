@@ -495,12 +495,12 @@ const Calendar = (props) => {
       />
       {BackdropSideDrawer}
       <CalNav
-        leftArrow="<< nedelja"
+        leftArrow={isMobile ? '<<' : '<< nedelja'}
         leftMargin={isMobile ? '5px 0 5px 5px' : '5px 0 5px 60px'}
         leftFloat="left"
         prevWeek={prevWeek}
         nextWeek={nextWeek}
-        rightArrow="nedelja >>"
+        rightArrow={isMobile ? '>>' : 'nedelja >>'}
         rightMargin={isMobile ? '5px 2vw 5px 0' : '5px 5.2vw 5px 0'}
         rightFloat="right"
         currWeek={`${currMonday} - ${currSunday}`}
