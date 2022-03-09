@@ -1,5 +1,5 @@
+//REFAKTORISANO
 import { useState, useEffect, useRef } from 'react';
-/* import axios from '../../../utils/Axios/axios-appointments'; */
 import {
     useDeviceDetect,
     inputChangedHandler,
@@ -16,10 +16,23 @@ import classes from '../../UI/UI.module.scss';
 const PassRecovery = (props) => {
     const { isMobile } = useDeviceDetect();
     const isPageLoad = useRef(true);
-    const modalAnimation = isMobile ? classes.modalInMob : classes.modalInPC;
     const [userData, setUserData] = useState([]);
 
     const [formInput, setFormInput] = useState(initState);
+
+    function resHandler(message) {
+        responseHandler(
+            props.setShowResponseModal,
+            message,
+            'red',
+            !props.showResponseModal.triger,
+            props.setIsLoading,
+        );
+    }
+
+    function inputChanged(e, inputIdentifier) {
+        inputChangedHandler(e, inputIdentifier, formInput, setFormInput);
+    }
 
     function closeForm() {
         props.setDisplayPassRecovery('none');
@@ -27,7 +40,7 @@ const PassRecovery = (props) => {
         setFormInput(initState);
     }
 
-    /* const passRecoveryHandler = () => {
+    /* `const passRecoveryHandler = () => {
 		const api = saveServiceProviders(props.serviceProviderInfo)
 			.then(res => {
 				console.log(res);
@@ -65,7 +78,6 @@ const PassRecovery = (props) => {
             return;
         }
         props.passRecoveryHandler();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userData]);
 
     const onSubmit = (e) => {
@@ -78,31 +90,26 @@ const PassRecovery = (props) => {
         const emailPattern =
             /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
         if (
-            (formInput.mobOperator.value !== '' && formInput.phone.value.trim() !== '') ||
+            (formInput.mobOperator.value !== '' &&
+                formInput.phone.value.trim() !== '') ||
             (formInput.email.value.trim() !== '' &&
                 emailPattern.test(formInput.email.value))
         ) {
             setUserData([...userData, formData]);
             props.setDisplayPassRecovery('none');
         } else {
-            setFormInput({
-                ...formInput,
-                initState,
-            });
-            responseHandler(
-                props.setShowResponseModal,
-                modalAnimation,
-                'Morate uneti broj telefona ili validnu e-mail adresu',
-                'red'
-            );
-            props.setShowBackdrop(classes.backdropIn);
+            setFormInput(initState);
+            resHandler('Morate uneti broj telefona ili validnu e-mail adresu!');
         }
     };
     const inputClassName = isMobile ? classes.InputTextMob : classes.InputText;
     const formMarginTop = isMobile ? '60px' : '0';
     return (
         <form
-            style={{ display: props.displayPassRecovery, marginTop: formMarginTop }}
+            style={{
+                display: props.displayPassRecovery,
+                marginTop: formMarginTop,
+            }}
             className={classes.Form}
             onSubmit={onSubmit}
         >
@@ -113,14 +120,16 @@ const PassRecovery = (props) => {
             />
             <Select
                 name="mobOperator"
-                className={isMobile ? classes.MobileOperatorMob : classes.MobileOperator}
+                className={
+                    isMobile
+                        ? classes.MobileOperatorMob
+                        : classes.MobileOperator
+                }
                 display="inline-block"
                 margin="50px auto 5px auto"
                 placeholder="064"
                 value={formInput.mobOperator.value}
-                onChange={(e) =>
-                    inputChangedHandler(e, 'mobOperator', formInput, setFormInput)
-                }
+                onChange={(e) => inputChanged(e, 'mobOperator')}
                 invalid={!formInput.mobOperator.valid}
             >
                 <option value="060">060</option>
@@ -137,13 +146,15 @@ const PassRecovery = (props) => {
             <Input
                 type="number"
                 name="phone"
-                className={isMobile ? classes.PhoneNumberMob : classes.PhoneNumber}
+                className={
+                    isMobile ? classes.PhoneNumberMob : classes.PhoneNumber
+                }
                 display="inline-block"
                 margin="50px auto 5px auto"
                 placeholder="Uneti telefon"
                 maxLength="7"
                 value={formInput.phone.value}
-                onChange={(e) => inputChangedHandler(e, 'phone', formInput, setFormInput)}
+                onChange={(e) => inputChanged(e, 'phone')}
                 invalid={!formInput.phone.valid}
             />
             <Input
@@ -154,7 +165,7 @@ const PassRecovery = (props) => {
                 margin="15px auto 5px auto"
                 placeholder="Uneti e-mail"
                 value={formInput.email.value}
-                onChange={(e) => inputChangedHandler(e, 'email', formInput, setFormInput)}
+                onChange={(e) => inputChangedHandler(e, 'email')}
                 invalid={!formInput.email.valid}
             />
             <Input
@@ -162,15 +173,21 @@ const PassRecovery = (props) => {
                 value="POTVRDI"
                 display="block"
                 margin="40px auto 5px auto"
-                className={isMobile ? classes.SubmitButtonMob : classes.SubmitButton}
+                className={
+                    isMobile ? classes.SubmitButtonMob : classes.SubmitButton
+                }
             />
             <Input
                 type="button"
                 value="NAZAD"
-                display={props.displayPassRecovery === 'block' ? 'block' : 'none'} //don't need button in client authentication page
+                display={
+                    props.displayPassRecovery === 'block' ? 'block' : 'none'
+                } //don't need button in client authentication page
                 margin="20px auto 5px auto"
                 color="orangered"
-                className={isMobile ? classes.FormButtonCloseMob : classes.FormButton}
+                className={
+                    isMobile ? classes.FormButtonCloseMob : classes.FormButton
+                }
                 onClick={() => closeForm()}
             />
         </form>
