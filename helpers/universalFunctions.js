@@ -87,34 +87,38 @@ export function checkValidity(value, rules) {
     return isValid;
 }
 
-export function responseHandler(setState, message, border, triger) {
+export function responseHandler(setState, message, border, triger, setIsLoading) {
     setState({
         message: message,
         border: border,
         triger: triger,
     });
+    setIsLoading(false);
 }
 
-export function confirmHandler(setState, message, triger) {
+export function confirmHandler(setState, message, triger, setIsLoading) {
     setState({
         message: message,
         triger: triger,
     });
+    setIsLoading(false);
 }
 
-export function infoMessageHandler(setState, message, triger) {
+export function infoMessageHandler(setState, message, triger, setIsLoading) {
     setState({
-        triger: triger,
         message: message,
+        triger: triger,
     });
+    setIsLoading(false);
 }
 
-export function verifyHandler(setState, message, border, triger) {
+export function verifyHandler(setState, message, border, triger, setIsLoading) {
     setState({
         message: message,
         border: border,
         triger: triger,
     });
+    setIsLoading(false);
 }
 
 export function updateValidity(setState, state, key, value, valid) {
@@ -252,6 +256,7 @@ export function getErrorMessage(errorResponse) {
 }
 
 export const getResponseData = (response) => response.data.map((data) => data);
+
 export function parseJwt(token) {
     if (!token) {
         return null;

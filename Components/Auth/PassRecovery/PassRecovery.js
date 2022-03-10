@@ -1,10 +1,6 @@
+//REFAKTORISANO
 import { useState, useEffect, useRef } from 'react';
-/* import axios from '../../../utils/Axios/axios-appointments'; */
-import {
-    useDeviceDetect,
-    inputChangedHandler,
-    responseHandler,
-} from '../../../helpers/universalFunctions';
+import { useDeviceDetect, inputChangedHandler, responseHandler } from '../../../helpers/universalFunctions';
 import initState from './initState';
 
 import DescriptionLabel from '../../UI/DescriptionLabel';
@@ -16,10 +12,23 @@ import classes from '../../UI/UI.module.scss';
 const PassRecovery = (props) => {
     const { isMobile } = useDeviceDetect();
     const isPageLoad = useRef(true);
-    const modalAnimation = isMobile ? classes.modalInMob : classes.modalInPC;
     const [userData, setUserData] = useState([]);
 
     const [formInput, setFormInput] = useState(initState);
+
+    function resHandler(message) {
+        responseHandler(
+            props.setShowResponseModal,
+            message,
+            'red',
+            !props.showResponseModal.triger,
+            props.setIsLoading,
+        );
+    }
+
+    function inputChanged(e, inputIdentifier) {
+        inputChangedHandler(e, inputIdentifier, formInput, setFormInput);
+    }
 
     function closeForm() {
         props.setDisplayPassRecovery('none');
@@ -27,7 +36,7 @@ const PassRecovery = (props) => {
         setFormInput(initState);
     }
 
-    /* const passRecoveryHandler = () => {
+    /* `const passRecoveryHandler = () => {
 		const api = saveServiceProviders(props.serviceProviderInfo)
 			.then(res => {
 				console.log(res);
@@ -65,7 +74,6 @@ const PassRecovery = (props) => {
             return;
         }
         props.passRecoveryHandler();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userData]);
 
     const onSubmit = (e) => {
@@ -79,30 +87,23 @@ const PassRecovery = (props) => {
             /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
         if (
             (formInput.mobOperator.value !== '' && formInput.phone.value.trim() !== '') ||
-            (formInput.email.value.trim() !== '' &&
-                emailPattern.test(formInput.email.value))
+            (formInput.email.value.trim() !== '' && emailPattern.test(formInput.email.value))
         ) {
             setUserData([...userData, formData]);
             props.setDisplayPassRecovery('none');
         } else {
-            setFormInput({
-                ...formInput,
-                initState,
-            });
-            responseHandler(
-                props.setShowResponseModal,
-                modalAnimation,
-                'Morate uneti broj telefona ili validnu e-mail adresu',
-                'red'
-            );
-            props.setShowBackdrop(classes.backdropIn);
+            setFormInput(initState);
+            resHandler('Morate uneti broj telefona ili validnu e-mail adresu!');
         }
     };
     const inputClassName = isMobile ? classes.InputTextMob : classes.InputText;
     const formMarginTop = isMobile ? '60px' : '0';
     return (
         <form
-            style={{ display: props.displayPassRecovery, marginTop: formMarginTop }}
+            style={{
+                display: props.displayPassRecovery,
+                marginTop: formMarginTop,
+            }}
             className={classes.Form}
             onSubmit={onSubmit}
         >
@@ -118,9 +119,7 @@ const PassRecovery = (props) => {
                 margin="50px auto 5px auto"
                 placeholder="064"
                 value={formInput.mobOperator.value}
-                onChange={(e) =>
-                    inputChangedHandler(e, 'mobOperator', formInput, setFormInput)
-                }
+                onChange={(e) => inputChanged(e, 'mobOperator')}
                 invalid={!formInput.mobOperator.valid}
             >
                 <option value="060">060</option>
@@ -143,7 +142,7 @@ const PassRecovery = (props) => {
                 placeholder="Uneti telefon"
                 maxLength="7"
                 value={formInput.phone.value}
-                onChange={(e) => inputChangedHandler(e, 'phone', formInput, setFormInput)}
+                onChange={(e) => inputChanged(e, 'phone')}
                 invalid={!formInput.phone.valid}
             />
             <Input
@@ -154,7 +153,7 @@ const PassRecovery = (props) => {
                 margin="15px auto 5px auto"
                 placeholder="Uneti e-mail"
                 value={formInput.email.value}
-                onChange={(e) => inputChangedHandler(e, 'email', formInput, setFormInput)}
+                onChange={(e) => inputChangedHandler(e, 'email')}
                 invalid={!formInput.email.valid}
             />
             <Input

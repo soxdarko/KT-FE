@@ -1,89 +1,82 @@
+//REFAKTORISANO
 import { useState, useEffect, useRef } from 'react';
+import { responseHandler } from '../../helpers/universalFunctions';
 import { saveServiceProviders } from '../../api/saveServiceProviders';
 import { getAllServiceProviders } from '../../api/getAllServiceProviders';
 
 import QuestionForm from './QuestionForm/QuestionForm';
 
-const ServiceProviderQuestionForm = props => {
-	const isComponentLoad = useRef(true);
-	const [singleServiceProvider, setSingleServiceProvider] = useState(false);
+const ServiceProviderQuestionForm = (props) => {
+    const isComponentLoad = useRef(true);
+    const [singleServiceProvider, setSingleServiceProvider] = useState(false);
 
-	const getAllServiceProvidersHandler = async () => {
-		const api = await getAllServiceProviders()
-			.then(response => {
-				const getServiceProviderName = response.data.map(serviceProvider => {
-					return serviceProvider;
-				});
-				props.setServiceProviderData(getServiceProviderName);
-			})
-			.catch(err => {
-				if (err.response) {
-					console.log(err.response);
-					err.response.data.map(err => {
-						props.errorMessage([], err.errorMessage);
-					});
-				} else if (err.request) {
-					props.errorMessage(err.request);
-				} else {
-					props.errorMessage(err);
-				}
-			});
-		return api;
-	};
+    function resHandler(message) {
+        responseHandler(
+            props.setShowResponseModal,
+            message,
+            'red',
+            !props.showResponseModal.triger,
+            props.setIsLoading,
+        );
+    }
 
-	const addNewServiceProviderHandler = () => {
-		const api = saveServiceProviders([])
-			.then(response => {
-				console.log(response);
-				props.setIsLoading(false);
-				props.setDisplayServiceProviderQuestionForm('none');
-				props.setDisplayEmployeeQuestionForm('block');
-				getAllServiceProvidersHandler();
-			})
-			.catch(err => {
-				if (err.response) {
-					console.log(err.response);
-					err.response.data.map(err => {
-						props.errorMessage([], err.errorMessage);
-					});
-				} else if (err.request) {
-					props.errorMessage(err.request);
-				} else {
-					props.errorMessage(err);
-				}
-			});
-		api;
-	};
+    const singleCompanyHandler = (e) => {
+        e.preventDefault();
+        setSingleServiceProvider(true);
+        props.setIsLoading(true);
+    };
 
-	useEffect(() => {
-		if (isComponentLoad.current) {
-			isComponentLoad.current = false;
-			return;
-		}
-		addNewServiceProviderHandler();
+    const getAllServiceProvidersHandler = async () => {
+        const api = await getAllServiceProviders()
+            .then((response) => {
+                const getServiceProviderName = response.data.map((serviceProvider) => {
+                    return serviceProvider;
+                });
+                props.setServiceProviderData(getServiceProviderName);
+            })
+            .catch((err) => {
+                const errMessage = getErrorMessage(err.response);
+                resHandler(errMessage);
+            });
+        api;
+    };
 
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [singleServiceProvider]);
+    const addNewServiceProviderHandler = () => {
+        const api = saveServiceProviders([])
+            .then(() => {
+                props.setIsLoading(false);
+                props.setDisplayServiceProviderQuestionForm('none');
+                props.setDisplayEmployeeQuestionForm('block');
+                getAllServiceProvidersHandler();
+            })
+            .catch((err) => {
+                const errMessage = getErrorMessage(err.response);
+                resHandler(errMessage);
+            });
+        api;
+    };
 
-	function onSubmit() {
-		props.setDisplayServiceProviderQuestionForm('none');
-		props.setDisplayAddServiceProvidersForm('block');
-	}
+    useEffect(() => {
+        if (isComponentLoad.current) {
+            isComponentLoad.current = false;
+            return;
+        }
+        addNewServiceProviderHandler();
+    }, [singleServiceProvider]);
 
-	const singleCompanyHandler = e => {
-		e.preventDefault();
-		setSingleServiceProvider(true);
-		props.setIsLoading(true);
-	};
+    function onSubmit() {
+        props.setDisplayServiceProviderQuestionForm('none');
+        props.setDisplayAddServiceProvidersForm('block');
+    }
 
-	return (
-		<QuestionForm
-			title="Da li imate više salona?"
-			displayQuestionForm={props.displayServiceProviderQuestionForm}
-			onSubmit={() => onSubmit()}
-			onDecline={e => singleCompanyHandler(e)}
-		/>
-	);
+    return (
+        <QuestionForm
+            title="Da li imate više salona?"
+            displayQuestionForm={props.displayServiceProviderQuestionForm}
+            onSubmit={() => onSubmit()}
+            onDecline={(e) => singleCompanyHandler(e)}
+        />
+    );
 };
 
 export default ServiceProviderQuestionForm;
