@@ -73,19 +73,16 @@ const Slider = () => {
     return (
         <div className={classes.SliderContainer}>
             {Slides.map((s, i) => (
-                <div className={i === curr ? newActive : prevActive} key={s.id}>
-                    <Link href={Slides[curr].link}>
-                        <a>
-                            <Image
-                                src={s.image}
-                                alt={s.title}
-                                width={1920}
-                                height={603}
-                            />
-                            {/* <img src={s.image} alt={s.title} /> */}
-                        </a>
-                    </Link>
-                </div>
+                <Link href={Slides[curr].link} key={s.id}>
+                    <a>
+                        <Image
+                            src={s.image}
+                            alt={s.title}
+                            layout="fill"
+                            className={i === curr ? newActive : prevActive}
+                        />
+                    </a>
+                </Link>
             ))}
             <FontAwesomeIcon
                 icon={faAngleLeft}

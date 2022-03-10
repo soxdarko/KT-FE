@@ -1,10 +1,7 @@
 @import '../../scss/variables.scss';
 
 .ButtonWrapperMob {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+    @include flexBoxSpaceBetween;
     box-sizing: border-box;
     position: fixed;
     bottom: 0;

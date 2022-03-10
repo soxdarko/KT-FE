@@ -117,6 +117,13 @@ $disabled-input-bg: rgb(117, 117, 117);
     align-self: center;
 }
 
+@mixin flexBoxSpaceBetween {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
 @mixin buttonMob {
     box-sizing: border-box;
     cursor: pointer;
