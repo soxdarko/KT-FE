@@ -1,14 +1,11 @@
 import { useState } from 'react';
 import { auth } from '../helpers/auth';
 import { fetchJson } from '../api/fetchJson';
-import { responseHandler } from '../helpers/universalFunctions';
 import Head from 'next/head';
 import ServiceProvidersEmployees from '../Components/DataFromBE/Clients';
 import Layout from '../Components/hoc/Layout/Layout';
 import Profile from '../Components/Profile/Profile';
-import Backdrop from '../Components/UI/Backdrop';
 import InfoModal from '../Components/UI/Modal/InfoModal';
-import ConfirmModal from '../Components/UI/Modal/ConfirmModal';
 import ResponseModal from '../Components/UI/Modal/ResponseModal';
 import PassRecovery from '../Components/Auth/PassRecovery/PassRecovery';
 import Loader from '../Components/UI/Loader';
@@ -17,28 +14,17 @@ import classes from '../Components/Navigation/Navigation.module.scss';
 
 const Profil = (props) => {
     const [isLoading, setIsLoading] = useState(false);
-    const [profileData, setProfileeData] = useState(props.profileData);
-    const [displayConfirmModal, setDisplayConfirmModal] = useState('none');
+    const profileData = props.profileData;
     const [displayPassRecovery, setDisplayPassRecovery] = useState('none');
-    const [showBackdrop, setShowBackdrop] = useState('');
     const [showInfoModal, setShowInfoModal] = useState({
         triger: false,
         message: null,
-    });
-    const [showConfirmModal, setShowConfirmModal] = useState({
-        message: null,
-        triger: false,
     });
     const [showResponseModal, setShowResponseModal] = useState({
         triger: false,
         message: null,
         border: '',
     });
-
-    const errorMessage = (message) => {
-        responseHandler(setShowResponseModal, message, 'red');
-        setShowBackdrop(classes.backdropIn);
-    };
 
     return (
         <>
@@ -63,44 +49,20 @@ const Profil = (props) => {
                 sms="10"
                 license="5"
             />
-            <Backdrop backdropAnimation={showBackdrop} onClick={() => setShowBackdrop(classes.backdropOut)} />
             <Loader loading={isLoading} />
             <InfoModal message={showInfoModal.message} showInfoModal={showInfoModal} borderColor="green" />
-            <ResponseModal
-                showResponseModal={showResponseModal}
-                setShowBackdrop={setShowBackdrop}
-                holdBackdrop={false}
-                setIsLoading={setIsLoading}
-            />
-            <ConfirmModal
-                display={displayConfirmModal}
-                animation={showConfirmModal}
-                message="Da li sigurno želite deaktivirati profil? Deaktivacija profila onemogućuje Vas i klijente da Vam rezervišu termine !!!"
-                submitValue="DEAKTIVIRAJ"
-                onDecline={() => {
-                    setShowConfirmModal(classes.modalDown);
-                    setShowBackdrop(classes.backdropOut);
-                }}
-                onSubmit={() => {
-                    setShowConfirmModal(classes.modalDown);
-                    setShowBackdrop(classes.backdropOut);
-                }}
-            />
+            <ResponseModal showResponseModal={showResponseModal} />
             <PassRecovery
                 displayPassRecovery={displayPassRecovery}
                 setDisplayPassRecovery={setDisplayPassRecovery}
                 setShowResponseModal={setShowResponseModal}
-                setShowBackdrop={setShowBackdrop}
             />
             <Profile
-                setDisplayConfirmModal={setDisplayConfirmModal}
-                setShowBackdrop={setShowBackdrop}
-                errorMessage={errorMessage}
-                setShowConfirmModal={setShowConfirmModal}
+                showResponseModal
                 setShowResponseModal={setShowResponseModal}
+                showInfoModal={showInfoModal}
                 setShowInfoModal={setShowInfoModal}
                 responseTriger={setShowResponseModal.triger}
-                infoTriger={setShowInfoModal.triger}
                 profileData={profileData}
                 setIsLoading={setIsLoading}
             />
