@@ -216,7 +216,8 @@ const Index = () => {
         } else if (userStatus.guideStatus === 'WorkingHours' && userStatus.userRole === 'Company') {
             router.push('/kalendar');
         } else if (userStatus.userRole === 'Client') {
-            alert('preusmeriti klijenta na klijent kalendar stranicu');
+            console.log('userStatus-check');
+            router.push('/klijent-kalendar');
         } else {
             router.push('/');
         }

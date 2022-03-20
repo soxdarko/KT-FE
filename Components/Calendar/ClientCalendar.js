@@ -21,7 +21,7 @@ import { getErrorMessage } from '../../helpers/universalFunctions';
 import { getMondayForAPI } from '../../helpers/universalFunctions';
 import { useRouter } from 'next/router';
 
-const Calendar = (props) => {
+const ClientCalendar = (props) => {
     const router = useRouter();
     const { isMobile } = useDeviceDetect();
     const [checkedServices, setCheckedServices] = useState([]);
@@ -300,7 +300,7 @@ const Calendar = (props) => {
             DateStart: dateStart,
             DateEnd: dateEnd,
             IdEmployee: props.selectedEmployee,
-            IdClient: chosenClient,
+            IdClient: props.clientId,
             Services: checkedServices.map((s) => ({
                 IdService: s.id,
                 Price: s.price,
@@ -365,7 +365,7 @@ const Calendar = (props) => {
                             setClickedCell={setClickedCell}
                             showMessage={showMessage}
                             clientPicker={() => {
-                                setDisplayClientPicker('block'), props.showBackdrop();
+                                setDisplayServicesPicker('block'), props.showBackdrop();
                             }}
                         />
                     ))}
@@ -382,53 +382,10 @@ const Calendar = (props) => {
                 RegCodeClientHandler={RegCodeClientHandler}
                 setDisplayRegCodeClient={setDisplayRegCodeClient}
             />
-            <ClientPickerForm
-                displayClientPicker={displayClientPicker}
-                setDisplayClientPicker={setDisplayClientPicker}
-                setDisplayServicesPicker={setDisplayServicesPicker}
-                hideBackdrop={props.hideBackdrop}
-                bodyDataMob={props.employees.map((user) => (
-                    <div
-                        className={classesUI.ClientsMob}
-                        key={user.id}
-                        onClick={() => setDisplayServicesPicker('block')}
-                    >
-                        <tr>
-                            <td>{user.name}</td>
-                        </tr>
-                        <tr>
-                            <td>{user.phone}</td>
-                        </tr>
-                        <tr>
-                            <td>{user.email}</td>
-                        </tr>
-                    </div>
-                ))}
-                bodyData={props.employees.map((user) => (
-                    <tr
-                        className={classesUI.Clients}
-                        key={user.id}
-                        onClick={() => {
-                            setDisplayServicesPicker('block'), setChosenClient(user.id);
-                        }}
-                    >
-                        <td>{user.name}</td>
-                        <td
-                            style={{
-                                width: '180px',
-                                minWidth: '180px',
-                            }}
-                        >
-                            {user.phone}
-                        </td>
-                        <td>{user.email}</td>
-                    </tr>
-                ))}
-            />
             <ServicePickerForm
+                clientCalendar={true}
                 displayServicesPicker={displayServicesPicker}
                 setDisplayServicesPicker={setDisplayServicesPicker}
-                setDisplayClientPicker={setDisplayClientPicker}
                 hideBackdrop={props.hideBackdrop}
                 setAppointment={saveNewAppointment}
                 bodyDataMob={props.services.map((serv) => (
@@ -542,4 +499,4 @@ const Calendar = (props) => {
     );
 };
 
-export default Calendar;
+export default ClientCalendar;
