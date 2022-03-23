@@ -3,6 +3,12 @@ import moment from 'moment'
 import {
   useDeviceDetect,
   getTimeString,
+  getErrorMessage,
+  getMondayForAPI,
+  responseHandler,
+  infoMessageHandler,
+  confirmHandler,
+  getResponseData,
 } from '../../helpers/universalFunctions'
 import Days from './RightTable/CalHead/Days'
 import Time from './LeftTable/Time'
@@ -12,21 +18,27 @@ import CalNav from './Nav/CalNav'
 import RegCodeClientForm from './Forms/RegCodeClientForm'
 import ClientPickerForm from './Forms/ClientPickerForm'
 import ServicePickerForm from './Forms/ServicePickerForm'
-import Input from '../UI/Forms/Input'
-import Label from '../UI/Forms/Label'
 import classes from './Calendar.module.scss'
 import classesUI from '../UI/UI.module.scss'
 import { getDateFromDayOfWeek } from '../../helpers/universalFunctions'
 import { saveAppointment } from '../../api/saveAppointment'
 import { v4 as uuidv4 } from 'uuid'
 import InfoModal from '../UI/Modal/InfoModal'
-import { getErrorMessage } from '../../helpers/universalFunctions'
-import { getMondayForAPI } from '../../helpers/universalFunctions'
+import ConfirmModal from '../UI/Modal/ConfirmModal'
+import ResponseModal from '../UI/Modal/ResponseModal'
+import { useRouter } from 'next/router'
+import AppointmentNote from './RightTable/CalBody/AppointmentNote'
+import Loader from '../UI/Loader'
+import { getAppointments } from '../../api/getAppointments'
+import { deleteAppointment } from '../../api/deleteAppointment'
+import CheckBox from '../UI/CheckBox'
+import AppointmentConfirmModal from '../UI/Modal/AppointmentConfirmModal'
 
 const Calendar = (props) => {
+  const router = useRouter()
   const { isMobile } = useDeviceDetect()
-  const isPageLoad = useRef(true)
-  const modalAnimationIn = isMobile ? classes.modalInMob : classes.modalInPC
+  const [appointmentId, setAppointmentId] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
   const [checkedServices, setCheckedServices] = useState([])
   const [daysInWeek, setDaysInWeek] = useState([])
   const [minMaxWorkingHours, setMinMaxWorkingWours] = useState([])
@@ -34,16 +46,105 @@ const Calendar = (props) => {
   const days = ['Pon', 'Uto', 'Sre', 'Cet', 'Pet', 'Sub', 'Ned']
   const [chosenClient, setChosenClient] = useState('')
   const [appointmentData, setAppointmentData] = useState(props.appointments)
-  const [showInfoModal, setShowInfoModal] = useState('')
-  const [infoMessage, setInfoMessage] = useState('')
+  const [currMonday, setCurrMonday] = useState()
+
+  const [displayClientPicker, setDisplayClientPicker] = useState('none')
+  const [displayServicesPicker, setDisplayServicesPicker] = useState('none')
+  const [displayRegCodeClient, setDisplayRegCodeClient] = useState('none')
+
+  const cloneDiv = useRef(0)
+  const cloneScrollTop = useRef(0)
+  const cloneHeadScrollLeft = useRef(0)
+  const [showInfoModal, setShowInfoModal] = useState({
+    triger: false,
+    message: null,
+  })
+  const [showConfirmModal, setShowConfirmModal] = useState({
+    message: null,
+    triger: false,
+  })
+  const [showResponseModal, setShowResponseModal] = useState({
+    triger: false,
+    message: null,
+    border: '',
+  })
+  const [clickedCell, setClickedCell] = useState([
+    {
+      date: null,
+      time: null,
+    },
+  ])
+
+  function resHandler(message, border) {
+    responseHandler(
+      setShowResponseModal,
+      message,
+      border,
+      !showResponseModal.triger,
+      setIsLoading,
+    )
+  }
+
+  function infoHandler(message) {
+    infoMessageHandler(
+      setShowInfoModal,
+      message,
+      !showInfoModal.triger,
+      setIsLoading,
+    )
+  }
+
+  function confirmMessageHandler(message) {
+    confirmHandler(
+      setShowConfirmModal,
+      message,
+      !showConfirmModal.triger,
+      setIsLoading,
+    )
+  }
+
+  const getAppointmentsAfterDelete = async () => {
+    const api = await getAppointments(props.employeeId, props.dateOfMonday)
+      .then((res) => {
+        const getAppointmentsData = getResponseData(res)
+        setAppointmentData(getAppointmentsData)
+      })
+      .catch((err) => {
+        console.log(err)
+        const errMessage = getErrorMessage(err.response)
+        resHandler(errMessage, 'red')
+      })
+    api
+  }
+
+  const deleteAppointmentHandler = async () => {
+    const api = await deleteAppointment(appointmentId)
+      .then(() => {
+        getAppointmentsAfterDelete()
+        infoHandler('Zakazani termin je uspešno otkazan!')
+      })
+      .catch((err) => {
+        const errMessage = getErrorMessage(err.response)
+        resHandler(errMessage, 'red')
+      })
+    api
+  }
 
   useEffect(() => {
     setAppointmentData(props.appointments)
   }, [props.appointments])
 
   useEffect(() => {
+    const urlMondayDate = router.query.mondayDate
+    setCurrMonday(
+      moment(urlMondayDate)
+        .locale('sr')
+        .startOf('isoweek')
+        .format(isMobile ? 'D.MM' : 'D.MMM')
+        .toUpperCase(),
+    )
     prepDaysInWeek()
-  }, [])
+  }, [router.asPath])
 
   useEffect(() => {
     daysInWeek.length > 0 && prepMinMaxWorkingHours()
@@ -54,8 +155,12 @@ const Calendar = (props) => {
   }, [minMaxWorkingHours, appointmentData])
 
   const prepDaysInWeek = () => {
+    const urlMondayDate = new Date(router.query.mondayDate)
     const prepDaysInWeek = days.map((d, i) => {
-      return { day: d, date: getDateFromDayOfWeek(new Date(), i) }
+      return {
+        day: d,
+        date: getDateFromDayOfWeek(urlMondayDate, i),
+      }
     })
     setDaysInWeek(prepDaysInWeek)
   }
@@ -94,35 +199,39 @@ const Calendar = (props) => {
   }
 
   const prepWorkingHoursForEveryDay = () => {
-    let prepWorkingHoursArr = []
-    let workingHoursObj
-    daysInWeek.map((d) => {
-      let dateInWeek = new Date(d.date).getTime()
-      let breakMap = false
-      props.workingHours.map((w) => {
-        let dateOfWorkingHours = new Date(w.date).getTime()
-        if (!breakMap) {
-          if (dateInWeek == dateOfWorkingHours) {
-            workingHoursObj = w
-            breakMap = true
-          } else {
-            workingHoursObj = {
-              id: null,
-              date: d.date,
-              firstStartHour: null,
-              firstEndHour: null,
-              secondStartHour: null,
-              secondEndHour: null,
-              cellsDuration: null,
-              idAbsenceType: null,
-            }
-          }
-        }
-      })
-      prepWorkingHoursArr.push(workingHoursObj)
-    })
+    if (!props.workingHours != undefined) {
+      let prepWorkingHoursArr = []
+      let workingHoursObj
 
-    prepWorkHourAppointment(minMaxWorkingHours, prepWorkingHoursArr)
+      if (props.workingHours.length > 0)
+        daysInWeek.map((d) => {
+          let dateInWeek = new Date(d.date).getTime()
+          let breakMap = false
+          props.workingHours.map((w) => {
+            let dateOfWorkingHours = new Date(w.date).getTime()
+            if (!breakMap) {
+              if (dateInWeek == dateOfWorkingHours) {
+                workingHoursObj = w
+                breakMap = true
+              } else {
+                workingHoursObj = {
+                  id: null,
+                  date: d.date,
+                  firstStartHour: null,
+                  firstEndHour: null,
+                  secondStartHour: null,
+                  secondEndHour: null,
+                  cellsDuration: null,
+                  idAbsenceType: null,
+                }
+              }
+            }
+          })
+          prepWorkingHoursArr.push(workingHoursObj)
+        })
+
+      prepWorkHourAppointment(minMaxWorkingHours, prepWorkingHoursArr)
+    }
   }
 
   const minMaxHourExist = (
@@ -157,7 +266,7 @@ const Calendar = (props) => {
               hours: minMaxHour,
               enabled: true,
               absence: h.idAbsenceType,
-              appointment: getAppointments(h.date, minMaxHour),
+              appointment: getAppointmentsHandler(h.date, minMaxHour),
             })
           : prepWHA[i].wha.push({
               hours: minMaxHour,
@@ -170,7 +279,7 @@ const Calendar = (props) => {
     setWorkHourAppointments(prepWHA)
   }
 
-  const getAppointments = (date, minMaxHour) => {
+  const getAppointmentsHandler = (date, minMaxHour) => {
     const appointment = appointmentData
       ?.map((a) => {
         let whDate = Date.parse(date.split('T')[0])
@@ -201,22 +310,6 @@ const Calendar = (props) => {
     return appointment?.length > 0 ? appointment[0] : {}
   }
 
-  const [clickedCell, setClickedCell] = useState([
-    {
-      date: null,
-      time: null,
-    },
-  ])
-
-  const [displayClientPicker, setDisplayClientPicker] = useState('none')
-  const [displayServicesPicker, setDisplayServicesPicker] = useState('none')
-  const [week, setWeek] = useState(0)
-  const [displayRegCodeClient, setDisplayRegCodeClient] = useState('none')
-
-  const cloneDiv = useRef(0)
-  const cloneScrollTop = useRef(0)
-  const cloneHeadScrollLeft = useRef(0)
-
   const VerticalTaxing = () => {
     const scroll = cloneDiv.current.scrollTop
     cloneScrollTop.current.scrollTop = scroll
@@ -227,33 +320,38 @@ const Calendar = (props) => {
     cloneHeadScrollLeft.current.scrollLeft = scroll
   }
 
-  /// ////////////// Date menagemant start/////////////////
-  const currYear = moment().format('YYYY')
-  const currMonday = moment()
-    .locale('sr')
-    .startOf('isoweek')
-    .format(isMobile ? 'D.MM' : 'D.MMM')
-    .toUpperCase()
+  const currYear = moment(currMonday).format('YYYY')
   const currSunday = moment(currMonday)
     .locale('sr')
     .add(6, 'days')
     .format(isMobile ? 'D.MM' : 'D.MMM')
-    .toUpperCase() // next Sunday .add(7, 'days')
+    .toUpperCase()
   const calendarHeaderDates = (i) =>
-    moment(currMonday)
-      .locale('sr')
+    `${days[i]} - ${moment(currMonday)
       .add(i, 'days')
-      .format('ddd / D.MMM')
-      .toUpperCase()
+      .locale('sr')
+      .format('DD. MMM')
+      .toUpperCase()}`
+
+  const calendarWeekSet = (prevOrNext) => {
+    const days = prevOrNext == 'next' ? 7 : -7
+    const urlMondayDate = Date.parse(router.query.mondayDate)
+    const mondayDate = moment(urlMondayDate)
+      .startOf('isoweek')
+      .add(days, 'days')
+      .toDate()
+    const mondayAPIFormat = getMondayForAPI(mondayDate)
+    router.push(
+      `/kalendar?mondayDate=${mondayAPIFormat}&employeeId=${props.employeeId}`,
+    )
+  }
 
   const nextWeek = () => {
-    setWeek((w) => w + 1)
+    calendarWeekSet('next')
   }
-
   const prevWeek = () => {
-    setWeek((w) => w - 1)
+    calendarWeekSet('prev')
   }
-  /// /////////////// Date menagemant end//////////////////
 
   const minMaxHoursDisplay = () =>
     minMaxWorkingHours.map((h) => getTimeString(h))
@@ -272,7 +370,7 @@ const Calendar = (props) => {
   const pickServices = (obj) => {
     setCheckedServices((services) => {
       const serviceCopy = [...services]
-      const index = serviceCopy.findIndex((service) => (service.id = obj.id))
+      const index = serviceCopy.findIndex((service) => service.id == obj.id)
       if (index > -1) {
         serviceCopy.splice(index, 1)
       } else {
@@ -286,21 +384,9 @@ const Calendar = (props) => {
     })
   }
 
-  // useEffect(() => {
-  // 	if (isPageLoad.current) {
-  // 		isPageLoad.current = false;
-  // 		return;
-  // 	}
-  // 	// eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [appointment]);
-
-  const showMessage = (eventMessage) => {
-    setShowInfoModal(modalAnimationIn)
-    setInfoMessage(eventMessage)
-    setTimeout(() => {
-      setShowInfoModal('')
-      setInfoMessage('')
-    }, 3000)
+  const isServiceChecked = (obj) => {
+    const checkedServicesIDs = checkedServices.map((s) => s.id)
+    return checkedServicesIDs.indexOf(obj.id) !== -1 ? true : false
   }
 
   const saveNewAppointment = () => {
@@ -311,9 +397,10 @@ const Calendar = (props) => {
       '00:00:00',
       getTimeString(clickedCell.time, true),
     )
+
     const dateEnd = clickedCell.date.replace(
       '00:00:00',
-      getTimeString((clickedCell.time + durationSum) * 2, true),
+      getTimeString(clickedCell.time + durationSum, true),
     )
     const newAppointment = {
       Id: uuidv4(),
@@ -328,11 +415,17 @@ const Calendar = (props) => {
       Deleted: false,
       Updated: false,
     }
+
     saveAppointment(newAppointment)
-      .then((res) => props.refreshData())
+      .then(() => {
+        props.refreshData()
+        setCheckedServices([])
+        /* resHandler(appointmentConfirmation, 'green'); */
+      })
       .catch((err) => {
+        console.log(err)
         const errMessage = getErrorMessage(err.response)
-        showMessage(errMessage)
+        resHandler(errMessage, 'red')
       })
   }
 
@@ -362,7 +455,9 @@ const Calendar = (props) => {
       <table className={classes.calRightTable}>
         <thead
           ref={cloneHeadScrollLeft}
-          style={{ width: isMobile ? '100%' : '97%' }}
+          style={{
+            width: isMobile ? '100%' : '97%',
+          }}
         >
           <tr>
             <Days days={days} key={days} date={calendarHeaderDates} />
@@ -370,9 +465,12 @@ const Calendar = (props) => {
         </thead>
         <tbody
           ref={cloneDiv}
-          style={{ width: isMobile ? '100%' : '97%' }}
+          style={{
+            width: isMobile ? '100%' : '97%',
+          }}
           onScroll={() => {
-            VerticalTaxing(), HorisontalTaxing()
+            VerticalTaxing()
+            HorisontalTaxing()
           }}
         >
           {minMaxWorkingHours.map((time) => (
@@ -381,10 +479,14 @@ const Calendar = (props) => {
               time={time}
               workHourAppointments={workHourAppointments}
               setClickedCell={setClickedCell}
-              showMessage={showMessage}
               clientPicker={() => {
-                setDisplayClientPicker('block'), props.showBackdrop()
+                setDisplayClientPicker('block')
+                props.showBackdrop()
               }}
+              resHandler={resHandler}
+              infoHandler={infoHandler}
+              confirmMessageHandler={confirmMessageHandler}
+              setAppointmentId={setAppointmentId}
             />
           ))}
         </tbody>
@@ -394,11 +496,16 @@ const Calendar = (props) => {
 
   return (
     <>
-      <InfoModal
-        message={infoMessage}
-        showInfoModal={showInfoModal}
-        borderColor="green"
+      <Loader loading={isLoading} />
+      <InfoModal showInfoModal={showInfoModal} borderColor="green" />
+      <ResponseModal showResponseModal={showResponseModal} />
+      <ConfirmModal
+        showConfirmModal={showConfirmModal}
+        submitValue="Da"
+        itemId={setAppointmentId}
+        onSubmit={() => deleteAppointmentHandler()}
       />
+      <AppointmentNote displayAppointmentsNote={'none'} />
       <RegCodeClientForm
         displayRegCodeClient={displayRegCodeClient}
         RegCodeClientHandler={RegCodeClientHandler}
@@ -431,11 +538,19 @@ const Calendar = (props) => {
             className={classesUI.Clients}
             key={user.id}
             onClick={() => {
-              setDisplayServicesPicker('block'), setChosenClient(user.id)
+              setDisplayServicesPicker('block')
+              setChosenClient(user.id)
             }}
           >
             <td>{user.name}</td>
-            <td style={{ width: '180px', minWidth: '180px' }}>{user.phone}</td>
+            <td
+              style={{
+                width: '180px',
+                minWidth: '180px',
+              }}
+            >
+              {user.phone}
+            </td>
             <td>{user.email}</td>
           </tr>
         ))}
@@ -446,20 +561,28 @@ const Calendar = (props) => {
         setDisplayClientPicker={setDisplayClientPicker}
         hideBackdrop={props.hideBackdrop}
         setAppointment={saveNewAppointment}
+        setCheckedServices={setCheckedServices}
         bodyDataMob={props.services.map((serv) => (
           <div className={classesUI.ServicesMob} key={serv.serviceId}>
             <tr>
               <td>{serv.name}</td>
-              <td style={{ width: '20%' }} rowSpan="3">
-                <Input type="checkbox" id={`chkbox${serv.serviceId}`} />
-                <Label
-                  htmlFor={`chkbox${serv.serviceId}`}
+              <td
+                style={{
+                  width: '20%',
+                }}
+                rowSpan="2"
+              >
+                <CheckBox
+                  name={serv.id}
+                  id={serv.id}
                   className={classesUI.checkbox}
+                  onClick={() => pickServices(serv)}
+                  checked={isServiceChecked(serv)}
                 />
               </td>
             </tr>
             <tr>
-              <td>{serv.time}</td>
+              <td>{serv.duration}</td>
             </tr>
             <tr>
               <td>{serv.price}</td>
@@ -468,26 +591,76 @@ const Calendar = (props) => {
         ))}
         headData={
           <tr>
-            <th style={{ width: '100%' }}>NAZIV USLUGE</th>
-            <th style={{ width: '100px', minWidth: '150px' }}>DUŽINA</th>
-            <th style={{ width: '100px', minWidth: '150px' }}>CENA</th>
-            <th style={{ width: '100px', minWidth: '100px' }}>IZBOR</th>
+            <th
+              style={{
+                width: '100%',
+              }}
+            >
+              NAZIV USLUGE
+            </th>
+            <th
+              style={{
+                width: '100px',
+                minWidth: '150px',
+              }}
+            >
+              DUŽINA
+            </th>
+            <th
+              style={{
+                width: '100px',
+                minWidth: '150px',
+              }}
+            >
+              CENA
+            </th>
+            <th
+              style={{
+                width: '100px',
+                minWidth: '100px',
+              }}
+            >
+              IZBOR
+            </th>
           </tr>
         }
         bodyData={props.services.map((serv) => (
           <tr key={serv.serviceId} className={classesUI.Services}>
-            <td style={{ width: '100%' }}>{serv.name}</td>
-            <td style={{ width: '100px', minWidth: '150px' }}>{serv.time}</td>
-            <td style={{ width: '100px', minWidth: '150px' }}>{serv.price}</td>
-            <td style={{ width: '100px', minWidth: '100px' }}>
-              <Input
-                type="checkbox"
-                id={`chkbox${serv.serviceId}`}
-                onClick={() => pickServices(serv)}
-              />
-              <Label
-                htmlFor={`chkbox${serv.serviceId}`}
+            <td
+              style={{
+                width: '100%',
+              }}
+            >
+              {serv.name}
+            </td>
+            <td
+              style={{
+                width: '100px',
+                minWidth: '150px',
+              }}
+            >
+              {serv.duration}
+            </td>
+            <td
+              style={{
+                width: '100px',
+                minWidth: '150px',
+              }}
+            >
+              {serv.price}
+            </td>
+            <td
+              style={{
+                width: '100px',
+                minWidth: '100px',
+              }}
+            >
+              <CheckBox
+                name={serv.id}
+                id={serv.id}
                 className={classesUI.checkbox}
+                onClick={() => pickServices(serv)}
+                checked={isServiceChecked(serv)}
               />
             </td>
           </tr>

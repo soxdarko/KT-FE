@@ -1,3 +1,4 @@
+//REFAKTORISANO
 import { useState } from 'react'
 import {
   useDeviceDetect,
@@ -18,7 +19,6 @@ import ResponseModal from '../Components/UI/Modal/ResponseModal'
 import ConfirmModal from '../Components/UI/Modal/ConfirmModal'
 import InfoModal from '../Components/UI/Modal/InfoModal'
 import initServicesForm from '../Components/SetupForms/initServicesForm'
-import Backdrop from '../Components/UI/Backdrop'
 import ServicesList from '../Components/Services/ServicesList'
 import AddServicesForm from '../Components/SetupForms/AddServicesForm'
 import WrappedTools from '../Components/UI/WrappedTools'
@@ -44,7 +44,6 @@ const Services = (props) => {
   const [serviceDescriptionData, setServiceDescriptionData] = useState(null)
   const [descriptionEdit, setDescriptionEdit] = useState(false)
   const [editMode, setEditMode] = useState(false)
-  const [showBackdrop, setShowBackdrop] = useState('')
   const [displayServiceSettings, setDisplayServiceSettings] = useState('none')
   const [showInfoModal, setShowInfoModal] = useState({
     triger: false,
@@ -59,7 +58,25 @@ const Services = (props) => {
     message: null,
     border: '',
   })
-  const [holdBackdrop, setHoldBackdrop] = useState(true)
+
+  function resHandler(message) {
+    responseHandler(
+      setShowResponseModal,
+      message,
+      'red',
+      !showResponseModal.triger,
+      setIsLoading,
+    )
+  }
+
+  function infoHandler(message) {
+    infoMessageHandler(
+      setShowInfoModal,
+      message,
+      !showInfoModal.triger,
+      setIsLoading,
+    )
+  }
 
   const displayWrappedButtonsMob = (condition) => {
     if (isMobile && condition === 'block') {
@@ -81,22 +98,12 @@ const Services = (props) => {
     const api = await saveSettingsServices(serviceSettingsData)
       .then(() => {
         setDisplayServiceSettings('none')
-        infoMessageHandler(
-          setShowInfoModal,
-          'Uspešno sačuvano',
-          !showInfoModal.triger,
-        )
+        infoHandler('Uspešno sačuvano')
         getServiceSettingsHandler()
       })
       .catch((err) => {
         const errMessage = getErrorMessage(err.response)
-        responseHandler(
-          props.setShowResponseModal,
-          errMessage,
-          'red',
-          !showResponseModal.triger,
-        )
-        !holdBackdrop ? setHoldBackdrop(true) : {}
+        resHandler(errMessage)
       })
     api
   }
@@ -107,21 +114,11 @@ const Services = (props) => {
         getAllServicesHandler()
         setDisplayWrappedTools('none')
         resetForm()
-        infoMessageHandler(
-          setShowInfoModal,
-          'Usluga uspešno obrisana!',
-          !showInfoModal.triger,
-        )
+        infoHandler('Usluga uspešno obrisana!')
       })
       .catch((err) => {
         const errMessage = getErrorMessage(err.response)
-        responseHandler(
-          props.setShowResponseModal,
-          errMessage,
-          'red',
-          !showResponseModal.triger,
-        )
-        !holdBackdrop ? setHoldBackdrop(true) : {}
+        resHandler(errMessage)
       })
     api
   }
@@ -134,13 +131,7 @@ const Services = (props) => {
       })
       .catch((err) => {
         const errMessage = getErrorMessage(err.response)
-        responseHandler(
-          props.setShowResponseModal,
-          errMessage,
-          'red',
-          !showResponseModal.triger,
-        )
-        setHoldBackdrop(false)
+        resHandler(errMessage)
       })
     return api
   }
@@ -154,20 +145,13 @@ const Services = (props) => {
       })
       .catch((err) => {
         const errMessage = getErrorMessage(err.response)
-        responseHandler(
-          props.setShowResponseModal,
-          errMessage,
-          'red',
-          !showResponseModal.triger,
-        )
-        setHoldBackdrop(false)
+        resHandler(errMessage)
       })
     return api
   }
 
   function confirmModalSubmitHandler() {
     deleteServiceHandler(serviceId)
-    setShowBackdrop(classes.backdropOut)
     setDisplayWrappedTools('none')
   }
   function newServiceHandler() {
@@ -178,8 +162,6 @@ const Services = (props) => {
     setDisplayAddServicesForm('block')
     setEditMode(true)
   }
-
-  console.log(props.token)
 
   return (
     <>
@@ -205,33 +187,22 @@ const Services = (props) => {
         license="5"
       />
       <Loader loading={isLoading} />
-      <Backdrop backdropAnimation={showBackdrop} />
       <InfoModal showInfoModal={showInfoModal} borderColor="green" />
       <ConfirmModal
         showConfirmModal={showConfirmModal}
         submitValue="Da"
-        setShowBackdrop={setShowBackdrop}
         itemId={setServiceId}
         onSubmit={() => confirmModalSubmitHandler()}
       />
-      <ResponseModal
-        showResponseModal={showResponseModal}
-        resetForm={resetForm}
-        setShowBackdrop={setShowBackdrop}
-        holdBackdrop={holdBackdrop}
-        displayLinkButton="none"
-        displayFormButton="block"
-        setIsLoading={setIsLoading}
-      />
+      <ResponseModal showResponseModal={showResponseModal} />
       <WrappedTools
+        setShowConfirmModal={setShowConfirmModal}
+        showConfirmModal={showConfirmModal}
         displayWrappedTools={displayWrappedTools}
         setDisplayWrappedTools={setDisplayWrappedTools}
         setDisplayDescription={setDisplayDescription}
-        setShowBackdrop={setShowBackdrop}
         descriptionEdit={descriptionEdit}
         setDescriptionEdit={setDescriptionEdit}
-        setShowConfirmModal={setShowConfirmModal}
-        triger={showConfirmModal.triger}
         setFormInput={setFormInput}
         setDataId={setServiceId}
         isEmployeesArray={true}
@@ -267,27 +238,30 @@ const Services = (props) => {
         saveSettingsServicesHandler={saveSettingsServicesHandler}
       />
       <ServiceDescription
+        setShowResponseModal={setShowResponseModal}
+        showResponseModal={showResponseModal}
+        showInfoModal={showInfoModal}
+        setShowInfoModal={setShowInfoModal}
         displayDescription={displayDescription}
         setDisplayDescription={setDisplayDescription}
         displayWrappedButtonsMob={displayWrappedButtonsMob}
         getAllServicesHandler={getAllServicesHandler}
-        setShowInfoModal={setShowInfoModal}
-        triger={showInfoModal.triger}
         formInput={formInput}
         setFormInput={setFormInput}
         setServicesData={setServicesData}
-        setShowBackdrop={setShowBackdrop}
         setDescriptionEdit={setDescriptionEdit}
-        setShowResponseModal={setShowResponseModal}
         serviceDescriptionData={serviceDescriptionData}
         setServiceDescriptionData={setServiceDescriptionData}
         checkedEmployees={checkedEmployees}
         serviceId={serviceId}
         resetForm={resetForm}
         setIsLoading={setIsLoading}
-        triger={showResponseModal.triger}
       />
       <AddServicesForm
+        setShowResponseModal={setShowResponseModal}
+        showResponseModal={showResponseModal}
+        showInfoModal={showInfoModal}
+        setShowInfoModal={setShowInfoModal}
         setFormInput={setFormInput}
         displayAddServicesForm={displayAddServicesForm}
         setDisplayAddServicesForm={setDisplayAddServicesForm}
@@ -304,25 +278,22 @@ const Services = (props) => {
         setCheckedEmployees={setCheckedEmployees}
         editMode={editMode}
         setEditMode={setEditMode}
-        setShowBackdrop={setShowBackdrop}
         setIsLoading={setIsLoading}
         displayEmployeesPicker="block"
         displayForward="none"
         displayForwardMob="none"
-        setShowResponseModal={setShowResponseModal}
-        setShowInfoModal={setShowInfoModal}
         validation={true}
         isSetupGuide={false}
         cancelAddService={() => props.cancelAddServiceHandler()}
         displayCancel={isMobile ? 'none' : 'inline-block'}
         getAllServicesHandler={getAllServicesHandler}
         resetForm={resetForm}
-        triger={showResponseModal.triger}
       />
       <ServicesList
+        showConfirmModal={showConfirmModal}
+        setShowConfirmModal={setShowConfirmModal}
         servicesData={servicesData}
         setDisplayAddServicesForm={setDisplayAddServicesForm}
-        setShowBackdrop={setShowBackdrop}
         setDisplayWrappedTools={setDisplayWrappedTools}
         setDisplayServiceSettings={setDisplayServiceSettings}
         newServiceHandler={newServiceHandler}
@@ -331,9 +302,7 @@ const Services = (props) => {
         serviceSettings={serviceSettings}
         setServiceSettings={setServiceSettings}
         setServiceSettingsData={setServiceSettingsData}
-        showConfirmModal={showConfirmModal}
-        setShowConfirmModal={setShowConfirmModal}
-        triger={showConfirmModal.triger}
+        setIsLoading={setIsLoading}
       />
     </>
   )

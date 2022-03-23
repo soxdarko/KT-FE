@@ -1,18 +1,17 @@
-import { fetchJson } from '../../api/fetchJson';
+//REFAKTORISANO
+import { fetchJson } from '../../api/fetchJson'
+import cookie from 'cookie'
 
 export default async (req, res) => {
-	const obj = req.body.serviceData;
-	const employee = req.body.employee;
-	const cookie = req.headers.cookie;
-	const token = cookie.substring(cookie.indexOf('=') + 1);
-	const url = `appointments/addNewService?employee=${employee}`;
-
-	const cookies = await fetchJson(url, 'post', token, obj).then(response => {
-		return response;
-	});
-
-	cookies;
-
-	res.statusCode = 200;
-	res.json({ success: true });
-};
+  const cookies = cookie.parse(req.headers.cookie || '')
+  const employee = req.body.employee
+  const obj = req.body.employeeData
+  const response = await fetchJson(
+    `appointments/addNewService?employee=${employee}`,
+    'post',
+    cookies.token,
+    obj,
+  )
+  res.statusCode = response?.status ? response.status : 200
+  res.json(response.data)
+}

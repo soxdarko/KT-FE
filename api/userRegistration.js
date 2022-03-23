@@ -1,7 +1,7 @@
-import axios from 'axios';
+import axios from 'axios'
 
-export const userRegistration = companyData => {
-	return axios.post('http://localhost:3000/api/userRegistration', {
-		companyData: companyData,
-	});
-};
+export const userRegistration = (companyData) => {
+  return axios.post('http://localhost:3000/api/userRegistration', {
+    companyData,
+  })
+}

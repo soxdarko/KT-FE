@@ -1,25 +1,15 @@
-import { fetchJson } from '../../api/fetchJson';
+import { fetchJson } from '../../api/fetchJson'
+import cookie from 'cookie'
 
 export default async (req, res) => {
-	const cookie = req.headers.cookie;
-	const token = cookie.substring(cookie.indexOf('=') + 1);
-    const dateOfMonday = req.body.dateOfMonday;
-	const url = `appointments/getAppointments?dateOfMonday=${dateOfMonday}`;
-
-	async function getAppointments() {
-		const api = await fetchJson(url, 'get', token)
-			.then(res => {
-				return res.data;
-			})
-			.catch(err => {
-				console.log(err);
-			});
-
-		return api;
-	}
-
-	const data = getAppointments();
-
-	res.statusCode = 200;
-	res.json(await data);
-};
+  const cookies = cookie.parse(req.headers.cookie || '')
+  const dateOfMonday = req.body.dateOfMonday
+  const employeeId = req.body.employeeId
+  const response = await fetchJson(
+    `appointments/getAppointments?employeeId=${employeeId}&dateOfMonday=${dateOfMonday}`,
+    'get',
+    cookies.token,
+  )
+  res.statusCode = response?.status ? response.status : 200
+  res.json(response.data)
+}

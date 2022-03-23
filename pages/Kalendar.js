@@ -4,10 +4,9 @@ import { auth } from '../helpers/auth'
 import Head from 'next/head'
 import Layout from '../Components/hoc/Layout/Layout'
 import Calendar from '../Components/Calendar/Calendar'
-import { getMondayForAPI } from '../helpers/universalFunctions'
+import { getMondayForAPI, parseJwt } from '../helpers/universalFunctions'
 import classes from '../Components/Navigation/Navigation.module.scss'
 import { useRouter } from 'next/router'
-import { parseJwt } from '../helpers/universalFunctions'
 
 const CalendarPage = (props) => {
   const router = useRouter()
@@ -67,6 +66,8 @@ const CalendarPage = (props) => {
           workingHours={props.workingHours}
           appointments={props.appointments}
           refreshData={refreshData}
+          employeeId={props.employeeId}
+          dateOfMonday={mondayDate}
         />
       </Layout>
     </>

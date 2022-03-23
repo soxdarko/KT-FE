@@ -1,3 +1,4 @@
+//REFAKTORISANO
 import { fetchJson } from '../../api/fetchJson'
 import cookie from 'cookie'
 

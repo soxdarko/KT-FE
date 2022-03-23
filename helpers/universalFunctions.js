@@ -105,34 +105,44 @@ export function checkValidity(value, rules) {
   return isValid
 }
 
-export function responseHandler(setState, message, border, triger) {
+export function responseHandler(
+  setState,
+  message,
+  border,
+  triger,
+  setIsLoading,
+) {
   setState({
     message: message,
     border: border,
     triger: triger,
   })
+  setIsLoading(false)
 }
 
-export function confirmHandler(setState, message, triger) {
+export function confirmHandler(setState, message, triger, setIsLoading) {
   setState({
     message: message,
     triger: triger,
   })
+  setIsLoading(false)
 }
 
-export function infoMessageHandler(setState, message, triger) {
+export function infoMessageHandler(setState, message, triger, setIsLoading) {
   setState({
-    triger: triger,
     message: message,
+    triger: triger,
   })
+  setIsLoading(false)
 }
 
-export function verifyHandler(setState, message, border, triger) {
+export function verifyHandler(setState, message, border, triger, setIsLoading) {
   setState({
     message: message,
     border: border,
     triger: triger,
   })
+  setIsLoading(false)
 }
 
 export function updateValidity(setState, state, key, value, valid) {
@@ -231,8 +241,8 @@ export function getMonday(date) {
   return date
 }
 
-export function getMondayForAPI() {
-  const mondayDateTime = getMonday(new Date())
+export function getMondayForAPI(date) {
+  const mondayDateTime = getMonday(date ? date : new Date())
   const year = mondayDateTime.getFullYear()
   const month = ('0' + (mondayDateTime.getMonth() + 1)).slice(-2)
   const day = ('0' + mondayDateTime.getDate()).slice(-2)
@@ -258,7 +268,7 @@ export function isObjEmpty(obj) {
 export function getTimeString(h, seconds = false) {
   const hour = `0${Math.floor(h / 60)}`.slice(-2)
   const minutes = `0${h % 60}`.slice(-2)
-  return `${hour}:${minutes}${seconds ? ':00' : ''}`
+  return hour == 24 ? `23:59:59` : `${hour}:${minutes}${seconds ? ':00' : ''}`
 }
 
 export function getErrorMessage(errorResponse) {
@@ -271,6 +281,7 @@ export function getErrorMessage(errorResponse) {
 }
 
 export const getResponseData = (response) => response.data.map((data) => data)
+
 export function parseJwt(token) {
   if (!token) {
     return null

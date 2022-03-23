@@ -1,25 +1,15 @@
-import { fetchJson } from '../../api/fetchJson';
+//REFAKTORISANO
+import { fetchJson } from '../../api/fetchJson'
+import cookie from 'cookie'
 
 export default async (req, res) => {
-	const deleted = req.body.deleted;
-	const cookie = req.headers.cookie;
-	const token = cookie.substring(cookie.indexOf('=') + 1);
-	const url = `users/getClients?deleted=${deleted}`;
-
-	async function getClients() {
-		const api = await fetchJson(url, 'get', token)
-			.then(res => {
-				return res.data;
-			})
-			.catch(err => {
-				console.log(err);
-			});
-
-		return api;
-	}
-
-	const data = getClients();
-
-	res.statusCode = 200;
-	res.json(await data);
-};
+  const cookies = cookie.parse(req.headers.cookie || '')
+  const deleted = req.body.deleted
+  const response = await fetchJson(
+    `users/getClients?deleted=${deleted}`,
+    'get',
+    cookies.token,
+  )
+  res.statusCode = response?.status ? response.status : 200
+  res.json(response.data)
+}

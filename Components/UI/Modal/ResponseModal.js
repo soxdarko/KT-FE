@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useDeviceDetect } from '../../../helpers/universalFunctions'
 import Backdrop from '../Backdrop'
-
 import Input from '../Forms/Input'
 
 import classes from '../UI.module.scss'
@@ -37,8 +36,6 @@ const ResponseModal = (props) => {
       backdrop: classes.backdropOut,
       displayBackdrop: 'none',
     })
-    props.setIsLoading(false)
-    props.holdBackdrop ? {} : props.setShowBackdrop(classes.backdropOut)
   }
 
   return (

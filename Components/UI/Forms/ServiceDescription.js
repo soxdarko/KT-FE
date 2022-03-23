@@ -1,16 +1,18 @@
+//REFAKTORISANO
 import { useEffect, useRef } from 'react'
 import {
   useDeviceDetect,
   infoMessageHandler,
   getErrorMessage,
   responseHandler,
+  inputChangedHandler,
 } from '../../../helpers/universalFunctions'
 import { saveServicesToManyEmployees } from '../../../api/saveServicesToManyEmployees'
+import WrappedButtonsMob from '../WrappedButtonsMob'
 import TextArea from './TextArea'
 import Input from './Input'
 
 import classes from '../UI.module.scss'
-import WrappedButtonsMob from '../WrappedButtonsMob'
 
 const ServiceDescription = (props) => {
   const { isMobile } = useDeviceDetect()
@@ -24,7 +26,7 @@ const ServiceDescription = (props) => {
         infoMessageHandler(
           props.setShowInfoModal,
           'Uspešno sačuvano',
-          !props.triger,
+          !props.showInfoModal.triger,
         )
       })
       .catch((err) => {
@@ -33,7 +35,7 @@ const ServiceDescription = (props) => {
           props.setShowResponseModal,
           errMessage,
           'red',
-          !props.triger,
+          !props.showResponseModal.triger,
         )
       })
     api
@@ -47,7 +49,6 @@ const ServiceDescription = (props) => {
 
     /* addServiceToManyHandler(); */
     saveDescription()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.serviceDescriptionData])
 
   const onSubmit = (e) => {
@@ -72,49 +73,52 @@ const ServiceDescription = (props) => {
 
   function stopEditHandler() {
     props.setDisplayDescription('none')
-    props.setShowBackdrop(classes.backdropOut)
     props.setDescriptionEdit(false)
     props.resetForm()
   }
 
   return (
     <div
+      className={classes.AddFormContainer}
       style={{ display: props.displayDescription }}
-      className={
-        isMobile
-          ? classes.DescriptionContainerMob
-          : classes.DescriptionContainer
-      }
     >
-      <h3>Dodatne informacije</h3>
-      <TextArea
-        value={props.formInput.description.value}
-        className={classes.DescriptionArea}
-        minRows="5"
-        onChange={(e) =>
-          props.setFormInput({
-            ...props.formInput,
-            ['description']: {
-              value: e.target.value,
-            },
-          })
+      <div
+        className={
+          isMobile
+            ? classes.DescriptionContainerMob
+            : classes.DescriptionContainer
         }
-      />
-      <Input
-        type="button"
-        value="sačavaj"
-        display={isMobile ? 'none' : 'block'}
-      />
-      <WrappedButtonsMob
-        save={onSubmit}
-        isMobile={props.displayWrappedButtonsMob(props.displayDescription)}
-        displayForward="none"
-        displaySave="block"
-        displayAdd="none"
-        displayStopEdit="block"
-        stopEdit={() => stopEditHandler()}
-        validation={true}
-      />
+      >
+        <h3>Dodatne informacije</h3>
+        <TextArea
+          value={props.formInput.description.value}
+          className={classes.DescriptionArea}
+          minRows="5"
+          onChange={(e) =>
+            inputChangedHandler(
+              e,
+              'description',
+              props.formInput,
+              props.setFormInput,
+            )
+          }
+        />
+        <Input
+          type="button"
+          value="sačavaj"
+          display={isMobile ? 'none' : 'block'}
+        />
+        <WrappedButtonsMob
+          save={onSubmit}
+          isMobile={props.displayWrappedButtonsMob(props.displayDescription)}
+          displayForward="none"
+          displaySave="block"
+          displayAdd="none"
+          displayStopEdit="block"
+          stopEdit={() => stopEditHandler()}
+          validation={true}
+        />
+      </div>
     </div>
   )
 }

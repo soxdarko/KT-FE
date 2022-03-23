@@ -1,9 +1,11 @@
+import { useState } from 'react'
 import Appointment from './Appointment'
 import classes from '../../Calendar.module.scss'
 import {
   isObjEmpty,
   getTimeString,
 } from '../../../../helpers/universalFunctions'
+import AppointmentOptions from './AppointmentOptions'
 
 const CalBodyCol = ({
   date,
@@ -13,13 +15,18 @@ const CalBodyCol = ({
   appointment,
   clientPicker,
   setClickedCell,
-  showMessage,
+  getErrorMessage,
+  resHandler,
+  confirmMessageHandler,
+  setAppointmentId,
 }) => {
+  const [showOptions, setShowOptions] = useState('none')
+
   const onClick = () => {
     const dateStart = date.replace('00:00:00', getTimeString(time, true))
     const mDateStart = Date.parse(dateStart)
     const mCurrentDateTime = Date.now()
-    if (mDateStart > mCurrentDateTime)
+    if (mDateStart > mCurrentDateTime || !isObjEmpty(appointment))
       if (enabled && isObjEmpty(appointment)) {
         clientPicker()
         setClickedCell((clickedCellState) => ({
@@ -30,7 +37,8 @@ const CalBodyCol = ({
       } else {
         null
       }
-    else showMessage('Nije moguće zakazati termin u vreme koje je prošlo!')
+    else
+      resHandler('Nije moguće zakazati termin u vreme koje je prošlo!', 'red')
   }
 
   const getAppointmentTime = () => {
@@ -39,6 +47,17 @@ const CalBodyCol = ({
       const timeEnd = appointment.dateEnd.split('T')[1]
       return `${timeStart.substring(0, 5)} - ${timeEnd.substring(0, 5)}`
     }
+  }
+
+  const appointmentContent = () => {
+    return (
+      <>
+        <h5>{getAppointmentTime()}</h5>
+        <h5>{appointment.clientName}</h5>
+        <h5>{appointment.clientPhone}</h5>
+        <hr className={classes.HrLineAppointment} />
+      </>
+    )
   }
 
   return (
@@ -55,11 +74,19 @@ const CalBodyCol = ({
           display={isObjEmpty(appointment) ? 'none' : 'flex'}
           height={`150px`}
           className={classes.Appointment}
+          onMouseEnter={() => setShowOptions('flex')}
+          onMouseLeave={() => setShowOptions('none')}
         >
-          <h5>{getAppointmentTime()}</h5>
-          <h5>{appointment.clientName}</h5>
-          <h5>{appointment.clientPhone}</h5>
-          <hr className={classes.HrLineAppointment} />
+          {appointmentContent()}
+          <AppointmentOptions
+            display={showOptions}
+            onClickDelete={() => {
+              confirmMessageHandler(
+                'Da li ste sigurni da želite obrisati termin?',
+              )
+              setAppointmentId(appointment.id)
+            }}
+          />
           {!isObjEmpty(appointment) &&
             appointment.services.map((s, i) => {
               return <h5 key={i}>{`${s.serviceName} (${s.price} din)`}</h5>

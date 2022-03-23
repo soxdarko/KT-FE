@@ -6,7 +6,10 @@ const CalBodyRow = ({
   time,
   clientPicker,
   setClickedCell,
-  showMessage,
+  resHandler,
+  infoHandler,
+  confirmMessageHandler,
+  setAppointmentId,
 }) => {
   return (
     <tr>
@@ -24,7 +27,11 @@ const CalBodyRow = ({
                     appointment={wha.appointment}
                     clientPicker={clientPicker}
                     setClickedCell={setClickedCell}
-                    showMessage={showMessage}
+                    /* showMessage={showMessage} */
+                    resHandler={resHandler}
+                    infoHandler={infoHandler}
+                    confirmMessageHandler={confirmMessageHandler}
+                    setAppointmentId={setAppointmentId}
                   />
                 </Fragment>
               ),

@@ -4,9 +4,9 @@ import cookie from 'cookie'
 
 export default async (req, res) => {
   const cookies = cookie.parse(req.headers.cookie || '')
-  const clientId = req.body.clientId
+  const appointmentId = req.body.appointmentId
   const response = await fetchJson(
-    `users/banClient?clientId=${clientId}`,
+    `appointments/deleteAppointment?appointmentid=${appointmentId}`,
     'post',
     cookies.token,
   )

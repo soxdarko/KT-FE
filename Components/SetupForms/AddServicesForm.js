@@ -1,3 +1,4 @@
+//REFAKTORISANO
 import { useState, useEffect, useRef } from 'react'
 import {
   useDeviceDetect,
@@ -32,42 +33,33 @@ const AddServicesForm = (props) => {
     ))
   }
 
-  const addServiceToManyHandler = () => {
-    props.setIsLoading(false)
-    const api = saveServicesToManyEmployees(serviceData)
-      .then(() => {
-        props.getAllServicesHandler()
-        props.resetForm()
-        infoMessageHandler(
-          props.setShowInfoModal,
-          'Uspešno sačuvano',
-          !props.triger,
-        )
-        props.setShowBackdrop(classes.backdropOut)
-        props.setDisplayAddServicesForm(props.isSetupGuide ? 'block' : 'none')
-      })
-      .catch((err) => {
-        const errMessage = getErrorMessage(err.response)
-        responseHandler(
-          props.setShowResponseModal,
-          errMessage,
-          'red',
-          !props.responseTriger,
-        )
-      })
-    api
+  function resHandler(message) {
+    responseHandler(
+      props.setShowResponseModal,
+      message,
+      'red',
+      !props.showResponseModal.triger,
+      props.setIsLoading,
+    )
   }
 
-  useEffect(() => {
-    if (isComponentLoad.current) {
-      isComponentLoad.current = false
-      return
-    }
+  function infoHandler(message) {
+    infoMessageHandler(
+      props.setShowInfoModal,
+      message,
+      !props.showInfoModal.triger,
+      props.setIsLoading,
+    )
+  }
 
-    /* addServiceToManyHandler(); */
-    addServiceToManyHandler()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [serviceData])
+  function inputChanged(e, inputIdentifier) {
+    inputChangedHandler(
+      e,
+      inputIdentifier,
+      props.servicesFormInput,
+      props.setServicesFormInput,
+    )
+  }
 
   const inputValidityHandler = (inputName, message) => {
     updateValidity(
@@ -77,8 +69,71 @@ const AddServicesForm = (props) => {
       '',
       false,
     )
-    responseHandler(props.setShowResponseModal, message, 'red', !props.triger)
+    resHandler(message)
   }
+
+  const serviceProvidersPreview = (serviceProviders) => {
+    const listItems = serviceProviders.map((serviceProvider) => {
+      return (
+        <option key={serviceProvider.id} value={serviceProvider.id}>
+          {serviceProvider.name}
+        </option>
+      )
+    })
+    return listItems
+  }
+
+  const displayForm = () => {
+    if (props.userGuideStatus === 'Employees') {
+      props.setDisplayGreeting('none')
+      props.setDisplayAddServicesForm('block')
+    } else {
+      props.setDisplayAddServicesForm('none')
+    }
+  }
+
+  function cancelAddServicePcHandler() {
+    props.setServiceId(null)
+    props.setCheckedEmployees([])
+    props.setFormInput(initServicesForm)
+    props.setDisplayAddServicesForm('none')
+    props.setEditMode(false)
+  }
+
+  function cancelAddServiceMobHandler() {
+    props.setDisplayAddServicesForm('none')
+    isMobile ? {} : props.setServicesFormInput(initServicesForm)
+    props.setCheckedEmployees([])
+  }
+
+  function forward() {
+    props.setDisplayAddServicesForm('none')
+    props.setDisplayWorkingTimeForm('block')
+  }
+
+  const addServiceToManyHandler = () => {
+    const api = saveServicesToManyEmployees(serviceData)
+      .then(() => {
+        props.getAllServicesHandler()
+        props.resetForm()
+        props.setCheckedEmployees([])
+        infoHandler('Uspešno sačuvano')
+        props.setDisplayAddServicesForm(props.isSetupGuide ? 'block' : 'none')
+      })
+      .catch((err) => {
+        const errMessage = getErrorMessage(err.response)
+        resHandler(errMessage)
+      })
+    api
+  }
+
+  useEffect(() => {
+    if (isComponentLoad.current) {
+      isComponentLoad.current = false
+      return
+    }
+    addServiceToManyHandler()
+  }, [serviceData])
 
   const onSubmit = (e) => {
     e.preventDefault()
@@ -112,18 +167,6 @@ const AddServicesForm = (props) => {
     }
   }
 
-  const serviceProvidersPreview = (serviceProviders) => {
-    const listItems = serviceProviders.map((serviceProvider) => {
-      return (
-        <option key={serviceProvider.id} value={serviceProvider.id}>
-          {serviceProvider.name}
-        </option>
-      )
-    })
-    return listItems
-  }
-
-  /* Load data for edit in formInput state */
   useEffect(() => {
     props.servicesData.filter((item) => {
       if (item.id === props.serviceId) {
@@ -162,54 +205,13 @@ const AddServicesForm = (props) => {
     })
   }, [props.serviceId])
 
-  const displayForm = () => {
-    if (props.userGuideStatus === 'Employees') {
-      props.setDisplayGreeting('none')
-      props.setDisplayAddServicesForm('block')
-    } else {
-      props.setDisplayAddServicesForm('none')
-    }
-  }
-
   useEffect(() => {
     if (isComponentLoad.current) {
       isComponentLoad.current = false
       return
     }
     displayForm()
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  const onChange = (e, object) => {
-    inputChangedHandler(
-      e,
-      object,
-      props.servicesFormInput,
-      props.setServicesFormInput,
-    )
-  }
-
-  function cancelAddServicePcHandler() {
-    props.setServiceId(null)
-    props.setCheckedEmployees([])
-    props.setFormInput(initServicesForm)
-    props.setDisplayAddServicesForm('none')
-    props.setEditMode(false)
-    props.setShowBackdrop(classes.backdropOut)
-  }
-
-  function cancelAddServiceMobHandler() {
-    props.setDisplayAddServicesForm('none')
-    isMobile ? {} : props.setServicesFormInput(initServicesForm)
-    props.setShowBackdrop(classes.backdropOut)
-    props.setCheckedEmployees([])
-  }
-
-  function forward() {
-    props.setDisplayAddServicesForm('none')
-    props.setDisplayWorkingTimeForm('block')
-  }
 
   const inputClassName = isMobile ? classes.InputTextMob : classes.InputText
 
@@ -226,7 +228,7 @@ const AddServicesForm = (props) => {
           name="serviceProviderId"
           className={classes.SelectInputText}
           value={props.servicesFormInput.serviceProviderId.value}
-          onChange={(e) => onChange(e, 'serviceProviderId')}
+          onChange={(e) => inputChanged(e, 'serviceProviderId')}
         >
           <option value="" disabled selected hidden>
             Izaberite salon
@@ -239,7 +241,7 @@ const AddServicesForm = (props) => {
           placeholder="Unesite naziv usluge"
           className={inputClassName}
           value={props.servicesFormInput.serviceName.value}
-          onChange={(e) => onChange(e, 'serviceName')}
+          onChange={(e) => inputChanged(e, 'serviceName')}
           invalid={!props.servicesFormInput.serviceName.valid}
         />
         <Input
@@ -248,14 +250,14 @@ const AddServicesForm = (props) => {
           placeholder="Unesite opis usluge"
           className={inputClassName}
           value={props.servicesFormInput.description.value}
-          onChange={(e) => onChange(e, 'description')}
+          onChange={(e) => inputChanged(e, 'description')}
         />
         <Select
           displaySelect="block"
           className={classes.SelectInputText}
           value={props.servicesFormInput.duration.value}
           name={'duration'}
-          onChange={(e) => onChange(e, 'duration')}
+          onChange={(e) => inputChanged(e, 'duration')}
         >
           <option value="trajanje usluge" disabled selected hidden>
             trajanje usluge
@@ -269,7 +271,7 @@ const AddServicesForm = (props) => {
           maxLength="10"
           className={inputClassName}
           value={props.servicesFormInput.price.value}
-          onChange={(e) => onChange(e, 'price')}
+          onChange={(e) => inputChanged(e, 'price')}
         />
         <EmployeesPicker
           title="Radnici u izabranom salonu"

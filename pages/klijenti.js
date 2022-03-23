@@ -1,3 +1,4 @@
+//Refaktorisano
 import { useState } from 'react'
 import { auth } from '../helpers/auth'
 import { fetchJson } from '../api/fetchJson'
@@ -5,6 +6,8 @@ import {
   useDeviceDetect,
   responseHandler,
   infoMessageHandler,
+  getErrorMessage,
+  getResponseData,
 } from '../helpers/universalFunctions'
 import { banClient } from '../api/banClient'
 import { getClients } from '../api/getClients'
@@ -12,7 +15,6 @@ import initClientForm from '../Components/Clients/initClientForm'
 import ServiceProvidersEmployees from '../Components/DataFromBE/Clients'
 import Head from 'next/head'
 import Layout from '../Components/hoc/Layout/Layout'
-import Backdrop from '../Components/UI/Backdrop'
 import ResponseModal from '../Components/UI/Modal/ResponseModal'
 import ConfirmModal from '../Components/UI/Modal/ConfirmModal'
 import InfoModal from '../Components/UI/Modal/InfoModal'
@@ -40,7 +42,6 @@ const Clients = (props) => {
   const [displayAddClientForm, setDisplayAddClientForm] = useState('none')
   const [displayWrappedTools, setDisplayWrappedTools] = useState('none')
   const [displayDescription, setDisplayDescription] = useState('none')
-  const [showBackdrop, setShowBackdrop] = useState('')
   const [showInfoModal, setShowInfoModal] = useState({
     triger: false,
     message: null,
@@ -54,7 +55,25 @@ const Clients = (props) => {
     message: null,
     border: '',
   })
-  const [holdBackdrop, setHoldBackdrop] = useState(true)
+
+  function resHandler(message) {
+    responseHandler(
+      setShowResponseModal,
+      message,
+      'red',
+      !showResponseModal.triger,
+      setIsLoading,
+    )
+  }
+
+  function infoHandler(message) {
+    infoMessageHandler(
+      setShowInfoModal,
+      message,
+      !showInfoModal.triger,
+      setIsLoading,
+    )
+  }
 
   const displayWrappedButtonsMob = (condition) => {
     if (isMobile && condition === 'block') {
@@ -71,91 +90,48 @@ const Clients = (props) => {
     }
   }
 
-  const errorMessage = (
-    err,
-    message = 'Došlo je do greške, pokušajte ponovo ili nas kontaktirajte putem kontakt forme',
-  ) => {
-    console.log(err)
-    responseHandler(
-      setShowResponseModal,
-      message,
-      'red',
-      showResponseModal.triger,
-    )
-    setShowBackdrop(classes.backdropIn)
-  }
-
   const getClientsHandler = async (deleted) => {
     const api = await getClients(deleted)
       .then((res) => {
-        const getClientsData = res.data.map((client) => {
-          return client
-        })
+        const getClientsData = getResponseData(res)
         setClientData(getClientsData)
       })
       .catch((err) => {
-        setHoldBackdrop(false)
-        if (err.response) {
-          console.log(err.response)
-          err.response.data.map((err) => {
-            errorMessage([], err.errorMessage)
-          })
-        } else if (err.request) {
-          errorMessage(err.request)
-        } else {
-          errorMessage(err)
-        }
+        const errMessage = getErrorMessage(err.response)
+        resHandler(errMessage)
       })
     return api
   }
 
   const banClientHandler = () => {
     const api = banClient(clientId)
-      .then((res) => {
-        console.log(res)
+      .then(() => {
         getClientsHandler(false)
         resetForm()
-        infoMessageHandler(
-          setShowInfoModal,
-          'Klijent uspešno uklonjen sa liste!',
-          !showInfoModal.triger,
-        )
+        infoHandler('Klijent uspešno uklonjen sa liste!')
       })
       .catch((err) => {
-        !holdBackdrop ? setHoldBackdrop(true) : {}
-        if (err.response) {
-          console.log(err.response)
-          err.response.data.map((err) => {
-            errorMessage([], err.errorMessage)
-          })
-        } else if (err.request) {
-          errorMessage(err.request)
-        } else {
-          errorMessage(err)
-        }
+        const errMessage = getErrorMessage(err.response)
+        resHandler(errMessage)
       })
     api
   }
 
   function confirmModalSubmitHandler() {
     banClientHandler(clientId)
-    setShowBackdrop(classes.backdropOut)
     setDisplayWrappedTools('none')
     isMobile ? setDisplayWrappedTools('none') : {}
   }
   function newClientHandler() {
     setDisplayAddClientForm('block')
-    setShowBackdrop(classes.backdropIn)
     setFormInput(initClientForm)
   }
   function editClientHandler() {
     setDisplayAddClientForm('block')
-    setShowBackdrop(classes.backdropIn)
     setEditMode(true)
   }
   function clientInvitationHandler() {
     setShowInviteClient(classes.slideInLeft)
-    setShowBackdrop(classes.backdropIn)
     setDisplayInviteClient('block')
   }
 
@@ -183,19 +159,11 @@ const Clients = (props) => {
         license="5"
       >
         <Loader loading={isLoading} />
-        <Backdrop backdropAnimation={showBackdrop} />
         <InfoModal showInfoModal={showInfoModal} borderColor="green" />
-        <ResponseModal
-          showResponseModal={showResponseModal}
-          setShowBackdrop={setShowBackdrop}
-          holdBackdrop={holdBackdrop}
-          resetForm={resetForm}
-          setIsLoading={setIsLoading}
-        />
+        <ResponseModal showResponseModal={showResponseModal} />
         <ConfirmModal
           showConfirmModal={showConfirmModal}
           submitValue="Da"
-          setShowBackdrop={setShowBackdrop}
           itemId={setClientId}
           onSubmit={() => confirmModalSubmitHandler()}
         />
@@ -204,7 +172,6 @@ const Clients = (props) => {
           setDisplayWrappedTools={setDisplayWrappedTools}
           setDisplayDescription={setDisplayDescription}
           setDescriptionEdit={setDescriptionEdit}
-          setShowBackdrop={setShowBackdrop}
           setShowConfirmModal={setShowConfirmModal}
           triger={showConfirmModal.triger}
           setFormInput={setFormInput}
@@ -225,18 +192,21 @@ const Clients = (props) => {
           setClientData={setClientData}
           setUserData={setUserData}
           clientId={clientId}
-          setShowBackdrop={setShowBackdrop}
           setDescriptionEdit={setDescriptionEdit}
           resetForm={resetForm}
           setIsLoading={setIsLoading}
         />
         <AddClientForm
+          setShowResponseModal={setShowResponseModal}
+          showResponseModal={showResponseModal}
+          showInfoModal={showInfoModal}
+          setShowInfoModal={setShowInfoModal}
           getClientsHandler={getClientsHandler}
           formInput={formInput}
+          setFormInput={setFormInput}
           userData={userData}
           setUserData={setUserData}
           initClientForm={initClientForm}
-          setFormInput={setFormInput}
           clientsData={clientsData}
           setClientData={setClientData}
           clientId={clientId}
@@ -245,36 +215,28 @@ const Clients = (props) => {
           setEditMode={setEditMode}
           displayAddClientForm={displayAddClientForm}
           setDisplayAddClientForm={setDisplayAddClientForm}
-          setShowBackdrop={setShowBackdrop}
-          setShowResponseModal={setShowResponseModal}
-          showInfoModal={showInfoModal}
-          setShowInfoModal={setShowInfoModal}
           setDisplayDescription={setDisplayDescription}
           displayWrappedButtonsMob={displayWrappedButtonsMob}
           resetForm={resetForm}
-          errorMessage={errorMessage}
           setIsLoading={setIsLoading}
-          triger={showResponseModal.triger}
         />
         <InviteClient
           display={displayInviteClient}
           animation={showInviteClient}
-          backdropAnimation={showBackdrop}
-          setShowBackdrop={setShowBackdrop}
           setShowInviteClient={setShowInviteClient}
         />
         <ClientsList
+          setShowConfirmModal={setShowConfirmModal}
+          showConfirmModal={showConfirmModal}
           setDisplayWrappedTools={setDisplayWrappedTools}
-          setShowBackdrop={setShowBackdrop}
           setDisplayAddClientForm={setDisplayAddClientForm}
           setDisplayDescription={setDisplayDescription}
           setDescriptionEdit={setDescriptionEdit}
           clientsData={clientsData}
           setClientId={setClientId}
           setEditMode={setEditMode}
-          setShowConfirmModal={setShowConfirmModal}
           newClientHandler={newClientHandler}
-          triger={showConfirmModal.triger}
+          setIsLoading={setIsLoading}
         />
         <AddClientButton onClick={() => clientInvitationHandler()} />
       </Layout>

@@ -1,3 +1,4 @@
+//REFAKTORISANO
 import { useState, useRef, useEffect } from 'react'
 import {
   useDeviceDetect,
@@ -8,6 +9,7 @@ import {
 } from '../../../helpers/universalFunctions'
 import { userRegistration } from '../../../api/userRegistration'
 import initState from './initState'
+import resetPassword from './resetPassword'
 
 import Select from '../../UI/Select'
 import Input from '../../UI/Forms/Input'
@@ -21,33 +23,50 @@ const RegServProv = (props) => {
 
   const [formInput, setFormInput] = useState(initState)
 
+  function resHandler(message) {
+    responseHandler(
+      props.setShowResponseModal,
+      message,
+      'red',
+      !props.showResponseModal.triger,
+      props.setIsLoading,
+    )
+  }
+
+  function inputChanged(e, inputIdentifier) {
+    inputChangedHandler(e, inputIdentifier, formInput, setFormInput)
+  }
+
+  const inputValidityHandler = (inputName, message) => {
+    updateValidity(setFormInput, formInput, inputName, '', false)
+    resHandler(message)
+  }
+
+  const refreshPassword = {
+    ...formInput,
+    resetPassword,
+  }
+
   function closeForm() {
     props.setDisplayTabContainer('none')
     setFormInput(initState)
-    props.setShowBackdrop(classes.backdropOut)
   }
 
   const regHandler = () => {
-    props.setIsLoading(false)
     const api = userRegistration(companyData)
       .then(() => {
         responseHandler(
           props.setShowResponseModal,
           'Poslali smo Vam verifikacioni e-mail i sms. Klikom na link u e-mail-u i sms-u registracija će biti završena.',
-          'green',
-          !props.triger,
+          'green', //becouse border color function is not simplified
+          !props.showResponseModal.triger,
+          props.setIsLoading,
         )
         props.setDisplayTabContainer('none')
-        props.setShowBackdrop(classes.backdropOut)
       })
       .catch((err) => {
         const errMessage = getErrorMessage(err.response)
-        responseHandler(
-          props.setShowResponseModal,
-          errMessage,
-          'red',
-          !props.responseTriger,
-        )
+        resHandler(errMessage)
       })
     api
     setFormInput(initState)
@@ -59,12 +78,11 @@ const RegServProv = (props) => {
       return
     }
     regHandler()
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [companyData])
 
   const onSubmit = (e) => {
     e.preventDefault()
+    props.setIsLoading(true)
     const formData = {
       name: formInput.name.value.trim(),
       companyName: formInput.companyName.value.trim(),
@@ -80,107 +98,43 @@ const RegServProv = (props) => {
       /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/
     const numericPattern = /^\d+$/
     if (!formInput.name.value.trim()) {
-      updateValidity(setFormInput, 'name', formInput, '', false)
-      responseHandler(
-        props.setShowResponseModal,
-        'Morate uneti Ime i prezime!',
-        'red',
-        !props.triger,
-      )
+      inputValidityHandler('name', 'Morate uneti Ime i prezime!')
     } else if (!formInput.userName.value.trim()) {
-      updateValidity(setFormInput, 'userName', formInput, '', false)
-      responseHandler(
-        props.setShowResponseModal,
-        'Morate uneti korisničko ime!',
-        'red',
-        !props.triger,
-      )
+      inputValidityHandler('userName', 'Morate uneti korisničko ime!')
     } else if (!formInput.companyName.value.trim()) {
-      updateValidity(setFormInput, 'companyName', formInput, '', false)
-      responseHandler(
-        props.setShowResponseModal,
-        'Morate uneti naziv firme!',
-        'red',
-        !props.triger,
-      )
+      inputValidityHandler('companyName', 'Morate uneti naziv firme!')
     } else if (!formInput.city.value.trim()) {
-      updateValidity(setFormInput, 'city', formInput, '', false)
-      responseHandler(
-        props.setShowResponseModal,
-        'Morate uneti grad!',
-        'red',
-        !props.triger,
-      )
+      inputValidityHandler('city', 'Morate uneti grad!')
     } else if (!formInput.mobOperator.value) {
-      updateValidity(setFormInput, 'mobOperator', formInput, '', false)
-      responseHandler(
-        props.setShowResponseModal,
-        'Morate izabrati pozivni broj!',
-        'red',
-        !props.triger,
-      )
+      inputValidityHandler('mobOperator', 'Morate izabrati pozivni broj!')
     } else if (
       !formInput.phone.value.trim() ||
       !numericPattern.test(formInput.phone.value) ||
       formInput.phone.value.length < 6
     ) {
-      updateValidity(setFormInput, 'phone', formInput, '', false)
-      responseHandler(
-        props.setShowResponseModal,
-        'Morate uneti validan broj telefona!',
-        'red',
-        !props.triger,
-      )
+      inputValidityHandler('phone', 'Morate uneti validan broj telefona!')
     } else if (
       !formInput.email.value.trim() ||
       !emailPattern.test(formInput.email.value)
     ) {
-      updateValidity(setFormInput, 'email', formInput, '', false)
-      responseHandler(
-        props.setShowResponseModal,
-        'Morate uneti validnu e-mail adresu!',
-        'red',
-        !props.triger,
-      )
+      inputValidityHandler('email', 'Morate uneti validnu e-mail adresu!')
     } else if (!formInput.password.value.trim()) {
-      updateValidity(setFormInput, 'password', formInput, '', false)
-      responseHandler(
-        props.setShowResponseModal,
-        'Morate uneti lozinku!',
-        'red',
-        !props.triger,
-      )
+      inputValidityHandler('password', 'Morate uneti lozinku!')
     } else if (!formInput.passConfirm.value.trim()) {
-      updateValidity(setFormInput, 'passConfirm', formInput, '', false)
-      responseHandler(
-        props.setShowResponseModal,
+      inputValidityHandler(
+        'passConfirm',
         'Morate uneti potvrdu izabrane lozinke!',
-        'red',
-        !props.triger,
       )
     } else if (
       formInput.password.value.trim() !== formInput.passConfirm.value.trim()
     ) {
-      setFormInput({
-        ...formInput,
-        password: {
-          value: '',
-          valid: false,
-        },
-        passConfirm: {
-          value: '',
-          valid: false,
-        },
-      })
-      responseHandler(
-        props.setShowResponseModal,
+      setFormInput(refreshPassword)
+      inputValidityHandler(
+        'passConfirm',
         'Lozinka i potvrda moraju biti jednake!',
-        'red',
-        !props.triger,
       )
     } else {
       setCompanyData(formData)
-      props.setIsLoading(true)
     }
   }
 
@@ -201,9 +155,7 @@ const RegServProv = (props) => {
         placeholder="Uneti ime i prezime"
         value={formInput.name.value}
         maxLength="50"
-        onChange={(e) =>
-          inputChangedHandler(e, 'name', formInput, setFormInput)
-        }
+        onChange={(e) => inputChanged(e, 'name')}
         invalid={!formInput.name.valid}
         ref={props.regInputRef}
       />
@@ -214,9 +166,7 @@ const RegServProv = (props) => {
         placeholder="Uneti korisničko ime"
         value={formInput.userName.value}
         maxLength="50"
-        onChange={(e) =>
-          inputChangedHandler(e, 'userName', formInput, setFormInput)
-        }
+        onChange={(e) => inputChanged(e, 'userName')}
         invalid={!formInput.userName.valid}
       />
       <Input
@@ -226,9 +176,7 @@ const RegServProv = (props) => {
         placeholder="Uneti naziv firme"
         value={formInput.companyName.value}
         maxLength="50"
-        onChange={(e) =>
-          inputChangedHandler(e, 'companyName', formInput, setFormInput)
-        }
+        onChange={(e) => inputChanged(e, 'companyName')}
         invalid={!formInput.companyName.valid}
       />
       <Input
@@ -238,9 +186,7 @@ const RegServProv = (props) => {
         placeholder="Uneti adresu firme"
         value={formInput.address.value}
         maxLength="50"
-        onChange={(e) =>
-          inputChangedHandler(e, 'address', formInput, setFormInput)
-        }
+        onChange={(e) => inputChanged(e, 'address')}
       />
       <Input
         type="text"
@@ -249,9 +195,7 @@ const RegServProv = (props) => {
         placeholder="Uneti grad"
         value={formInput.city.value}
         maxLength="40"
-        onChange={(e) =>
-          inputChangedHandler(e, 'city', formInput, setFormInput)
-        }
+        onChange={(e) => inputChanged(e, 'city')}
         invalid={!formInput.city.valid}
       />
       <Select
@@ -261,9 +205,7 @@ const RegServProv = (props) => {
         }
         display="inline-block"
         value={formInput.mobOperator.value}
-        onChange={(e) =>
-          inputChangedHandler(e, 'mobOperator', formInput, setFormInput)
-        }
+        onChange={(e) => inputChanged(e, 'mobOperator')}
         invalid={!formInput.mobOperator.valid}
       >
         <option value="" disabled selected>
@@ -287,9 +229,7 @@ const RegServProv = (props) => {
         placeholder="Uneti telefon"
         value={formInput.phone.value}
         maxLength="7"
-        onChange={(e) =>
-          inputChangedHandler(e, 'phone', formInput, setFormInput)
-        }
+        onChange={(e) => inputChanged(e, 'phone')}
         invalid={!formInput.phone.valid}
       />
       <Input
@@ -299,9 +239,7 @@ const RegServProv = (props) => {
         placeholder="Uneti e-mail"
         value={formInput.email.value}
         maxLength="50"
-        onChange={(e) =>
-          inputChangedHandler(e, 'email', formInput, setFormInput)
-        }
+        onChange={(e) => inputChanged(e, 'email')}
         invalid={!formInput.email.valid}
       />
       <Input
@@ -311,9 +249,7 @@ const RegServProv = (props) => {
         placeholder="Izabrati lozinku"
         value={formInput.password.value}
         maxLength="50"
-        onChange={(e) =>
-          inputChangedHandler(e, 'password', formInput, setFormInput)
-        }
+        onChange={(e) => inputChanged(e, 'password')}
         invalid={!formInput.password.valid}
       />
       <Input
@@ -323,9 +259,7 @@ const RegServProv = (props) => {
         placeholder="Ponovo uneti lozinku"
         value={formInput.passConfirm.value}
         maxLength="50"
-        onChange={(e) =>
-          inputChangedHandler(e, 'passConfirm', formInput, setFormInput)
-        }
+        onChange={(e) => inputChanged(e, 'passConfirm')}
         invalid={!formInput.passConfirm.valid}
       />
       <Input
@@ -336,7 +270,6 @@ const RegServProv = (props) => {
         float={isMobile ? 'left' : 'inherit'}
         margin={isMobile ? '20px auto 5px auto' : '40px auto 5px auto'}
         className={isMobile ? classes.SubmitButtonMob : classes.SubmitButton}
-        onClick={() => props.setIsLoading(true)}
       />
       <Input
         type="button"

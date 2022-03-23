@@ -8,10 +8,10 @@ import {
   faAddressBook,
   faTruckMonster,
   faUserShield,
-} from '@fortawesome/free-solid-svg-icons';
-import Title from '../Title';
-import OurServicesContainer from './OurServicesContainer';
-import OurService from './OurService';
+} from '@fortawesome/free-solid-svg-icons'
+import Title from '../Title'
+import OurServicesContainer from './OurServicesContainer'
+import OurService from './OurService'
 
 const OurServices = () => (
   <>
@@ -64,6 +64,6 @@ const OurServices = () => (
       />
     </OurServicesContainer>
   </>
-);
+)
 
-export default OurServices;
+export default OurServices

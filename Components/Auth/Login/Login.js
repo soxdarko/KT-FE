@@ -1,9 +1,12 @@
+//REFAKTORIANO
 import { useState, useRef, useEffect } from 'react'
 import { userLogin } from '../../../api/userLogin'
 import {
   useDeviceDetect,
   inputChangedHandler,
+  updateValidity,
   responseHandler,
+  infoMessageHandler,
   getErrorMessage,
 } from '../../../helpers/universalFunctions'
 import { getCompanyGuideStatus } from '../../../api/getCompanyGuideStatus'
@@ -19,11 +22,39 @@ const Login = (props) => {
   const [loginUser, setLoginUser] = useState([])
   const [formInput, setFormInput] = useState(initState)
 
+  function resHandler(message) {
+    responseHandler(
+      props.setShowResponseModal,
+      message,
+      'red',
+      !props.showResponseModal.triger,
+      props.setIsLoading,
+    )
+  }
+
+  function infoHandler(message) {
+    infoMessageHandler(
+      props.setShowInfoModal,
+      message,
+      !props.showInfoModal.triger,
+      props.setIsLoading,
+    )
+  }
+
+  function inputChanged(e, inputIdentifier) {
+    inputChangedHandler(e, inputIdentifier, formInput, setFormInput)
+  }
+
+  const inputValidityHandler = (inputName, message) => {
+    updateValidity(setFormInput, formInput, inputName, '', false)
+    resHandler(message)
+  }
+
   function closeForm() {
     props.setDisplayLogin('none')
     props.setDisplayTabContainer('none')
     setFormInput(initState)
-    props.setShowBackdrop(classes.backdropOut)
+    1
   }
 
   function passRecoveryFormHandler() {
@@ -33,7 +64,6 @@ const Login = (props) => {
   }
 
   const getGuideStatus = async () => {
-    props.setIsLoading(false)
     const api = await getCompanyGuideStatus()
       .then((response) => {
         const getGuideStatusData = response.data
@@ -41,12 +71,7 @@ const Login = (props) => {
       })
       .catch((err) => {
         const errMessage = getErrorMessage(err.response)
-        responseHandler(
-          props.setShowResponseModal,
-          errMessage,
-          'red',
-          !props.triger,
-        )
+        resHandler(errMessage)
       })
     return api
   }
@@ -57,25 +82,15 @@ const Login = (props) => {
   }
 
   const loginHandler = () => {
-    props.setIsLoading(false)
     const api = userLogin(userData)
       .then(() => {
-        props.infoMessageHandler(
-          props.setShowInfoModal,
-          'Uspešno ste se prijavili!',
-          !props.triger,
-        )
+        infoHandler('Uspešno ste se prijavili!')
         getGuideStatus()
         setFormInput(initState)
       })
       .catch((err) => {
         const errMessage = getErrorMessage(err.response)
-        responseHandler(
-          props.setShowResponseModal,
-          errMessage,
-          'red',
-          !props.triger,
-        )
+        resHandler(errMessage)
       })
     api
   }
@@ -86,7 +101,6 @@ const Login = (props) => {
       return
     }
     loginHandler()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loginUser])
 
   const buttonClassName = (mob, pc) => {
@@ -104,7 +118,6 @@ const Login = (props) => {
           classes.SubmitButtonMob,
           classes.SubmitButton,
         )}
-        onClick={() => props.setIsLoading(true)}
       />
       <Input
         type="button"
@@ -129,38 +142,15 @@ const Login = (props) => {
 
   const onSubmit = (e) => {
     e.preventDefault()
+    props.setIsLoading(true)
     const formData = {
       userName: formInput.userName.value.trim(),
       password: formInput.password.value.trim(),
     }
     if (!formInput.userName.value.trim()) {
-      setFormInput({
-        ...formInput,
-        userName: {
-          value: '',
-          valid: false,
-        },
-      })
-      responseHandler(
-        props.setShowResponseModal,
-        'Morate uneti korisničko ime!',
-        'red',
-        !props.triger,
-      )
+      inputValidityHandler('userName', 'Morate uneti korisničko ime!')
     } else if (!formInput.password.value.trim()) {
-      setFormInput({
-        ...formInput,
-        password: {
-          value: '',
-          valid: false,
-        },
-      })
-      responseHandler(
-        props.setShowResponseModal,
-        'Morate uneti lozinku!',
-        'red',
-        !props.triger,
-      )
+      inputValidityHandler('password', 'Morate uneti lozinku!')
     } else {
       setLoginUser(formData)
     }
@@ -183,9 +173,7 @@ const Login = (props) => {
         value={formInput.userName.value}
         placeholder="UNESITE KORISNIČKO IME"
         className={inputClassName}
-        onChange={(e) =>
-          inputChangedHandler(e, 'userName', formInput, setFormInput)
-        }
+        onChange={(e) => inputChanged(e, 'userName')}
         invalid={!formInput.userName.valid}
       />
       <Input
@@ -194,9 +182,7 @@ const Login = (props) => {
         value={formInput.password.value}
         placeholder="UNESITE LOZINKU"
         className={inputClassName}
-        onChange={(e) =>
-          inputChangedHandler(e, 'password', formInput, setFormInput)
-        }
+        onChange={(e) => inputChanged(e, 'password')}
         invalid={!formInput.password.valid}
       />
       {buttonGroup}

@@ -1,6 +1,8 @@
 const Appointment = (props) => (
   <div
     className={props.className}
+    onMouseEnter={props.onMouseEnter}
+    onMouseLeave={props.onMouseLeave}
     style={{
       display: props.display,
       position: props.position,
@@ -9,6 +11,6 @@ const Appointment = (props) => (
   >
     {props.children}
   </div>
-);
+)
 
-export default Appointment;
+export default Appointment

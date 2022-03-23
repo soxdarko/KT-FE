@@ -45,7 +45,6 @@ const ConfirmModal = (props) => {
       backdrop: classes.backdropOut,
       displayBackdrop: 'none',
     })
-    props.holdBackdrop ? {} : props.setShowBackdrop(classes.backdropOut)
     isMobile ? {} : props.itemId(null)
   }
 
