@@ -1,15 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import moment from 'moment';
-import {
-    useDeviceDetect,
-    getTimeString,
-    getErrorMessage,
-    getMondayForAPI,
-    responseHandler,
-    infoMessageHandler,
-    confirmHandler,
-    getResponseData,
-} from '../../helpers/universalFunctions';
+import { useDeviceDetect, getTimeString } from '../../helpers/universalFunctions';
 import Days from './RightTable/CalHead/Days';
 import Time from './LeftTable/Time';
 import CalBodyRow from './RightTable/CalBody/CalBodyRow';
@@ -18,26 +9,21 @@ import CalNav from './Nav/CalNav';
 import RegCodeClientForm from './Forms/RegCodeClientForm';
 import ClientPickerForm from './Forms/ClientPickerForm';
 import ServicePickerForm from './Forms/ServicePickerForm';
+import Input from '../UI/Forms/Input';
+import Label from '../UI/Forms/Label';
 import classes from './Calendar.module.scss';
 import classesUI from '../UI/UI.module.scss';
 import { getDateFromDayOfWeek } from '../../helpers/universalFunctions';
 import { saveAppointment } from '../../api/saveAppointment';
 import { v4 as uuidv4 } from 'uuid';
 import InfoModal from '../UI/Modal/InfoModal';
-import ConfirmModal from '../UI/Modal/ConfirmModal';
-import ResponseModal from '../UI/Modal/ResponseModal';
+import { getErrorMessage } from '../../helpers/universalFunctions';
+import { getMondayForAPI } from '../../helpers/universalFunctions';
 import { useRouter } from 'next/router';
-import AppointmentNote from './RightTable/CalBody/AppointmentNote';
-import Loader from '../UI/Loader';
-import { getAppointments } from '../../api/getAppointments';
-import { deleteAppointment } from '../../api/deleteAppointment';
-import CheckBox from '../UI/CheckBox';
 
-const Calendar = (props) => {
+const ClientCalendar = (props) => {
     const router = useRouter();
     const { isMobile } = useDeviceDetect();
-    const [appointmentId, setAppointmentId] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
     const [checkedServices, setCheckedServices] = useState([]);
     const [daysInWeek, setDaysInWeek] = useState([]);
     const [minMaxWorkingHours, setMinMaxWorkingWours] = useState([]);
@@ -54,18 +40,10 @@ const Calendar = (props) => {
     const cloneDiv = useRef(0);
     const cloneScrollTop = useRef(0);
     const cloneHeadScrollLeft = useRef(0);
+
     const [showInfoModal, setShowInfoModal] = useState({
         triger: false,
         message: null,
-    });
-    const [showConfirmModal, setShowConfirmModal] = useState({
-        message: null,
-        triger: false,
-    });
-    const [showResponseModal, setShowResponseModal] = useState({
-        triger: false,
-        message: null,
-        border: '',
     });
     const [clickedCell, setClickedCell] = useState([
         {
@@ -74,43 +52,14 @@ const Calendar = (props) => {
         },
     ]);
 
-    function resHandler(message, border) {
-        responseHandler(setShowResponseModal, message, border, !showResponseModal.triger, setIsLoading);
-    }
-
-    function infoHandler(message) {
-        infoMessageHandler(setShowInfoModal, message, !showInfoModal.triger, setIsLoading);
-    }
-
-    function confirmMessageHandler(message) {
-        confirmHandler(setShowConfirmModal, message, !showConfirmModal.triger, setIsLoading);
-    }
-
-    const getAppointmentsAfterDelete = async () => {
-        const api = await getAppointments(props.employeeId, props.dateOfMonday)
-            .then((res) => {
-                const getAppointmentsData = getResponseData(res);
-                setAppointmentData(getAppointmentsData);
-            })
-            .catch((err) => {
-                const errMessage = getErrorMessage(err.response);
-                resHandler(errMessage, 'red');
-            });
-        api;
-    };
-
-    const deleteAppointmentHandler = async () => {
-        const api = await deleteAppointment(appointmentId)
-            .then(() => {
-                getAppointmentsAfterDelete();
-                infoHandler('Zakazani termin je uspešno otkazan!');
-            })
-            .catch((err) => {
-                const errMessage = getErrorMessage(err.response);
-                resHandler(errMessage, 'red');
-            });
-        api;
-    };
+    useEffect(() => {
+        if (showInfoModal.triger) {
+            setShowInfoModal((s) => ({
+                ...s,
+                triger: false,
+            }));
+        }
+    }, [showInfoModal]);
 
     useEffect(() => {
         setAppointmentData(props.appointments);
@@ -226,7 +175,7 @@ const Calendar = (props) => {
                           hours: minMaxHour,
                           enabled: true,
                           absence: h.idAbsenceType,
-                          appointment: getAppointmentsHandler(h.date, minMaxHour),
+                          appointment: getAppointments(h.date, minMaxHour),
                       })
                     : prepWHA[i].wha.push({
                           hours: minMaxHour,
@@ -239,7 +188,7 @@ const Calendar = (props) => {
         setWorkHourAppointments(prepWHA);
     };
 
-    const getAppointmentsHandler = (date, minMaxHour) => {
+    const getAppointments = (date, minMaxHour) => {
         const appointment = appointmentData
             ?.map((a) => {
                 let whDate = Date.parse(date.split('T')[0]);
@@ -334,9 +283,11 @@ const Calendar = (props) => {
         });
     };
 
-    const isServiceChecked = (obj) => {
-        const checkedServicesIDs = checkedServices.map((s) => s.id);
-        return checkedServicesIDs.indexOf(obj.id) !== -1 ? true : false;
+    const showMessage = (eventMessage) => {
+        setShowInfoModal({
+            triger: true,
+            message: eventMessage,
+        });
     };
 
     const saveNewAppointment = () => {
@@ -348,8 +299,8 @@ const Calendar = (props) => {
             Id: uuidv4(),
             DateStart: dateStart,
             DateEnd: dateEnd,
-            IdEmployee: null,
-            IdClient: chosenClient,
+            IdEmployee: props.selectedEmployee,
+            IdClient: props.clientId,
             Services: checkedServices.map((s) => ({
                 IdService: s.id,
                 Price: s.price,
@@ -359,15 +310,10 @@ const Calendar = (props) => {
         };
 
         saveAppointment(newAppointment)
-            .then(() => {
-                props.refreshData();
-                setCheckedServices([]);
-                infoHandler('Termin uspešno zakazan');
-            })
+            .then((res) => props.refreshData())
             .catch((err) => {
-                console.log(err);
                 const errMessage = getErrorMessage(err.response);
-                resHandler(errMessage, 'red');
+                showMessage(errMessage);
             });
     };
 
@@ -408,8 +354,7 @@ const Calendar = (props) => {
                         width: isMobile ? '100%' : '97%',
                     }}
                     onScroll={() => {
-                        VerticalTaxing();
-                        HorisontalTaxing();
+                        VerticalTaxing(), HorisontalTaxing();
                     }}
                 >
                     {minMaxWorkingHours.map((time) => (
@@ -418,14 +363,10 @@ const Calendar = (props) => {
                             time={time}
                             workHourAppointments={workHourAppointments}
                             setClickedCell={setClickedCell}
+                            showMessage={showMessage}
                             clientPicker={() => {
-                                setDisplayClientPicker('block');
-                                props.showBackdrop();
+                                setDisplayServicesPicker('block'), props.showBackdrop();
                             }}
-                            resHandler={resHandler}
-                            infoHandler={infoHandler}
-                            confirmMessageHandler={confirmMessageHandler}
-                            setAppointmentId={setAppointmentId}
                         />
                     ))}
                 </tbody>
@@ -435,72 +376,18 @@ const Calendar = (props) => {
 
     return (
         <>
-            <Loader loading={isLoading} />
             <InfoModal showInfoModal={showInfoModal} borderColor="green" />
-            <ResponseModal showResponseModal={showResponseModal} />
-            <ConfirmModal
-                showConfirmModal={showConfirmModal}
-                submitValue="Da"
-                itemId={setAppointmentId}
-                onSubmit={() => deleteAppointmentHandler()}
-            />
-            <AppointmentNote displayAppointmentsNote={'none'} />
             <RegCodeClientForm
                 displayRegCodeClient={displayRegCodeClient}
                 RegCodeClientHandler={RegCodeClientHandler}
                 setDisplayRegCodeClient={setDisplayRegCodeClient}
             />
-            <ClientPickerForm
-                displayClientPicker={displayClientPicker}
-                setDisplayClientPicker={setDisplayClientPicker}
-                setDisplayServicesPicker={setDisplayServicesPicker}
-                hideBackdrop={props.hideBackdrop}
-                bodyDataMob={props.employees.map((user) => (
-                    <div
-                        className={classesUI.ClientsMob}
-                        key={user.id}
-                        onClick={() => setDisplayServicesPicker('block')}
-                    >
-                        <tr>
-                            <td>{user.name}</td>
-                        </tr>
-                        <tr>
-                            <td>{user.phone}</td>
-                        </tr>
-                        <tr>
-                            <td>{user.email}</td>
-                        </tr>
-                    </div>
-                ))}
-                bodyData={props.employees.map((user) => (
-                    <tr
-                        className={classesUI.Clients}
-                        key={user.id}
-                        onClick={() => {
-                            setDisplayServicesPicker('block');
-                            setChosenClient(user.id);
-                        }}
-                    >
-                        <td>{user.name}</td>
-                        <td
-                            style={{
-                                width: '180px',
-                                minWidth: '180px',
-                            }}
-                        >
-                            {user.phone}
-                        </td>
-                        <td>{user.email}</td>
-                    </tr>
-                ))}
-            />
             <ServicePickerForm
+                clientCalendar={true}
                 displayServicesPicker={displayServicesPicker}
                 setDisplayServicesPicker={setDisplayServicesPicker}
-                setDisplayClientPicker={setDisplayClientPicker}
                 hideBackdrop={props.hideBackdrop}
                 setAppointment={saveNewAppointment}
-                setCheckedServices={setCheckedServices}
                 bodyDataMob={props.services.map((serv) => (
                     <div className={classesUI.ServicesMob} key={serv.serviceId}>
                         <tr>
@@ -511,13 +398,8 @@ const Calendar = (props) => {
                                 }}
                                 rowSpan="2"
                             >
-                                <CheckBox
-                                    name={serv.id}
-                                    id={serv.id}
-                                    className={classesUI.checkbox}
-                                    onClick={() => pickServices(serv)}
-                                    checked={isServiceChecked(serv)}
-                                />
+                                <Input type="checkbox" id={`chkbox${serv.id}`} />
+                                <Label htmlFor={`chkbox${serv.id}`} className={classesUI.checkbox} />
                             </td>
                         </tr>
                         <tr>
@@ -594,13 +476,8 @@ const Calendar = (props) => {
                                 minWidth: '100px',
                             }}
                         >
-                            <CheckBox
-                                name={serv.id}
-                                id={serv.id}
-                                className={classesUI.checkbox}
-                                onClick={() => pickServices(serv)}
-                                checked={isServiceChecked(serv)}
-                            />
+                            <Input type="checkbox" id={`chkbox${serv.id}`} onClick={() => pickServices(serv)} />
+                            <Label htmlFor={`chkbox${serv.id}`} className={classesUI.checkbox} />
                         </td>
                     </tr>
                 ))}
@@ -622,4 +499,4 @@ const Calendar = (props) => {
     );
 };
 
-export default Calendar;
+export default ClientCalendar;

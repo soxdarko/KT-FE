@@ -5,7 +5,13 @@ $orange-line-color: linear-gradient(to right, #303030, #fc9815, #303030);
 $header-background-color: #1a1b1c;
 $base-cal-font-color: rgba(255, 255, 255, 0.801);
 $calendar-weeks-button-bg: linear-gradient(to top, #404040, #606060, #404040);
-$calendar-weeks-button-bg-hover: linear-gradient(to top, #505050, #303030, #303030, #505050);
+$calendar-weeks-button-bg-hover: linear-gradient(
+    to top,
+    #505050,
+    #303030,
+    #303030,
+    #505050
+);
 $calendar-time_day-color: black;
 $transition: 0.25s;
 $small: 700px;
@@ -16,7 +22,14 @@ $sidedrawer-background-color: #524432;
 $base-calendar-border: solid $base-orange-color;
 $index-booking-button-bg: linear-gradient(to top, #404040, #606060, #404040);
 $calendar-event-bg: linear-gradient(to top, #3d4734, #303030, #3d4734);
-$Appointment-line-color: linear-gradient(to right, #303030, #fc9815, #fc9815, #fc9815, #303030);
+$Appointment-line-color: linear-gradient(
+    to right,
+    #303030,
+    #fc9815,
+    #fc9815,
+    #fc9815,
+    #303030
+);
 $scroll-button-color: linear-gradient(
     to top right,
     rgba(255, 255, 255, 0.63),

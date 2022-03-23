@@ -3,7 +3,7 @@ import { fetchJson } from '../api/fetchJson';
 import { auth } from '../helpers/auth';
 import Head from 'next/head';
 import Layout from '../Components/hoc/Layout/Layout';
-import Calendar from '../Components/Calendar/Calendar';
+import ClientCalendar from '../Components/Calendar/ClientCalendar';
 import { getMondayForAPI } from '../helpers/universalFunctions';
 import classes from '../Components/Navigation/Navigation.module.scss';
 import { useRouter } from 'next/router';
@@ -28,8 +28,16 @@ const CalendarPage = (props) => {
     };
 
     useEffect(() => {
+        console.log('serviceProviders', props.serviceProviders);
+        console.log('employees', props.employees);
+        console.log('services', props.services);
+        console.log('userStatus', props.userStatus);
+        console.log('workingHours', props.workingHours);
+        console.log('appointments', props.appointments);
+        console.log('mondayDate', props.mondayDate);
+
         if (mondayDate && selectedEmployee)
-            router.replace(`kalendar?mondayDate=${mondayDate}&employeeId=${selectedEmployee}`);
+            router.replace(`klijent-kalendar?mondayDate=${mondayDate}&employeeId=${selectedEmployee}`);
     }, [mondayDate, selectedEmployee]);
 
     return (
@@ -55,7 +63,7 @@ const CalendarPage = (props) => {
                 license="5"
                 setSelectedEmployee={setSelectedEmployee}
             >
-                <Calendar
+                <ClientCalendar
                     displayBackdrop={clientFormBackdrop}
                     showBackdrop={clientFormBackdropShow}
                     hideBackdrop={clientFormBackdropHide}
@@ -66,7 +74,7 @@ const CalendarPage = (props) => {
                     appointments={props.appointments}
                     refreshData={refreshData}
                     employeeId={props.employeeId}
-                    dateOfMonday={mondayDate}
+                    clientId={props.clientId}
                 />
             </Layout>
         </>
@@ -78,23 +86,22 @@ export async function getServerSideProps(ctx) {
     const token = auth(ctx);
 
     const parsedJWT = parseJwt(token);
-    const loggedInUser = parsedJWT?.userId;
+    const clientId = parsedJWT?.userId;
     const mondayDateForAPI = mondayDate ?? getMondayForAPI();
+    const lastAppointmentEmployeeIdUrl = `appointments/getLastAppointmentEmployeeId`;
+    const lastAppointmentEmployeeId = await fetchJson(lastAppointmentEmployeeIdUrl, 'get', token).then(
+        (res) => res.data,
+    );
+    const employeeIdForAPI = employeeId ?? lastAppointmentEmployeeId;
 
-    const serviceProvidersUrl = `users/getAllServiceProviders`;
+    const employeesUrl = `users/getAllEmployees?employeeId=${employeeIdForAPI}`;
+    const resEmployees = await fetchJson(employeesUrl, 'get', token);
+    const serviceProvidersUrl = `users/getAllServiceProviders?employeeId=${employeeIdForAPI}`;
     const resServiceProviders = await fetchJson(serviceProvidersUrl, 'get', token);
-    const servicesUrl = `appointments/getAllServices`;
+    const servicesUrl = `appointments/getAllServices?employeeId=${employeeIdForAPI}`;
     const resServices = await fetchJson(servicesUrl, 'get', token);
     const guideStatusUrl = `users/getCompanyGuideStatus`;
     const resGuideStatusUrl = await fetchJson(guideStatusUrl, 'get', token);
-    const employeesUrl = `users/getAllEmployees`;
-    const resEmployees = await fetchJson(employeesUrl, 'get', token);
-
-    let employeeIdForAPI = employeeId ?? loggedInUser;
-    if (!employeeId && resEmployees?.length > 0) {
-        if (!resEmployees.find((e) => e.id == loggedInUser)) employeeIdForAPI = resEmployees[0].id;
-    }
-
     const workingHoursUrl = `settings/getWorkingHours?dateOfMonday=${mondayDateForAPI}&employeeId=${employeeIdForAPI}`;
     const workingHours = await fetchJson(workingHoursUrl, 'get', token).then((res) => res.data);
     const appointmentUrl = `appointments/getAppointments?&dateOfMonday=${mondayDateForAPI}&employeeId=${employeeIdForAPI}`;
@@ -131,6 +138,7 @@ export async function getServerSideProps(ctx) {
             appointments,
             employeeId: employeeIdForAPI,
             mondayDate: mondayDateForAPI,
+            clientId,
         },
     };
 }
