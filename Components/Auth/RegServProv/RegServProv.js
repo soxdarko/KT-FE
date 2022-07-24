@@ -6,6 +6,8 @@ import {
     updateValidity,
     responseHandler,
     getErrorMessage,
+    emailPattern,
+    numericPattern,
 } from '../../../helpers/universalFunctions';
 import { userRegistration } from '../../../api/userRegistration';
 import initState from './initState';
@@ -93,10 +95,6 @@ const RegServProv = (props) => {
             city: formInput.city.value.trim(),
             address: formInput.address.value.trim(),
         };
-
-        const emailPattern =
-            /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
-        const numericPattern = /^\d+$/;
         if (!formInput.name.value.trim()) {
             inputValidityHandler('name', 'Morate uneti Ime i prezime!');
         } else if (!formInput.userName.value.trim()) {

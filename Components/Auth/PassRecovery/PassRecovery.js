@@ -1,6 +1,11 @@
 //REFAKTORISANO
 import { useState, useEffect, useRef } from 'react';
-import { useDeviceDetect, inputChangedHandler, responseHandler } from '../../../helpers/universalFunctions';
+import {
+    useDeviceDetect,
+    inputChangedHandler,
+    responseHandler,
+    emailPattern,
+} from '../../../helpers/universalFunctions';
 import initState from './initState';
 
 import DescriptionLabel from '../../UI/DescriptionLabel';
@@ -83,8 +88,6 @@ const PassRecovery = (props) => {
             phone: formInput.phone.value.trim(),
             email: formInput.email.value.trim(),
         };
-        const emailPattern =
-            /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
         if (
             (formInput.mobOperator.value !== '' && formInput.phone.value.trim() !== '') ||
             (formInput.email.value.trim() !== '' && emailPattern.test(formInput.email.value))

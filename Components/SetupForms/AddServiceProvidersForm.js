@@ -100,8 +100,6 @@ const AddServiceProvidersForm = (props) => {
                 Informations: props.servProvFormInput.informations.value,
             },
         ];
-
-        /* const numericPattern = /^\d+$/; */
         if (!props.servProvFormInput.serviceProviderName.value.trim()) {
             inputValidityHandler('serviceProviderName', 'Morate uneti naziv salona!');
         } else if (!props.servProvFormInput.city.value.trim()) {

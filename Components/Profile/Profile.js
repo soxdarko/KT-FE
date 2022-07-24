@@ -7,6 +7,8 @@ import {
     infoMessageHandler,
     updateValidity,
     getErrorMessage,
+    emailPattern,
+    numericPattern,
 } from '../../helpers/universalFunctions';
 import { saveEmployeeProfile } from '../../api/saveEmployeeProfile.js';
 import WrappedButtonsMob from '../UI/WrappedButtonsMob';
@@ -106,9 +108,6 @@ const Profile = (props) => {
             OldPassword: formInput.oldPassword.value.trim(),
             NewPassword: formInput.newPassword.value.trim(),
         };
-        const emailPattern =
-            /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
-        const numericPattern = /^\d+$/;
         if (!formInput.name.value.trim()) {
             inputValidityHandler('name', 'Morate uneti ime i prezime!');
         } else if (!formInput.email.value.trim() || !emailPattern.test(formInput.email.value)) {

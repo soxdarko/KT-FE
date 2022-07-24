@@ -8,6 +8,8 @@ import {
     infoMessageHandler,
     getErrorMessage,
     getResponseData,
+    emailPattern,
+    numericPattern,
 } from '../../helpers/universalFunctions';
 import { saveEmployees } from '../../api/saveEmployees';
 import { getAllEmployees } from '../../api/getAllEmployees';
@@ -107,10 +109,6 @@ const AddEmployeeForm = (props) => {
                 serviceProviderId: props.emplyeesFormInput.serviceProviderId.value,
             },
         ];
-
-        const emailPattern =
-            /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
-        const numericPattern = /^\d+$/;
         if (!props.emplyeesFormInput.name.value.trim()) {
             inputValidityHandler('name', 'Morate uneti ime radnika!');
         } else if (

@@ -83,7 +83,6 @@ const Services = (props) => {
     };
 
     const saveSettingsServicesHandler = async () => {
-        setIsLoading(false);
         const api = await saveSettingsServices(serviceSettingsData)
             .then(() => {
                 setDisplayServiceSettings('none');

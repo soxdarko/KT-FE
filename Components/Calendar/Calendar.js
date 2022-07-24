@@ -50,6 +50,7 @@ const Calendar = (props) => {
     const [displayClientPicker, setDisplayClientPicker] = useState('none');
     const [displayServicesPicker, setDisplayServicesPicker] = useState('none');
     const [displayRegCodeClient, setDisplayRegCodeClient] = useState('none');
+    const [displayAppointmentsNote, setDisplayAppointmentsNote] = useState('none');
 
     const cloneDiv = useRef(0);
     const cloneScrollTop = useRef(0);
@@ -426,6 +427,7 @@ const Calendar = (props) => {
                             infoHandler={infoHandler}
                             confirmMessageHandler={confirmMessageHandler}
                             setAppointmentId={setAppointmentId}
+                            setDisplayAppointmentsNote={setDisplayAppointmentsNote}
                         />
                     ))}
                 </tbody>
@@ -444,7 +446,10 @@ const Calendar = (props) => {
                 itemId={setAppointmentId}
                 onSubmit={() => deleteAppointmentHandler()}
             />
-            <AppointmentNote displayAppointmentsNote={'none'} />
+            <AppointmentNote
+                displayAppointmentsNote={displayAppointmentsNote}
+                setDisplayAppointmentsNote={setDisplayAppointmentsNote}
+            />
             <RegCodeClientForm
                 displayRegCodeClient={displayRegCodeClient}
                 RegCodeClientHandler={RegCodeClientHandler}

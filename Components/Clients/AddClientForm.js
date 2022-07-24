@@ -7,6 +7,8 @@ import {
     responseHandler,
     infoMessageHandler,
     getErrorMessage,
+    emailPattern,
+    numericPattern,
 } from '../../helpers/universalFunctions';
 import { addOrUpdateNewClient } from '../../api/addOrUpdateNewClient';
 import Input from '../UI/Forms/Input';
@@ -85,9 +87,6 @@ const AddClientForm = (props) => {
             Email: props.formInput.email.value.trim(),
             Description: props.formInput.description.value.trim(),
         };
-        const emailPattern =
-            /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
-        const numericPattern = /^\d+$/;
         if (!props.formInput.name.value.trim()) {
             inputValidityHandler('name', 'Morate uneti ime klijenta!');
         } else if (!props.formInput.email.value.trim() || !emailPattern.test(props.formInput.email.value)) {

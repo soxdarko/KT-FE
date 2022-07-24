@@ -247,7 +247,13 @@ const Index = () => {
                 <Slider />
                 <OurServices />
                 <hr style={{ marginTop: isMobile ? '10px' : '40px' }} />
-                <ContactForm showResponseModal={showResponseModal} setShowResponseModal={setShowResponseModal} />
+                <ContactForm
+                    showResponseModal={showResponseModal}
+                    setShowResponseModal={setShowResponseModal}
+                    showInfoModal={showInfoModal}
+                    setShowInfoModal={setShowInfoModal}
+                    setIsLoading={setIsLoading}
+                />
                 <AuthButton
                     onClickLogin={() => {
                         loginFormHandler();
