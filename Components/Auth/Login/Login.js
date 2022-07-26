@@ -65,6 +65,7 @@ const Login = (props) => {
                 props.setUserStatus(getGuideStatusData);
             })
             .catch((err) => {
+                console.log(err);
                 const errMessage = getErrorMessage(err.response);
                 resHandler(errMessage);
             });

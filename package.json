@@ -61,22 +61,24 @@
 		"eslint-plugin-react": "^7.28.0",
 		"eslint-plugin-react-hooks": "^4.3.0",
 		"eslint-plugin-standard": "^5.0.0",
-		"prettier": "2.5.1",
 		"husky": "3.0.5",
-    	"lint-staged": "9.2.5",
+		"lint-staged": "9.2.5",
+		"prettier": "2.5.1",
 		"prettier-eslint": "^13.0.0",
 		"redux-devtools-extension": "^2.13.8",
 		"url-loader": "^4.1.1"
 	},
 	"husky": {
 		"hooks": {
-		  "pre-commit": "lint-staged"
+			"pre-commit": "lint-staged"
 		}
-	  },
-	  "lint-staged": {
-		"*.js": ["prettier --write", "git add"]
-	  },
-
+	},
+	"lint-staged": {
+		"*.js": [
+			"prettier --write",
+			"git add"
+		]
+	},
 	"scripts": {
 		"predeploy": "npm run build",
 		"deploy": "gh-pages -d dist",
