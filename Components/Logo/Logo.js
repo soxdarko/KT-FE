@@ -1,11 +1,13 @@
 import Link from 'next/link';
-import Image from "next/image"
+import Image from 'next/image';
 import logo from './logo.png';
 
 const Logo = (props) => (
-  <Link href="/">
-    <Image src={logo} alt="Kliktermin" width={props.width} height={props.height} />
-  </Link>
+    <Link href="/">
+        <div>
+            <Image src={logo} alt="Kliktermin" width={props.width} height={props.height} />
+        </div>
+    </Link>
 );
 
 export default Logo;

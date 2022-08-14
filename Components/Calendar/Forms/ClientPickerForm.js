@@ -61,7 +61,8 @@ const ClientPickerForm = (props) => {
                         margin="-10px auto auto auto"
                         color="orangered"
                         onClick={() => {
-                            props.setDisplayClientPicker('none'), props.hideBackdrop();
+                            props.setDisplayClientPicker('none');
+                            props.hideBackdrop();
                         }}
                     />
                 </div>
@@ -106,7 +107,8 @@ const ClientPickerForm = (props) => {
                     marginLeft="1%"
                     color="orangered"
                     onClick={() => {
-                        props.setDisplayClientPicker('none'), props.hideBackdrop();
+                        props.setDisplayClientPicker('none');
+                        props.hideBackdrop();
                     }}
                 />
             </div>

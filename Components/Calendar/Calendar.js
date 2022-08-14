@@ -24,6 +24,7 @@ import { useRouter } from 'next/router';
 const Calendar = (props) => {
     const router = useRouter();
     const { isMobile } = useDeviceDetect();
+    const currMondayFormat = isMobile ? 'D.MM' : 'D.MMM';
     const [checkedServices, setCheckedServices] = useState([]);
     const [daysInWeek, setDaysInWeek] = useState([]);
     const [minMaxWorkingHours, setMinMaxWorkingWours] = useState([]);
@@ -68,11 +69,7 @@ const Calendar = (props) => {
     useEffect(() => {
         const urlMondayDate = router.query.mondayDate;
         setCurrMonday(
-            moment(urlMondayDate)
-                .locale('sr')
-                .startOf('isoweek')
-                .format(isMobile ? 'D.MM' : 'D.MMM')
-                .toUpperCase(),
+            moment(urlMondayDate, 'YYYY.MM.DD').locale('sr').startOf('isoweek').format(currMondayFormat).toUpperCase(),
         );
         prepDaysInWeek();
     }, [router.asPath]);
@@ -229,19 +226,23 @@ const Calendar = (props) => {
         cloneHeadScrollLeft.current.scrollLeft = scroll;
     };
 
-    const currYear = moment(currMonday).format('YYYY');
-    const currSunday = moment(currMonday)
+    const currYear = moment(currMonday, currMondayFormat).format('YYYY');
+    const currSunday = moment(currMonday, currMondayFormat)
         .locale('sr')
         .add(6, 'days')
-        .format(isMobile ? 'D.MM' : 'D.MMM')
+        .format(currMondayFormat)
         .toUpperCase();
     const calendarHeaderDates = (i) =>
-        `${days[i]} - ${moment(currMonday).add(i, 'days').locale('sr').format('DD. MMM').toUpperCase()}`;
+        `${days[i]} - ${moment(currMonday, currMondayFormat)
+            .add(i, 'days')
+            .locale('sr')
+            .format('DD. MMM')
+            .toUpperCase()}`;
 
     const calendarWeekSet = (prevOrNext) => {
         const days = prevOrNext == 'next' ? 7 : -7;
         const urlMondayDate = Date.parse(router.query.mondayDate);
-        const mondayDate = moment(urlMondayDate).startOf('isoweek').add(days, 'days').toDate();
+        const mondayDate = moment(urlMondayDate, 'x').startOf('isoweek').add(days, 'days').toDate();
         const mondayAPIFormat = getMondayForAPI(mondayDate);
         router.push(`/kalendar?mondayDate=${mondayAPIFormat}&employeeId=${props.employeeId}`);
     };
@@ -354,21 +355,25 @@ const Calendar = (props) => {
                         width: isMobile ? '100%' : '97%',
                     }}
                     onScroll={() => {
-                        VerticalTaxing(), HorisontalTaxing();
+                        VerticalTaxing();
+                        HorisontalTaxing();
                     }}
                 >
-                    {minMaxWorkingHours.map((time) => (
-                        <CalBodyRow
-                            key={time}
-                            time={time}
-                            workHourAppointments={workHourAppointments}
-                            setClickedCell={setClickedCell}
-                            showMessage={showMessage}
-                            clientPicker={() => {
-                                setDisplayClientPicker('block'), props.showBackdrop();
-                            }}
-                        />
-                    ))}
+                    {minMaxWorkingHours.map((time) => {
+                        return (
+                            <CalBodyRow
+                                key={time}
+                                time={time}
+                                workHourAppointments={workHourAppointments}
+                                setClickedCell={setClickedCell}
+                                showMessage={showMessage}
+                                clientPicker={() => {
+                                    setDisplayClientPicker('block');
+                                    props.showBackdrop();
+                                }}
+                            />
+                        );
+                    })}
                 </tbody>
             </table>
         </div>
@@ -387,43 +392,48 @@ const Calendar = (props) => {
                 setDisplayClientPicker={setDisplayClientPicker}
                 setDisplayServicesPicker={setDisplayServicesPicker}
                 hideBackdrop={props.hideBackdrop}
-                bodyDataMob={props.employees.map((user) => (
-                    <div
-                        className={classesUI.ClientsMob}
-                        key={user.id}
-                        onClick={() => setDisplayServicesPicker('block')}
-                    >
-                        <tr>
-                            <td>{user.name}</td>
-                        </tr>
-                        <tr>
-                            <td>{user.phone}</td>
-                        </tr>
-                        <tr>
-                            <td>{user.email}</td>
-                        </tr>
-                    </div>
-                ))}
-                bodyData={props.employees.map((user) => (
-                    <tr
-                        className={classesUI.Clients}
-                        key={user.id}
-                        onClick={() => {
-                            setDisplayServicesPicker('block'), setChosenClient(user.id);
-                        }}
-                    >
-                        <td>{user.name}</td>
-                        <td
-                            style={{
-                                width: '180px',
-                                minWidth: '180px',
+                bodyDataMob={props.employees.map((user, i) => {
+                    return (
+                        <div
+                            className={classesUI.ClientsMob}
+                            key={`${user.id}${i}`}
+                            onClick={() => setDisplayServicesPicker('block')}
+                        >
+                            <tr>
+                                <td>{user.name}</td>
+                            </tr>
+                            <tr>
+                                <td>{user.phone}</td>
+                            </tr>
+                            <tr>
+                                <td>{user.email}</td>
+                            </tr>
+                        </div>
+                    );
+                })}
+                bodyData={props.employees.map((user, i) => {
+                    return (
+                        <tr
+                            className={classesUI.Clients}
+                            key={`${user.id}${i}`}
+                            onClick={() => {
+                                setDisplayServicesPicker('block');
+                                setChosenClient(user.id);
                             }}
                         >
-                            {user.phone}
-                        </td>
-                        <td>{user.email}</td>
-                    </tr>
-                ))}
+                            <td>{user.name}</td>
+                            <td
+                                style={{
+                                    width: '180px',
+                                    minWidth: '180px',
+                                }}
+                            >
+                                {user.phone}
+                            </td>
+                            <td>{user.email}</td>
+                        </tr>
+                    );
+                })}
             />
             <ServicePickerForm
                 displayServicesPicker={displayServicesPicker}
@@ -431,28 +441,30 @@ const Calendar = (props) => {
                 setDisplayClientPicker={setDisplayClientPicker}
                 hideBackdrop={props.hideBackdrop}
                 setAppointment={saveNewAppointment}
-                bodyDataMob={props.services.map((serv) => (
-                    <div className={classesUI.ServicesMob} key={serv.serviceId}>
-                        <tr>
-                            <td>{serv.name}</td>
-                            <td
-                                style={{
-                                    width: '20%',
-                                }}
-                                rowSpan="2"
-                            >
-                                <Input type="checkbox" id={`chkbox${serv.id}`} />
-                                <Label htmlFor={`chkbox${serv.id}`} className={classesUI.checkbox} />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>{serv.duration}</td>
-                        </tr>
-                        <tr>
-                            <td>{serv.price}</td>
-                        </tr>
-                    </div>
-                ))}
+                bodyDataMob={props.services.map((serv, i) => {
+                    return (
+                        <div className={classesUI.ServicesMob} key={`${serv.serviceId}${i}`}>
+                            <tr>
+                                <td>{serv.name}</td>
+                                <td
+                                    style={{
+                                        width: '20%',
+                                    }}
+                                    rowSpan="2"
+                                >
+                                    <Input type="checkbox" id={`chkbox${serv.id}`} />
+                                    <Label htmlFor={`chkbox${serv.id}`} className={classesUI.checkbox} />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>{serv.duration}</td>
+                            </tr>
+                            <tr>
+                                <td>{serv.price}</td>
+                            </tr>
+                        </div>
+                    );
+                })}
                 headData={
                     <tr>
                         <th
@@ -488,44 +500,46 @@ const Calendar = (props) => {
                         </th>
                     </tr>
                 }
-                bodyData={props.services.map((serv) => (
-                    <tr key={serv.serviceId} className={classesUI.Services}>
-                        <td
-                            style={{
-                                width: '100%',
-                            }}
-                        >
-                            {serv.name}
-                        </td>
-                        <td
-                            style={{
-                                width: '100px',
-                                minWidth: '150px',
-                            }}
-                        >
-                            {serv.duration}
-                        </td>
-                        <td
-                            style={{
-                                width: '100px',
-                                minWidth: '150px',
-                            }}
-                        >
-                            {serv.price}
-                        </td>
-                        <td
-                            style={{
-                                width: '100px',
-                                minWidth: '100px',
-                            }}
-                        >
-                            <Input type="checkbox" id={`chkbox${serv.id}`} onClick={() => pickServices(serv)} />
-                            <Label htmlFor={`chkbox${serv.id}`} className={classesUI.checkbox} />
-                        </td>
-                    </tr>
-                ))}
+                bodyData={props.services.map((serv, i) => {
+                    return (
+                        <tr className={classesUI.Services} key={`${serv.serviceId}${i}`}>
+                            <td
+                                style={{
+                                    width: '100%',
+                                }}
+                            >
+                                {serv.name}
+                            </td>
+                            <td
+                                style={{
+                                    width: '100px',
+                                    minWidth: '150px',
+                                }}
+                            >
+                                {serv.duration}
+                            </td>
+                            <td
+                                style={{
+                                    width: '100px',
+                                    minWidth: '150px',
+                                }}
+                            >
+                                {serv.price}
+                            </td>
+                            <td
+                                style={{
+                                    width: '100px',
+                                    minWidth: '100px',
+                                }}
+                            >
+                                <Input type="checkbox" id={`chkbox${serv.id}`} onClick={() => pickServices(serv)} />
+                                <Label htmlFor={`chkbox${serv.id}`} className={classesUI.checkbox} />
+                            </td>
+                        </tr>
+                    );
+                })}
             />
-            {BackdropSideDrawer}
+            {BackdropSideDrawer()}
             <CalNav
                 leftArrow="<< nedelja"
                 leftMargin={isMobile ? '5px 0 5px 5px' : '5px 0 5px 60px'}

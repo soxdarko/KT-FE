@@ -128,7 +128,7 @@ const ServicesList = (props) => {
                                 )
                                 .map((service, i) => {
                                     return (
-                                        <div className={classes.TbodyRow} key={service.id}>
+                                        <div className={classes.TbodyRow} key={`${service.id}${i}`}>
                                             <div className={classes.NumMob}>{indexNum(i)}</div>
                                             <div className={classes.ListDataContainer}>
                                                 <div>{service.name}</div>
@@ -194,7 +194,7 @@ const ServicesList = (props) => {
                                 )
                                 .map((service, i) => {
                                     return (
-                                        <div className={classes.TbodyRow} key={service.id}>
+                                        <div className={classes.TbodyRow} key={`${service.id}${i}`}>
                                             <div style={{ width: iWidth }}>{indexNum(i)}</div>
                                             <div
                                                 style={{

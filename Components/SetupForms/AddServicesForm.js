@@ -21,6 +21,7 @@ import classes from './SetupForms.module.scss';
 const AddServicesForm = (props) => {
     const { isMobile } = useDeviceDetect();
     const isComponentLoad = useRef(true);
+    const serviceproviderId = props.servicesFormInput.serviceProviderId.value;
     const [serviceData, setServiceData] = useState({});
 
     const duration = ['15', '30', '45', '60'];
@@ -205,10 +206,10 @@ const AddServicesForm = (props) => {
                 <Select
                     name="serviceProviderId"
                     className={classes.SelectInputText}
-                    value={props.servicesFormInput.serviceProviderId.value}
+                    value={serviceproviderId === null ? '' : serviceproviderId}
                     onChange={(e) => inputChanged(e, 'serviceProviderId')}
                 >
-                    <option value="" disabled selected hidden>
+                    <option value="" disabled defaultValue hidden>
                         Izaberite salon
                     </option>
                     {serviceProvidersPreview(props.serviceProviderData)}
@@ -237,7 +238,7 @@ const AddServicesForm = (props) => {
                     name={'duration'}
                     onChange={(e) => inputChanged(e, 'duration')}
                 >
-                    <option value="trajanje usluge" disabled selected hidden>
+                    <option value="trajanje usluge" disabled defaultValue hidden>
                         trajanje usluge
                     </option>
                     {durationList()}

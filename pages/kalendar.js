@@ -74,6 +74,7 @@ const CalendarPage = (props) => {
 
 export async function getServerSideProps(ctx) {
     const { employeeId, mondayDate } = ctx.query;
+
     const token = auth(ctx);
 
     const parsedJWT = parseJwt(token);
@@ -93,8 +94,7 @@ export async function getServerSideProps(ctx) {
     if (!employeeId && resEmployees?.length > 0) {
         if (!resEmployees.find((e) => e.id == loggedInUser)) employeeIdForAPI = resEmployees[0].id;
     }
-
-    const workingHoursUrl = `settings/getWorkingHours?dateOfMonday=${mondayDateForAPI}&employeeId=${employeeIdForAPI}`;
+    const workingHoursUrl = `settings/getWorkingHours?employeeId=${employeeIdForAPI}&dateOfMonday=${mondayDateForAPI}`;
     const workingHours = await fetchJson(workingHoursUrl, 'get', token).then((res) => res.data);
     const appointmentUrl = `appointments/getAppointments?&dateOfMonday=${mondayDateForAPI}&employeeId=${employeeIdForAPI}`;
     const appointments = await fetchJson(appointmentUrl, 'get', token).then((res) => res.data);

@@ -59,6 +59,8 @@ const Services = (props) => {
         border: '',
     });
 
+    console.log(formInput);
+
     const displayWrappedButtonsMob = (condition) => {
         if (isMobile && condition === 'block') {
             return true;
@@ -239,6 +241,7 @@ const Services = (props) => {
                 setShowResponseModal={setShowResponseModal}
                 showResponseModal={showResponseModal}
                 showInfoModal={showInfoModal}
+                userId
                 setShowInfoModal={setShowInfoModal}
                 setFormInput={setFormInput}
                 displayAddServicesForm={displayAddServicesForm}
